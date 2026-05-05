@@ -26,7 +26,7 @@ public class NFeOptions
     public string SchemaPath { get; set; } = "schemas";
 
     /// <summary>URL do WS SEFAZ para homologação — Autorização (SVRS)</summary>
-    public string SefazUrlHomologacao { get; set; } = "https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeAutorizacao/NfeAutorizacao4.asmx";
+    public string SefazUrlHomologacao { get; set; } = "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NfeAutorizacao4.asmx";
 
     /// <summary>URL do WS SEFAZ para produção — Autorização (SVRS)</summary>
     public string SefazUrlProducao { get; set; } = "https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NfeAutorizacao4.asmx";
