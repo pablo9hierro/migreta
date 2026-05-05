@@ -364,8 +364,14 @@
 
     /* Evita "efeito sanfona" ao alternar anonimo/CPF/CNPJ no passo de destinatario */
     #passo1 .card {
+      width: 100% !important;
       max-width: 100%;
       overflow-x: hidden;
+      box-sizing: border-box;
+    }
+    #passo1 > .card > div[style*="display:grid"] {
+      width: 100%;
+      box-sizing: border-box;
     }
 
     #passo1 #area_anonimo,
@@ -575,64 +581,7 @@
       <h1>Jubilados NF-e</h1>
       <span class="env-badge">HOMOLOGACAO</span>
       <div class="header-right">
-        <div class="theme-customizer" id="themeCustomizer">
-          <button class="theme-paint-btn" id="themePaintBtn" type="button" title="Personalizar cores">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M12 3.25a8.75 8.75 0 1 0 0 17.5h.95a2.8 2.8 0 0 0 0-5.6h-.74a1.2 1.2 0 0 1 0-2.4h1.54a5.25 5.25 0 0 0 0-10.5H12Z" stroke="currentColor" stroke-width="1.6"/>
-              <circle cx="7.6" cy="10.1" r="1.05" fill="currentColor"/>
-              <circle cx="10.2" cy="7.3" r="1.05" fill="currentColor"/>
-              <circle cx="13.8" cy="7.4" r="1.05" fill="currentColor"/>
-              <circle cx="16.1" cy="10.4" r="1.05" fill="currentColor"/>
-            </svg>
-          </button>
-          <div class="theme-popover" id="themePopover" hidden>
-            <div class="theme-header">
-              <h4>Personalize sua experi&ecirc;ncia</h4>
-              <button class="theme-close" id="themeCloseBtn" type="button" aria-label="Fechar">&times;</button>
-            </div>
 
-            <div class="theme-section">
-              <div class="theme-label"><span>Cor predominante</span><span id="themePrimaryHex">#0ED98A</span></div>
-              <div class="theme-color-row">
-                <input id="themePrimaryColor" type="color" value="#0ed98a">
-                <input id="themePrimaryText" type="text" value="#0ED98A" maxlength="7">
-              </div>
-              <div class="theme-swatches" data-target="themePrimaryColor">
-                <button class="theme-swatch" type="button" style="background:#0ED98A" data-color="#0ED98A"></button>
-                <button class="theme-swatch" type="button" style="background:#00B4D8" data-color="#00B4D8"></button>
-                <button class="theme-swatch" type="button" style="background:#8B5CF6" data-color="#8B5CF6"></button>
-                <button class="theme-swatch" type="button" style="background:#FF8A00" data-color="#FF8A00"></button>
-                <button class="theme-swatch" type="button" style="background:#E1FF00" data-color="#E1FF00"></button>
-              </div>
-              <div class="theme-label"><span>Escureza / Clareza</span><span id="themePrimaryLightnessVal">48%</span></div>
-              <input id="themePrimaryLightness" class="theme-slider" type="range" min="18" max="82" step="1" value="48">
-              <div class="theme-label"><span>Opacidade da predominante</span><span id="themePrimaryOpacityVal">100%</span></div>
-              <input id="themePrimaryOpacity" class="theme-slider" type="range" min="10" max="100" step="1" value="100">
-            </div>
-
-            <div class="theme-section">
-              <div class="theme-label"><span>Cor 2 (coadjuvante / sombra)</span><span id="themeAccentHex">#0CE4F5</span></div>
-              <div class="theme-color-row">
-                <input id="themeAccentColor" type="color" value="#0ce4f5">
-                <input id="themeAccentText" type="text" value="#0CE4F5" maxlength="7">
-              </div>
-              <div class="theme-swatches" data-target="themeAccentColor">
-                <button class="theme-swatch" type="button" style="background:#0CE4F5" data-color="#0CE4F5"></button>
-                <button class="theme-swatch" type="button" style="background:#3B82F6" data-color="#3B82F6"></button>
-                <button class="theme-swatch" type="button" style="background:#EC4899" data-color="#EC4899"></button>
-                <button class="theme-swatch" type="button" style="background:#10B981" data-color="#10B981"></button>
-                <button class="theme-swatch" type="button" style="background:#EAB308" data-color="#EAB308"></button>
-              </div>
-              <div class="theme-label"><span>Opacidade da sombra</span><span id="themeAccentOpacityVal">100%</span></div>
-              <input id="themeAccentOpacity" class="theme-slider" type="range" min="10" max="100" step="1" value="100">
-            </div>
-
-            <div class="theme-section">
-              <div class="theme-label"><span>Opacidade total do front</span><span id="themeUiOpacityVal">100%</span></div>
-              <input id="themeUiOpacity" class="theme-slider" type="range" min="55" max="100" step="1" value="100">
-            </div>
-          </div>
-        </div>
         <div class="sefaz-pill">
           <strong>SEFAZ</strong>
           <span class="pulse-dot"><span></span></span>
