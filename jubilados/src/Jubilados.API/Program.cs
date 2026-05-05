@@ -59,6 +59,8 @@ builder.Services.AddScoped<IDanfeService, DanfeService>();
 builder.Services.AddScoped<ISpedService, SpedService>();
 builder.Services.AddScoped<ICancelamentoService, CancelamentoService>();
 builder.Services.AddScoped<INfseService, NfseService>();
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient();
 
 // ── Controllers + Validação ───────────────────────────────────────────────────
 builder.Services.AddControllers()
@@ -180,7 +182,12 @@ using (var startupScope = app.Services.CreateScope())
             ALTER TABLE empresas ADD COLUMN IF NOT EXISTS contador_email                    VARCHAR(100);
             ALTER TABLE empresas ADD COLUMN IF NOT EXISTS faixa_simples                     VARCHAR(10);
             ALTER TABLE produtos ADD COLUMN IF NOT EXISTS quantidade_estoque                DECIMAL(15,4) DEFAULT 0;
-            ALTER TABLE produtos ADD COLUMN IF NOT EXISTS ean                               VARCHAR(14);");
+            ALTER TABLE produtos ADD COLUMN IF NOT EXISTS ean                               VARCHAR(14);
+            ALTER TABLE produtos ADD COLUMN IF NOT EXISTS cst_ibs_cbs                       VARCHAR(3);
+            ALTER TABLE produtos ADD COLUMN IF NOT EXISTS cclass_trib                       VARCHAR(6);
+            ALTER TABLE produtos ADD COLUMN IF NOT EXISTS reducao_ibs                       DECIMAL(5,2);
+            ALTER TABLE produtos ADD COLUMN IF NOT EXISTS reducao_cbs                       DECIMAL(5,2);
+            ALTER TABLE produtos ADD COLUMN IF NOT EXISTS tipo_aliquota_ibs_cbs            VARCHAR(30);");
 
         // Migration 006: tabela de usuarios locais (auth sem Supabase)
         await db.Database.ExecuteSqlRawAsync(@"
@@ -267,6 +274,11 @@ using (var startupScope = app.Services.CreateScope())
                 NCM         = "84713012",
                 CFOP        = "5102",
                 CST         = "00",
+                CstIbsCbs   = "000",
+                CClassTrib  = "000001",
+                ReducaoIbs  = 0,
+                ReducaoCbs  = 0,
+                TipoAliquotaIbsCbs = "2 - Padrão",
                 Unidade     = "UN",
                 Preco       = 100.00m,
                 AliquotaICMS = 0m,
@@ -346,9 +358,10 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Jubilados NFe API v1");
-    c.RoutePrefix = string.Empty; // Swagger na raiz
+    c.RoutePrefix = "swagger";
 });
 
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseCors();

@@ -20,9 +20,26 @@ public class Produto
     public decimal AliquotaPIS { get; set; }
     public decimal AliquotaCOFINS { get; set; }
 
+    // Reforma Tributaria (IBS/CBS)
+    public string? CstIbsCbs { get; set; }
+    public string? CClassTrib { get; set; }
+    public decimal? ReducaoIbs { get; set; }
+    public decimal? ReducaoCbs { get; set; }
+    public string? TipoAliquotaIbsCbs { get; set; }
+
     public string? EAN { get; set; }
     /// <summary>Quantidade em estoque atual — usado no Bloco H do SPED EFD.</summary>
     public decimal QuantidadeEstoque { get; set; } = 0;
+
+    // ── Campos de cadastro complementar (preenchidos manualmente pelo lojista) ──
+    /// <summary>Código interno / SKU próprio da loja.</summary>
+    public string? CodigoInterno { get; set; }
+    /// <summary>Categoria do produto (ex: Bebidas, Alimentos).</summary>
+    public string? Categoria { get; set; }
+    /// <summary>Organização/setor onde o produto está alocado.</summary>
+    public string? Organizacao { get; set; }
+    /// <summary>Padronização de embalagem/apresentação (ex: Unitário, Caixa).</summary>
+    public string? Padronizacao { get; set; }
 
     public bool Ativo { get; set; } = true;
     public DateTime CriadoEm { get; set; } = DateTime.UtcNow;

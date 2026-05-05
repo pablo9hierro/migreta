@@ -235,14 +235,59 @@ public record CancelamentoResultDto(
 public record ImportarXmlResultDto(
     bool Sucesso,
     string Mensagem,
+    string? ChaveAcesso = null,
     Guid? NotaFiscalId = null,
-    List<ProdutoImportadoDto>? ProdutosCriados = null
+    List<ProdutoImportadoDto>? ProdutosCriados = null,
+    FornecedorImportadoDto? Fornecedor = null
 );
 
+/// <summary>
+/// Produto extraído automaticamente do XML de entrada.
+/// Campos de venda (PrecoVenda, CodigoInterno, etc.) precisam ser complementados manualmente.
+/// </summary>
 public record ProdutoImportadoDto(
+    int ItemNumero,
     Guid Id,
     string Nome,
-    string NCM
+    string NCM,
+    string Unidade,
+    string? EAN,
+    string? CEST,
+    decimal Custo,
+    bool JaExistia
+);
+
+/// <summary>Fornecedor (emitente) identificado no XML de entrada.</summary>
+public record FornecedorImportadoDto(
+    Guid Id,
+    string Nome,
+    string CpfCnpj,
+    bool JaExistia
+);
+
+/// <summary>Dados de venda a serem preenchidos manualmente pelo lojista após importação XML.</summary>
+public record ComplementarProdutoDto(
+    decimal PrecoVenda,
+    string? CClassTrib = null,
+    string? CstIbsCbs = null,
+    string? CodigoInterno = null,
+    string? Categoria = null,
+    string? Organizacao = null,
+    string? Padronizacao = null,
+    string? Cfop = null
+);
+
+/// <summary>Complemento fiscal obrigatório por item do XML para efetivar a importação.</summary>
+public record ComplementoImportacaoProdutoDto(
+    int ItemNumero,
+    decimal PrecoVenda,
+    string CClassTrib,
+    string CstIbsCbs,
+    string Cfop,
+    string? CodigoInterno = null,
+    string? Categoria = null,
+    string? Organizacao = null,
+    string? Padronizacao = null
 );
 
 

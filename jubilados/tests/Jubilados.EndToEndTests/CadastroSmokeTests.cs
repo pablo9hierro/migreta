@@ -42,6 +42,8 @@ public class CadastroSmokeTests : IClassFixture<CustomWebApplicationFactory>
             cfop = "5102",
             cst = "00",
             csosn = "102",
+            cClassTrib = "000001",
+            cstIbsCbs = "000",
             unidade = "SC",
             preco = 12.5m,
             quantidadeEstoque = 30m,

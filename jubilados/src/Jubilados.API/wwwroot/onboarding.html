@@ -3,111 +3,372 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jubilados &#8212; Configura&#231;&#227;o Fiscal</title>
+  <title>Jubilados &mdash; Configuração Fiscal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --bg:        #060a16;
+      --card-bg:   rgba(255,255,255,0.03);
+      --card-border: rgba(255,255,255,0.08);
+      --cyan:      #22d3ee;
+      --purple:    #8b5cf6;
+      --text:      rgba(255,255,255,0.92);
+      --muted:     rgba(255,255,255,0.45);
+      --muted-dim: rgba(255,255,255,0.25);
+      --input-bg:  rgba(255,255,255,0.05);
+      --input-border: rgba(255,255,255,0.12);
+      --input-focus: rgba(14,165,233,0.35);
+      --danger:    #f87171;
+      --danger-bg: rgba(248,113,113,0.08);
+      --success:   #34d399;
+      --success-bg: rgba(52,211,153,0.08);
+      --info:      #7dd3fc;
+      --info-bg:   rgba(125,211,252,0.06);
+    }
+
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
     body {
-      margin: 0; font-family: system-ui, sans-serif; background: #f0f4f8;
-      display: flex; align-items: flex-start; justify-content: center;
-      padding: 40px 16px; min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 16px 60px;
+      position: relative;
+      overflow-x: hidden;
     }
+
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(139,92,246,0.16) 0%, transparent 70%);
+      top: -250px; left: -250px;
+    }
+    body::after {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(34,211,238,0.12) 0%, transparent 70%);
+      bottom: -200px; right: -200px;
+    }
+
+    /* Card */
     .card {
-      background: #fff; border-radius: 12px; padding: 40px;
-      box-shadow: 0 4px 24px rgba(0,0,0,.10); width: 100%; max-width: 640px;
+      position: relative;
+      width: 100%;
+      max-width: 660px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 36px 36px 32px;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 1;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 32px 64px rgba(0,0,0,0.4);
     }
-    h1 { margin: 0 0 4px; font-size: 1.5rem; color: #1a202c; }
-    p.sub { margin: 0 0 32px; color: #718096; font-size: .9rem; }
+
+    /* Header */
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+    .brand-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .brand-icon svg {
+      width: 20px; height: 20px;
+      stroke: #fff; fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    h1 {
+      margin: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    p.sub {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 0.87rem;
+      padding-left: 54px;
+    }
 
     /* Stepper */
-    .steps { display: flex; gap: 0; margin-bottom: 36px; position: relative; }
+    .steps {
+      display: flex;
+      gap: 0;
+      margin-bottom: 32px;
+      position: relative;
+    }
     .steps::before {
-      content: ''; position: absolute; top: 16px; left: 32px; right: 32px;
-      height: 2px; background: #e2e8f0; z-index: 0;
+      content: '';
+      position: absolute;
+      top: 15px; left: 32px; right: 32px;
+      height: 1px;
+      background: var(--card-border);
+      z-index: 0;
     }
     .step {
-      flex: 1; display: flex; flex-direction: column; align-items: center;
-      gap: 6px; position: relative; z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+      z-index: 1;
     }
     .step-circle {
-      width: 32px; height: 32px; border-radius: 50%; border: 2px solid #e2e8f0;
-      background: #fff; display: flex; align-items: center; justify-content: center;
-      font-size: .85rem; font-weight: 700; color: #a0aec0; transition: all .2s;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      transition: all 0.2s;
     }
-    .step.ativo .step-circle   { border-color: #3b82f6; background: #3b82f6; color: #fff; }
-    .step.concluido .step-circle { border-color: #10b981; background: #10b981; color: #fff; }
-    .step-label { font-size: .75rem; color: #718096; text-align: center; }
-    .step.ativo .step-label { color: #3b82f6; font-weight: 600; }
+    .step.ativo .step-circle {
+      border-color: var(--cyan);
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      color: #fff;
+      box-shadow: 0 0 12px rgba(14,165,233,0.4);
+    }
+    .step.concluido .step-circle {
+      border-color: var(--success);
+      background: var(--success);
+      color: #030712;
+    }
+    .step-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-align: center;
+      letter-spacing: 0.03em;
+    }
+    .step.ativo .step-label { color: var(--cyan); font-weight: 600; }
+    .step.concluido .step-label { color: var(--success); }
 
     /* Panels */
     .panel { display: none; }
-    .panel.ativo { display: block; }
+    .panel.ativo { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    label { display: block; font-size: .85rem; color: #4a5568; margin-bottom: 4px; margin-top: 14px; }
-    label:first-of-type { margin-top: 0; }
-    input, select {
-      width: 100%; padding: 10px 12px; border: 1.5px solid #e2e8f0;
-      border-radius: 8px; font-size: 1rem; outline: none; transition: border-color .15s;
-      background: #fff;
+    /* Form elements */
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-top: 14px;
+      margin-bottom: 6px;
+      letter-spacing: 0.03em;
     }
-    input:focus, select:focus { border-color: #3b82f6; }
+    label:first-of-type { margin-top: 0; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    select {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+    input::placeholder { color: rgba(255,255,255,0.18); }
+    input:focus, select:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px var(--input-focus);
+    }
+    select option { background: #0f172a; color: var(--text); }
 
     .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 
-    .check-group {
-      display: flex; align-items: center; gap: 10px; margin-top: 14px;
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted-dim);
+      margin: 18px 0 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
     }
-    .check-group input[type=checkbox] { width: auto; }
-    .check-group label { margin: 0; }
 
-    .btns { display: flex; gap: 12px; margin-top: 32px; }
+    /* Checkboxes */
+    .check-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .check-group input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--cyan);
+      cursor: pointer;
+    }
+    .check-group label {
+      margin: 0;
+      font-size: 0.84rem;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    /* Buttons */
+    .btns {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+    }
     .btn {
-      flex: 1; padding: 12px; border-radius: 8px; font-size: 1rem;
-      font-weight: 600; cursor: pointer; transition: background .15s; border: none;
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn:hover:not(:disabled) { opacity: 0.85; transform: translateY(-1px); }
+    .btn:active:not(:disabled) { transform: translateY(0); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      color: #fff;
     }
     .btn-outline {
-      background: #fff; border: 2px solid #e2e8f0; color: #4a5568;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-border);
+      color: var(--muted);
     }
-    .btn-outline:hover { border-color: #a0aec0; }
-    .btn-primary { background: #3b82f6; color: #fff; }
-    .btn-primary:hover { background: #2563eb; }
-    .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
-    .btn-success { background: #10b981; color: #fff; }
-    .btn-success:hover { background: #059669; }
+    .btn-outline:hover:not(:disabled) { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .btn-success {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+    }
 
-    .msg { margin-top: 14px; padding: 10px 14px; border-radius: 8px; font-size: .9rem; }
-    .msg.error { background: #fee2e2; color: #991b1b; }
-    .msg.success { background: #d1fae5; color: #065f46; }
-
+    /* Info box */
     .info-box {
-      background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;
-      padding: 12px 16px; font-size: .88rem; color: #1e40af; margin-bottom: 20px;
+      background: var(--info-bg);
+      border: 1px solid rgba(125,211,252,0.15);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.83rem;
+      color: var(--info);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .info-box.success {
+      background: var(--success-bg);
+      border-color: rgba(52,211,153,0.2);
+      color: var(--success);
     }
 
+    /* Revisao grid */
     .revisao-grid {
-      display: grid; grid-template-columns: max-content 1fr; gap: 6px 20px;
-      font-size: .9rem;
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 8px 20px;
+      font-size: 0.87rem;
     }
-    .revisao-grid dt { color: #718096; }
-    .revisao-grid dd { margin: 0; font-weight: 500; color: #1a202c; }
+    .revisao-grid dt { color: var(--muted); }
+    .revisao-grid dd { margin: 0; font-weight: 500; color: var(--text); }
+
+    /* Section title inside panel */
+    .panel-section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Messages */
+    .msg {
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      display: none;
+      border: 1px solid transparent;
+    }
+    .msg.error   { background: var(--danger-bg);  color: var(--danger);  border-color: rgba(248,113,113,0.2); }
+    .msg.success { background: var(--success-bg); color: var(--success); border-color: rgba(52,211,153,0.2); }
+
+    @media (max-width: 520px) {
+      .row2, .row3 { grid-template-columns: 1fr; }
+      .card { padding: 24px 20px; }
+      p.sub { padding-left: 0; }
+    }
   </style>
 </head>
 <body>
 <div class="card">
-  <h1>Configura&#231;&#227;o Fiscal</h1>
-  <p class="sub">Configure sua empresa para emitir NF-e com conformidade fiscal.</p>
+  <div class="card-header">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <line x1="10" y1="9" x2="8" y2="9"/>
+      </svg>
+    </div>
+    <h1>Configura&ccedil;&atilde;o Fiscal</h1>
+  </div>
+  <p class="sub">Aurora Suite fiscal: configure sua empresa para emitir NF-e com conformidade.</p>
 
   <div class="steps">
     <div class="step ativo" id="s1"><div class="step-circle">1</div><span class="step-label">Empresa</span></div>
     <div class="step" id="s2"><div class="step-circle">2</div><span class="step-label">Regime</span></div>
-    <div class="step" id="s3"><div class="step-circle">3</div><span class="step-label">Tributa&#231;&#227;o</span></div>
+    <div class="step" id="s3"><div class="step-circle">3</div><span class="step-label">Tributa&ccedil;&atilde;o</span></div>
     <div class="step" id="s4"><div class="step-circle">4</div><span class="step-label">Ramo</span></div>
     <div class="step" id="s5"><div class="step-circle">5</div><span class="step-label">Revisar</span></div>
   </div>
 
   <!-- Passo 1: Dados da empresa -->
   <div id="panel1" class="panel ativo">
-    <div class="info-box">Informe os dados cadastrais da sua empresa conforme o cart&#227;o CNPJ.</div>
+    <div class="info-box">Informe os dados cadastrais da sua empresa conforme o cart&atilde;o CNPJ.</div>
     <div class="row2">
       <div>
         <label>CNPJ *</label>
@@ -117,23 +378,23 @@
         <label>Ramo de atividade *</label>
         <select id="p1-ramo">
           <option value="">Selecione...</option>
-          <option value="material_construcao">Material de Constru&#231;&#227;o</option>
+          <option value="material_construcao">Material de Constru&ccedil;&atilde;o</option>
           <option value="ferragens">Ferragens</option>
-          <option value="vestuario">Vestu&#225;rio / Moda</option>
-          <option value="deposito_bebidas">Dep&#243;sito de Bebidas</option>
-          <option value="conveniencia_mercadinho">Conveni&#234;ncia / Mercadinho</option>
-          <option value="farmacia">Farm&#225;cia</option>
+          <option value="vestuario">Vestu&aacute;rio / Moda</option>
+          <option value="deposito_bebidas">Dep&oacute;sito de Bebidas</option>
+          <option value="conveniencia_mercadinho">Conveni&ecirc;ncia / Mercadinho</option>
+          <option value="farmacia">Farm&aacute;cia</option>
           <option value="petshop">Pet Shop</option>
           <option value="distribuidora">Distribuidora / Atacado</option>
-          <option value="restaurante">Restaurante / Alimenta&#231;&#227;o</option>
-          <option value="eletroeletronicos">Eletroeletr&#244;nicos / Inform&#225;tica</option>
-          <option value="autopecas">Autope&#231;as</option>
-          <option value="combustiveis">Combust&#237;veis</option>
+          <option value="restaurante">Restaurante / Alimenta&ccedil;&atilde;o</option>
+          <option value="eletroeletronicos">Eletroeletr&ocirc;nicos / Inform&aacute;tica</option>
+          <option value="autopecas">Autope&ccedil;as</option>
+          <option value="combustiveis">Combust&iacute;veis</option>
           <option value="outros">Outros</option>
         </select>
       </div>
     </div>
-    <label>Raz&#227;o Social *</label>
+    <label>Raz&atilde;o Social *</label>
     <input id="p1-razao" type="text" placeholder="Nome conforme registro na Receita Federal" />
     <label>Nome Fantasia</label>
     <input id="p1-fantasia" type="text" placeholder="Nome comercial (se diferente)" />
@@ -151,14 +412,14 @@
         <input id="p1-email" type="email" placeholder="contato@empresa.com.br" />
       </div>
     </div>
-    <p style="font-size:.82rem;font-weight:700;color:#4a5568;margin:18px 0 4px;text-transform:uppercase;letter-spacing:.04em">Endere&#231;o</p>
+    <p class="section-label">Endere&ccedil;o</p>
     <div class="row2">
       <div>
         <label>Logradouro *</label>
         <input id="p1-logradouro" type="text" placeholder="Rua, Av., Rodovia..." />
       </div>
       <div>
-        <label>N&#250;mero *</label>
+        <label>N&uacute;mero *</label>
         <input id="p1-numero" type="text" placeholder="100 ou S/N" maxlength="10" />
       </div>
     </div>
@@ -172,7 +433,7 @@
         <input id="p1-bairro" type="text" placeholder="Centro" />
       </div>
       <div>
-        <label>Munic&#237;pio *</label>
+        <label>Munic&iacute;pio *</label>
         <input id="p1-municipio" type="text" placeholder="Joao Pessoa" />
       </div>
     </div>
@@ -200,13 +461,13 @@
       </div>
     </div>
     <div class="btns">
-      <button class="btn btn-primary" onclick="irPasso(2)">Pr&#243;ximo &rarr;</button>
+      <button class="btn btn-primary" onclick="irPasso(2)">Pr&oacute;ximo &rarr;</button>
     </div>
   </div>
 
   <!-- Passo 2: Regime Tributario -->
   <div id="panel2" class="panel">
-    <label>Regime tribut&#225;rio *</label>
+    <label>Regime tribut&aacute;rio *</label>
     <select id="p2-regime" onchange="atualizarPasso2()">
       <option value="">Selecione...</option>
       <option value="simples_nacional">Simples Nacional</option>
@@ -218,11 +479,11 @@
       <label>Faixa do Simples (Anexo)</label>
       <select id="p2-faixa">
         <option value="">Selecione...</option>
-        <option value="I">Anexo I &#8212; Com&#233;rcio</option>
-        <option value="II">Anexo II &#8212; Ind&#250;stria</option>
-        <option value="III">Anexo III &#8212; Servi&#231;os (ISS)</option>
-        <option value="IV">Anexo IV &#8212; Servi&#231;os (Constru&#231;&#227;o)</option>
-        <option value="V">Anexo V &#8212; Servi&#231;os diversos</option>
+        <option value="I">Anexo I &mdash; Com&eacute;rcio</option>
+        <option value="II">Anexo II &mdash; Ind&uacute;stria</option>
+        <option value="III">Anexo III &mdash; Servi&ccedil;os (ISS)</option>
+        <option value="IV">Anexo IV &mdash; Servi&ccedil;os (Constru&ccedil;&atilde;o)</option>
+        <option value="V">Anexo V &mdash; Servi&ccedil;os diversos</option>
       </select>
     </div>
 
@@ -237,11 +498,11 @@
 
     <div class="check-group">
       <input type="checkbox" id="p2-nfse" />
-      <label for="p2-nfse">Minha empresa tamb&#233;m emite NFS-e (servi&#231;os)</label>
+      <label for="p2-nfse">Minha empresa tamb&eacute;m emite NFS-e (servi&ccedil;os)</label>
     </div>
     <div id="bloco-nfse" style="display:none; margin-top:10px;">
-      <label>Inscri&#231;&#227;o Municipal</label>
-      <input id="p2-im" type="text" placeholder="N&#250;mero na prefeitura" />
+      <label>Inscri&ccedil;&atilde;o Municipal</label>
+      <input id="p2-im" type="text" placeholder="N&uacute;mero na prefeitura" />
     </div>
 
     <div class="check-group">
@@ -251,7 +512,7 @@
 
     <div class="btns">
       <button class="btn btn-outline" onclick="irPasso(1)">&larr; Voltar</button>
-      <button class="btn btn-primary" onclick="irPasso(3)">Pr&#243;ximo &rarr;</button>
+      <button class="btn btn-primary" onclick="irPasso(3)">Pr&oacute;ximo &rarr;</button>
     </div>
   </div>
 
@@ -260,48 +521,48 @@
     <div class="info-box" id="info-crt"></div>
 
     <div id="bloco-sn" style="display:none">
-      <label>CSOSN padr&#227;o *</label>
+      <label>CSOSN padr&atilde;o *</label>
       <select id="p3-csosn">
-        <option value="400">400 &#8212; N&#227;o tributado pelo Simples (com&#233;rcio t&#237;pico)</option>
-        <option value="102">102 &#8212; Sem permiss&#227;o de cr&#233;dito</option>
-        <option value="103">103 &#8212; Isento de ICMS</option>
-        <option value="300">300 &#8212; Imune de ICMS</option>
-        <option value="500">500 &#8212; ICMS cobrado anteriormente por ST</option>
-        <option value="201">201 &#8212; Com cr&#233;dito + ST</option>
-        <option value="202">202 &#8212; Sem cr&#233;dito + ST</option>
-        <option value="900">900 &#8212; Outros (Simples com tributa&#231;&#227;o especial)</option>
+        <option value="400">400 &mdash; N&atilde;o tributado pelo Simples (com&eacute;rcio t&iacute;pico)</option>
+        <option value="102">102 &mdash; Sem permiss&atilde;o de cr&eacute;dito</option>
+        <option value="103">103 &mdash; Isento de ICMS</option>
+        <option value="300">300 &mdash; Imune de ICMS</option>
+        <option value="500">500 &mdash; ICMS cobrado anteriormente por ST</option>
+        <option value="201">201 &mdash; Com cr&eacute;dito + ST</option>
+        <option value="202">202 &mdash; Sem cr&eacute;dito + ST</option>
+        <option value="900">900 &mdash; Outros (Simples com tributa&ccedil;&atilde;o especial)</option>
       </select>
     </div>
 
     <div id="bloco-lr" style="display:none">
       <div class="row3">
         <div>
-          <label>CST ICMS padr&#227;o</label>
+          <label>CST ICMS padr&atilde;o</label>
           <select id="p3-cst-icms">
-            <option value="40">40 &#8212; N&#227;o tributado</option>
-            <option value="41">41 &#8212; N&#227;o tributado (sem d&#233;bito)</option>
-            <option value="00">00 &#8212; Tributado integralmente</option>
-            <option value="20">20 &#8212; Com redu&#231;&#227;o de BC</option>
-            <option value="60">60 &#8212; ICMS cobrado por ST</option>
-            <option value="70">70 &#8212; Com redu&#231;&#227;o + ST retida</option>
+            <option value="40">40 &mdash; N&atilde;o tributado</option>
+            <option value="41">41 &mdash; N&atilde;o tributado (sem d&eacute;bito)</option>
+            <option value="00">00 &mdash; Tributado integralmente</option>
+            <option value="20">20 &mdash; Com redu&ccedil;&atilde;o de BC</option>
+            <option value="60">60 &mdash; ICMS cobrado por ST</option>
+            <option value="70">70 &mdash; Com redu&ccedil;&atilde;o + ST retida</option>
           </select>
         </div>
         <div>
-          <label>CST PIS padr&#227;o</label>
+          <label>CST PIS padr&atilde;o</label>
           <select id="p3-cst-pis">
-            <option value="07">07 &#8212; Isento (revenda)</option>
-            <option value="01">01 &#8212; Op. tribut&#225;vel</option>
-            <option value="49">49 &#8212; Outras sa&#237;das</option>
-            <option value="99">99 &#8212; Outras opera&#231;&#245;es</option>
+            <option value="07">07 &mdash; Isento (revenda)</option>
+            <option value="01">01 &mdash; Op. tribut&aacute;vel</option>
+            <option value="49">49 &mdash; Outras sa&iacute;das</option>
+            <option value="99">99 &mdash; Outras opera&ccedil;&otilde;es</option>
           </select>
         </div>
         <div>
-          <label>CST COFINS padr&#227;o</label>
+          <label>CST COFINS padr&atilde;o</label>
           <select id="p3-cst-cofins">
-            <option value="07">07 &#8212; Isento (revenda)</option>
-            <option value="01">01 &#8212; Op. tribut&#225;vel</option>
-            <option value="49">49 &#8212; Outras sa&#237;das</option>
-            <option value="99">99 &#8212; Outras opera&#231;&#245;es</option>
+            <option value="07">07 &mdash; Isento (revenda)</option>
+            <option value="01">01 &mdash; Op. tribut&aacute;vel</option>
+            <option value="49">49 &mdash; Outras sa&iacute;das</option>
+            <option value="99">99 &mdash; Outras opera&ccedil;&otilde;es</option>
           </select>
         </div>
       </div>
@@ -309,137 +570,137 @@
 
     <div class="row2" style="margin-top:14px">
       <div>
-        <label>Al&#237;quota PIS (%)</label>
+        <label>Al&iacute;quota PIS (%)</label>
         <input id="p3-pis" type="number" step="0.01" min="0" max="10" value="0.65" />
       </div>
       <div>
-        <label>Al&#237;quota COFINS (%)</label>
+        <label>Al&iacute;quota COFINS (%)</label>
         <input id="p3-cofins" type="number" step="0.01" min="0" max="10" value="3.00" />
       </div>
     </div>
 
     <div class="check-group">
       <input type="checkbox" id="p3-st" onchange="atualizarST()" />
-      <label for="p3-st">Minha empresa opera como Substituta Tribut&#225;ria (ICMS-ST)</label>
+      <label for="p3-st">Minha empresa opera como Substituta Tribut&aacute;ria (ICMS-ST)</label>
     </div>
     <div id="bloco-st" style="display:none; margin-top:10px;">
       <div class="row2">
         <div>
-          <label>MVA padr&#227;o (%)</label>
+          <label>MVA padr&atilde;o (%)</label>
           <input id="p3-mva" type="number" step="0.01" min="0" value="30" />
         </div>
-        <div>
+        <div style="display:flex;flex-direction:column">
           <label>Opera com ST em bebidas</label>
-          <input type="checkbox" id="p3-st-bebidas" style="margin-top:12px;width:auto;" />
+          <input type="checkbox" id="p3-st-bebidas" style="margin-top:4px;width:16px;accent-color:var(--cyan);" />
         </div>
       </div>
     </div>
 
     <div class="btns">
       <button class="btn btn-outline" onclick="irPasso(2)">&larr; Voltar</button>
-      <button class="btn btn-primary" onclick="irPasso(4)">Pr&#243;ximo &rarr;</button>
+      <button class="btn btn-primary" onclick="irPasso(4)">Pr&oacute;ximo &rarr;</button>
     </div>
   </div>
 
   <!-- Passo 4: Ramo especifico -->
   <div id="panel4" class="panel">
-    <div class="info-box" id="info-ramo-desc">Preencha os campos espec&#237;ficos para o seu ramo de atividade.</div>
+    <div class="info-box" id="info-ramo-desc">Preencha os campos espec&iacute;ficos para o seu ramo de atividade.</div>
 
     <div id="ramo-material_construcao" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Material de Constru&#231;&#227;o &#8212; campos fiscais</p>
+      <p class="panel-section-title">Material de Constru&ccedil;&atilde;o &mdash; campos fiscais</p>
       <div class="check-group"><input type="checkbox" id="rmc-st-tintas"/><label for="rmc-st-tintas">Opera com ST em tintas e vernizes</label></div>
-      <div class="check-group"><input type="checkbox" id="rmc-st-materiais"/><label for="rmc-st-materiais">Opera com ST em materiais el&#233;tricos/hidr&#225;ulicos</label></div>
+      <div class="check-group"><input type="checkbox" id="rmc-st-materiais"/><label for="rmc-st-materiais">Opera com ST em materiais el&eacute;tricos/hidr&aacute;ulicos</label></div>
       <div class="check-group"><input type="checkbox" id="rmc-st-cimento"/><label for="rmc-st-cimento">Opera com ST em cimento</label></div>
       <div class="check-group"><input type="checkbox" id="rmc-st-ceramica"/><label for="rmc-st-ceramica">Opera com ST em pisos/revestimentos</label></div>
     </div>
 
     <div id="ramo-ferragens" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Ferragens &#8212; campos fiscais</p>
+      <p class="panel-section-title">Ferragens &mdash; campos fiscais</p>
       <div class="check-group"><input type="checkbox" id="rfe-st-ferragens"/><label for="rfe-st-ferragens">Opera com ST em ferragens</label></div>
       <div class="check-group"><input type="checkbox" id="rfe-st-ferramentas"/><label for="rfe-st-ferramentas">Opera com ST em ferramentas</label></div>
     </div>
 
     <div id="ramo-deposito_bebidas" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Dep&#243;sito de Bebidas &#8212; campos fiscais</p>
+      <p class="panel-section-title">Dep&oacute;sito de Bebidas &mdash; campos fiscais</p>
       <div class="check-group"><input type="checkbox" id="rb-cerveja"/><label for="rb-cerveja">Cerveja / Chope</label></div>
       <div class="check-group"><input type="checkbox" id="rb-refrigerante"/><label for="rb-refrigerante">Refrigerante</label></div>
       <div class="check-group"><input type="checkbox" id="rb-destilados"/><label for="rb-destilados">Destilados</label></div>
-      <div class="check-group"><input type="checkbox" id="rb-agua"/><label for="rb-agua">&#193;gua mineral</label></div>
+      <div class="check-group"><input type="checkbox" id="rb-agua"/><label for="rb-agua">&Aacute;gua mineral</label></div>
     </div>
 
     <div id="ramo-conveniencia_mercadinho" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Conveni&#234;ncia / Mercadinho &#8212; campos fiscais</p>
+      <p class="panel-section-title">Conveni&ecirc;ncia / Mercadinho &mdash; campos fiscais</p>
       <div class="check-group"><input type="checkbox" id="rcv-bebidas-st"/><label for="rcv-bebidas-st">Vende bebidas com ICMS-ST</label></div>
       <div class="check-group"><input type="checkbox" id="rcv-tabaco"/><label for="rcv-tabaco">Vende cigarros / tabaco</label></div>
       <div class="check-group"><input type="checkbox" id="rcv-higiene"/><label for="rcv-higiene">Vende higiene/perfumaria com ST</label></div>
     </div>
 
     <div id="ramo-farmacia" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Farm&#225;cia &#8212; campos fiscais</p>
+      <p class="panel-section-title">Farm&aacute;cia &mdash; campos fiscais</p>
       <div class="check-group"><input type="checkbox" id="rf-st-medicamentos"/><label for="rf-st-medicamentos">Opera com ICMS-ST para medicamentos</label></div>
       <div class="check-group"><input type="checkbox" id="rf-controlados"/><label for="rf-controlados">Vende medicamentos controlados</label></div>
     </div>
 
     <div id="ramo-petshop" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Pet Shop &#8212; campos fiscais</p>
-      <div class="check-group"><input type="checkbox" id="rps-vet"/><label for="rps-vet">Vende medicamentos veterin&#225;rios</label></div>
-      <div class="check-group"><input type="checkbox" id="rps-racao"/><label for="rps-racao">Vende ra&#231;&#245;es com ST</label></div>
+      <p class="panel-section-title">Pet Shop &mdash; campos fiscais</p>
+      <div class="check-group"><input type="checkbox" id="rps-vet"/><label for="rps-vet">Vende medicamentos veterin&aacute;rios</label></div>
+      <div class="check-group"><input type="checkbox" id="rps-racao"/><label for="rps-racao">Vende ra&ccedil;&otilde;es com ST</label></div>
     </div>
 
     <div id="ramo-distribuidora" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Distribuidora / Atacado &#8212; campos fiscais</p>
+      <p class="panel-section-title">Distribuidora / Atacado &mdash; campos fiscais</p>
       <div class="check-group"><input type="checkbox" id="rd-bebidas"/><label for="rd-bebidas">Bebidas</label></div>
       <div class="check-group"><input type="checkbox" id="rd-alimentos"/><label for="rd-alimentos">Alimentos</label></div>
       <div class="check-group"><input type="checkbox" id="rd-higiene"/><label for="rd-higiene">Higiene / Perfumaria</label></div>
-      <div class="check-group"><input type="checkbox" id="rd-eletro"/><label for="rd-eletro">Eletroeletr&#244;nicos</label></div>
+      <div class="check-group"><input type="checkbox" id="rd-eletro"/><label for="rd-eletro">Eletroeletr&ocirc;nicos</label></div>
     </div>
 
     <div id="ramo-restaurante" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Restaurante / Alimenta&#231;&#227;o &#8212; campos fiscais</p>
+      <p class="panel-section-title">Restaurante / Alimenta&ccedil;&atilde;o &mdash; campos fiscais</p>
       <div class="check-group"><input type="checkbox" id="rr-nfce"/><label for="rr-nfce">Emite NFC-e para consumo no local</label></div>
-      <div class="check-group"><input type="checkbox" id="rr-iss"/><label for="rr-iss">Emite NFS-e para servi&#231;os</label></div>
+      <div class="check-group"><input type="checkbox" id="rr-iss"/><label for="rr-iss">Emite NFS-e para servi&ccedil;os</label></div>
     </div>
 
     <div id="ramo-eletroeletronicos" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Eletroeletr&#244;nicos &#8212; campos fiscais</p>
-      <div class="check-group"><input type="checkbox" id="rel-st"/><label for="rel-st">Opera com ICMS-ST (Conv&#234;nio 52/2017)</label></div>
+      <p class="panel-section-title">Eletroeletr&ocirc;nicos &mdash; campos fiscais</p>
+      <div class="check-group"><input type="checkbox" id="rel-st"/><label for="rel-st">Opera com ICMS-ST (Conv&ecirc;nio 52/2017)</label></div>
     </div>
 
     <div id="ramo-autopecas" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Autope&#231;as &#8212; campos fiscais</p>
-      <div class="check-group"><input type="checkbox" id="rap-st"/><label for="rap-st">Opera com ICMS-ST (Conv&#234;nio 142/2018)</label></div>
+      <p class="panel-section-title">Autope&ccedil;as &mdash; campos fiscais</p>
+      <div class="check-group"><input type="checkbox" id="rap-st"/><label for="rap-st">Opera com ICMS-ST (Conv&ecirc;nio 142/2018)</label></div>
     </div>
 
     <div id="ramo-combustiveis" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Combust&#237;veis &#8212; campos fiscais</p>
-      <div class="check-group"><input type="checkbox" id="rcb-pmpf"/><label for="rcb-pmpf">Utilizo PMPF como base de c&#225;lculo do ICMS</label></div>
+      <p class="panel-section-title">Combust&iacute;veis &mdash; campos fiscais</p>
+      <div class="check-group"><input type="checkbox" id="rcb-pmpf"/><label for="rcb-pmpf">Utilizo PMPF como base de c&aacute;lculo do ICMS</label></div>
       <div class="check-group"><input type="checkbox" id="rcb-anp"/><label for="rcb-anp">Tenho registro na ANP como distribuidor</label></div>
     </div>
 
     <div id="ramo-vestuario" style="display:none">
-      <p style="font-weight:700;margin-bottom:8px">Vestu&#225;rio &#8212; campos fiscais</p>
-      <div class="check-group"><input type="checkbox" id="rv-st"/><label for="rv-st">Opera com ICMS-ST em vestu&#225;rio</label></div>
+      <p class="panel-section-title">Vestu&aacute;rio &mdash; campos fiscais</p>
+      <div class="check-group"><input type="checkbox" id="rv-st"/><label for="rv-st">Opera com ICMS-ST em vestu&aacute;rio</label></div>
     </div>
 
     <div id="ramo-outros" style="display:none">
-      <p style="font-size:.82rem;color:#718096">Configure os tributos individualmente por produto.</p>
+      <p style="font-size:.82rem;color:var(--muted)">Configure os tributos individualmente por produto.</p>
     </div>
 
     <div class="btns">
       <button class="btn btn-outline" onclick="irPasso(3)">&larr; Voltar</button>
-      <button class="btn btn-primary" onclick="irPasso(5)">Pr&#243;ximo &rarr;</button>
+      <button class="btn btn-primary" onclick="irPasso(5)">Pr&oacute;ximo &rarr;</button>
     </div>
   </div>
 
   <!-- Passo 5: Revisao + Salvar -->
   <div id="panel5" class="panel">
-    <div class="info-box" style="background:#f0fdf4;border-color:#bbf7d0;color:#166534;">
-      Revise as informa&#231;&#245;es antes de finalizar. Voc&#234; poder&#225; alterar tudo depois em "Configura&#231;&#245;es".
+    <div class="info-box success">
+      Revise as informa&ccedil;&otilde;es antes de finalizar. Voc&ecirc; poder&aacute; alterar tudo depois em &ldquo;Configura&ccedil;&otilde;es&rdquo;.
     </div>
     <dl class="revisao-grid" id="revisao"></dl>
     <div class="btns">
       <button class="btn btn-outline" onclick="irPasso(4)">&larr; Voltar</button>
-      <button class="btn btn-success" id="btn-finalizar" onclick="finalizarOnboarding()">&#10003; Finalizar configura&#231;&#227;o</button>
+      <button class="btn btn-success" id="btn-finalizar" onclick="finalizarOnboarding()">&check; Finalizar configura&ccedil;&atilde;o</button>
     </div>
   </div>
 

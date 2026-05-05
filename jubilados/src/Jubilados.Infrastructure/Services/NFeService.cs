@@ -664,8 +664,17 @@ public class NFeService : INFeService
         sb.AppendLine($"      <dhEmi>{dEmi}</dhEmi>");
         sb.AppendLine("      <tpNF>1</tpNF>");
         // idDest: 1=interna, 2=interestadual, 3=exterior
-        var ufDest = cliente?.UF ?? empresa.UF;
-        var idDest = dto.DestinoOperacao ?? ((!string.IsNullOrEmpty(ufDest) && ufDest != empresa.UF) ? "2" : "1");
+        var ufOrigem = (empresa.UF ?? string.Empty).Trim().ToUpperInvariant();
+        var ufDest = (cliente?.UF ?? empresa.UF ?? string.Empty).Trim().ToUpperInvariant();
+        var idDestCalculado = (!string.IsNullOrEmpty(ufDest) && ufDest != ufOrigem) ? "2" : "1";
+        var idDest = dto.DestinoOperacao is "1" or "2" or "3"
+            ? dto.DestinoOperacao
+            : idDestCalculado;
+
+        // Evita inconsistência rejeitada pela SEFAZ (ex.: idDest=2 com mesma UF de origem/destino).
+        if (idDest != "3")
+            idDest = idDestCalculado;
+
         sb.AppendLine($"      <idDest>{idDest}</idDest>");
         sb.AppendLine($"      <cMunFG>{_options.CodigoMunicipio}</cMunFG>");
         sb.AppendLine("      <tpImp>1</tpImp>");
@@ -723,7 +732,7 @@ public class NFeService : INFeService
             sb.AppendLine($"        <xBairro>{XmlEnc(string.IsNullOrWhiteSpace(cliente.Bairro) ? "NAO INFORMADO" : cliente.Bairro)}</xBairro>");
             sb.AppendLine($"        <cMun>{(string.IsNullOrWhiteSpace(cliente.CodigoMunicipio) ? _options.CodigoMunicipio : cliente.CodigoMunicipio)}</cMun>");
             sb.AppendLine($"        <xMun>{XmlEnc(string.IsNullOrWhiteSpace(cliente.Municipio) ? empresa.Municipio : cliente.Municipio)}</xMun>");
-            sb.AppendLine($"        <UF>{(string.IsNullOrWhiteSpace(cliente.UF) ? empresa.UF : cliente.UF)}</UF>");
+            sb.AppendLine($"        <UF>{(string.IsNullOrWhiteSpace(ufDest) ? ufOrigem : ufDest)}</UF>");
             sb.AppendLine($"        <CEP>{(string.IsNullOrWhiteSpace(cliente.CEP) ? Limpar(empresa.CEP) : Limpar(cliente.CEP))}</CEP>");
             sb.AppendLine("        <cPais>1058</cPais>");
             sb.AppendLine("        <xPais>Brasil</xPais>");

@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System.Globalization;
+using System.Xml;
 
 namespace Jubilados.Infrastructure.Services;
 
@@ -46,6 +48,11 @@ public class DanfeService : IDanfeService
             .ToDictionaryAsync(p => p.Id, cancellationToken);
 
         _logger.LogInformation("[DANFE] Gerando PDF para nota #{Numero}", nota.Numero);
+
+        var tributosExtras = ExtrairTributosExtrasDaNFe(nota.XmlEnvio, nota.XmlRetorno);
+        var valorTotalTributosPago = tributosExtras.ValorTotalTributos > 0
+            ? tributosExtras.ValorTotalTributos
+            : nota.ValorICMS + nota.ValorIPI + nota.ValorPIS + nota.ValorCOFINS + tributosExtras.ValorIbs + tributosExtras.ValorCbs;
 
         QuestPDF.Settings.License = LicenseType.Community;
 
@@ -257,6 +264,30 @@ public class DanfeService : IDanfeService
                         });
                     });
 
+                    // ── Totais IBS/CBS e tributos pagos ────────────────────
+                    col.Item().PaddingTop(2).Border(1).Padding(3).Row(r =>
+                    {
+                        static void TotalFiscal(RowDescriptor row, string label, decimal value)
+                        {
+                            row.RelativeItem().Column(c =>
+                            {
+                                c.Item().Text(label).FontSize(5).FontColor(Colors.Grey.Darken2);
+                                c.Item().Text($"R$ {value:N2}").Bold().FontSize(7);
+                            });
+                        }
+
+                        TotalFiscal(r, "BC IBS", tributosExtras.BaseIbs);
+                        TotalFiscal(r, "V. IBS", tributosExtras.ValorIbs);
+                        TotalFiscal(r, "BC CBS", tributosExtras.BaseCbs);
+                        TotalFiscal(r, "V. CBS", tributosExtras.ValorCbs);
+                        TotalFiscal(r, "FRETE", nota.ValorFrete);
+                        r.RelativeItem().Column(c =>
+                        {
+                            c.Item().Text("VALOR PAGO DOS IMPOSTOS").FontSize(5).FontColor(Colors.Grey.Darken2).Bold();
+                            c.Item().Text($"R$ {valorTotalTributosPago:N2}").Bold().FontSize(9).FontColor(Colors.Blue.Darken2);
+                        });
+                    });
+
                     // ── Homologação aviso ─────────────────────────────────────
                     if (nota.CStat == "100" && nota.XMotivo?.Contains("HOMOLOGACAO", StringComparison.OrdinalIgnoreCase) == true
                         || nota.XMotivo?.Contains("HOMOLOG", StringComparison.OrdinalIgnoreCase) == true)
@@ -270,6 +301,8 @@ public class DanfeService : IDanfeService
                     col.Item().PaddingTop(2).Border(1).Padding(3).Column(info =>
                     {
                         info.Item().Text("INFORMAÇÕES COMPLEMENTARES").FontSize(5).FontColor(Colors.Grey.Darken2).Bold();
+                        if (!string.IsNullOrWhiteSpace(tributosExtras.ReservadoAoFisco))
+                            info.Item().Text($"RESERVADO AO FISCO: {tributosExtras.ReservadoAoFisco}").FontSize(6);
                         info.Item().Text("Documento emitido por sistema autorizado. Consulte a validade em www.nfe.fazenda.gov.br").FontSize(6);
                     });
                 });
@@ -301,6 +334,72 @@ public class DanfeService : IDanfeService
         if (d.Length == 14) return $"{d[..2]}.{d[2..5]}.{d[5..8]}/{d[8..12]}-{d[12..]}";
         if (d.Length == 11) return $"{d[..3]}.{d[3..6]}.{d[6..9]}-{d[9..]}";
         return v;
+    }
+
+    private static DanfeTributosExtras ExtrairTributosExtrasDaNFe(string? xmlEnvio, string? xmlRetorno)
+    {
+        var xml = string.IsNullOrWhiteSpace(xmlRetorno) ? xmlEnvio : xmlRetorno;
+        if (string.IsNullOrWhiteSpace(xml))
+            return DanfeTributosExtras.Vazio;
+
+        try
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml(xml);
+
+            var baseIbs = SomarNodesDecimal(doc, "vBCIBS", "vBCIBSCBS", "vBCIBSMono", "vBCIBSUF");
+            var valorIbs = SomarNodesDecimal(doc, "vIBS", "vIBSUF", "vIBSMun", "vIBSMono");
+            var baseCbs = SomarNodesDecimal(doc, "vBCCBS", "vBCIBSCBS", "vBCCBSMono");
+            var valorCbs = SomarNodesDecimal(doc, "vCBS", "vCBSMono");
+            var valorTotalTributos = SomarNodesDecimal(doc, "vTotTrib");
+            var reservadoAoFisco = LerPrimeiroTexto(doc, "infAdFisco");
+
+            return new DanfeTributosExtras(baseIbs, valorIbs, baseCbs, valorCbs, valorTotalTributos, reservadoAoFisco);
+        }
+        catch
+        {
+            return DanfeTributosExtras.Vazio;
+        }
+    }
+
+    private static decimal SomarNodesDecimal(XmlDocument doc, params string[] localNames)
+    {
+        decimal soma = 0m;
+        foreach (var localName in localNames)
+        {
+            var nodes = doc.SelectNodes($"//*[local-name()='{localName}']");
+            if (nodes is null) continue;
+
+            foreach (XmlNode node in nodes)
+            {
+                if (node is null || string.IsNullOrWhiteSpace(node.InnerText))
+                    continue;
+
+                if (decimal.TryParse(node.InnerText, NumberStyles.Any, CultureInfo.InvariantCulture, out var valor))
+                    soma += valor;
+            }
+        }
+        return soma;
+    }
+
+    private static string? LerPrimeiroTexto(XmlDocument doc, string localName)
+    {
+        var node = doc.SelectSingleNode($"//*[local-name()='{localName}']");
+        if (node is null || string.IsNullOrWhiteSpace(node.InnerText))
+            return null;
+
+        return node.InnerText.Trim();
+    }
+
+    private sealed record DanfeTributosExtras(
+        decimal BaseIbs,
+        decimal ValorIbs,
+        decimal BaseCbs,
+        decimal ValorCbs,
+        decimal ValorTotalTributos,
+        string? ReservadoAoFisco)
+    {
+        public static DanfeTributosExtras Vazio => new(0m, 0m, 0m, 0m, 0m, null);
     }
 }
 

@@ -25,8 +25,17 @@ public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
         builder.Property(p => p.AliquotaIPI).HasColumnName("aliquota_ipi").HasPrecision(5, 2);
         builder.Property(p => p.AliquotaPIS).HasColumnName("aliquota_pis").HasPrecision(5, 2);
         builder.Property(p => p.AliquotaCOFINS).HasColumnName("aliquota_cofins").HasPrecision(5, 2);
+        builder.Property(p => p.CstIbsCbs).HasColumnName("cst_ibs_cbs").HasMaxLength(3);
+        builder.Property(p => p.CClassTrib).HasColumnName("cclass_trib").HasMaxLength(6);
+        builder.Property(p => p.ReducaoIbs).HasColumnName("reducao_ibs").HasPrecision(5, 2);
+        builder.Property(p => p.ReducaoCbs).HasColumnName("reducao_cbs").HasPrecision(5, 2);
+        builder.Property(p => p.TipoAliquotaIbsCbs).HasColumnName("tipo_aliquota_ibs_cbs").HasMaxLength(30);
         builder.Property(p => p.EAN).HasColumnName("ean").HasMaxLength(14);
         builder.Property(p => p.QuantidadeEstoque).HasColumnName("quantidade_estoque").HasPrecision(15, 4).HasDefaultValue(0m);
+        builder.Property(p => p.CodigoInterno).HasColumnName("codigo_interno").HasMaxLength(50);
+        builder.Property(p => p.Categoria).HasColumnName("categoria").HasMaxLength(80);
+        builder.Property(p => p.Organizacao).HasColumnName("organizacao").HasMaxLength(80);
+        builder.Property(p => p.Padronizacao).HasColumnName("padronizacao").HasMaxLength(80);
         builder.Property(p => p.Ativo).HasColumnName("ativo").HasDefaultValue(true);
         builder.Property(p => p.CriadoEm).HasColumnName("criado_em").HasDefaultValueSql("NOW()");
         builder.Property(p => p.AtualizadoEm).HasColumnName("atualizado_em").HasDefaultValueSql("NOW()");

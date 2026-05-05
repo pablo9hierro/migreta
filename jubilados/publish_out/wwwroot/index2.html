@@ -89,16 +89,269 @@
   .tipo-btn.selected { border-color: var(--primary); background: var(--step-active); color: var(--primary); }
   @media (max-width: 600px) { .grid2, .grid3, .tipo-grid { grid-template-columns: 1fr; } .span2, .span3 { grid-column: span 1; } }
 </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="css/design-system.css" />
+  <style>
+    :root {
+      --primary: #8b5cf6;
+      --primary-dark: #7c3aed;
+      --success: #34d399;
+      --danger: #f87171;
+      --warn: #fbbf24;
+      --bg: #060a16;
+      --card: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: rgba(255, 255, 255, 0.93);
+      --muted: rgba(255, 255, 255, 0.58);
+      --step-active: rgba(139, 92, 246, 0.18);
+      --step-done: rgba(52, 211, 153, 0.16);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 12% 0%, rgba(139, 92, 246, 0.24), transparent 42%),
+        radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.22), transparent 44%),
+        #060a16;
+      color: var(--text);
+    }
+
+    .card,
+    .estado-bar,
+    .stepper,
+    .result-box,
+    .item-linha,
+    .file-zone,
+    .tipo-btn,
+    .tab-btn.active {
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    header.app-header,
+    .app-header {
+      background: rgba(8, 13, 28, 0.78) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .estado-bar,
+    .card,
+    .stepper,
+    .file-zone,
+    .item-linha,
+    .tipo-btn,
+    .tabs,
+    .tab-btn.active {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
+    }
+
+    .card:hover,
+    .item-linha:hover,
+    .tipo-btn:hover,
+    .step-item:hover,
+    .tab-btn:hover {
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+      transform: translateY(-1px);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    input,
+    select,
+    textarea {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.16);
+      color: var(--text);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(255, 255, 255, 0.36);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.22);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      box-shadow: 0 10px 26px rgba(139, 92, 246, 0.33);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10b981, #34d399);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.04);
+      color: #9dd9ff;
+      border-color: rgba(157, 217, 255, 0.45);
+    }
+
+    .tabs {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-btn {
+      color: rgba(255, 255, 255, 0.68);
+    }
+
+    .tab-btn.active {
+      background: rgba(255, 255, 255, 0.12);
+      color: #d9e9ff;
+    }
+
+    .badge-blue { background: rgba(56, 189, 248, 0.16); color: #67e8f9; }
+    .badge-green { background: rgba(52, 211, 153, 0.2); color: #6ee7b7; }
+    .badge-red { background: rgba(248, 113, 113, 0.2); color: #fca5a5; }
+    .badge-orange { background: rgba(251, 191, 36, 0.22); color: #fde68a; }
+    .badge-gray { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+
+    .alert-info { background: rgba(56, 189, 248, 0.12); border-color: rgba(56, 189, 248, 0.25); color: #93c5fd; }
+    .alert-success { background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.25); color: #86efac; }
+    .alert-error { background: rgba(248, 113, 113, 0.12); border-color: rgba(248, 113, 113, 0.25); color: #fca5a5; }
+    .alert-warn { background: rgba(245, 158, 11, 0.14); border-color: rgba(245, 158, 11, 0.25); color: #fde68a; }
+
+    .result-box {
+      background: rgba(2, 6, 23, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .step-item.active .num,
+    .step-item.done .num {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.28);
+    }
+  </style>
 </head>
 <body>
-<header>
-  <div style="font-size:1.4rem">🧾</div>
-  <h1>Jubilados NF-e</h1>
-  <span class="env-badge">🟡 HOMOLOGACAO</span>
-  <span id="userEmail" style="margin-left:auto;font-size:.8rem;opacity:.85"></span>
-  <button id="btnLogout" onclick="fazerLogout()" style="margin-left:12px;background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:4px 12px;font-size:.8rem;cursor:pointer;display:none">Sair</button>
-</header>
-<div class="container">
+<div class="app-layout">
+
+  <!-- SIDEBAR NAV -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:#0c1017">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <line x1="10" y1="9" x2="8" y2="9"/>
+        </svg>
+      </div>
+      <div>
+        <div class="sidebar-brand-name">Jubilados NF-e</div>
+        <div class="sidebar-brand-tag">v2.0 &mdash; SEFAZ</div>
+      </div>
+    </div>
+    <div class="sidebar-section sidebar-nav">
+      <div class="sidebar-label">Emiss&atilde;o</div>
+      <button class="tab-btn active" onclick="showTab('emitir',this)">📄 Emitir NF-e</button>
+      <button class="tab-btn" onclick="showTab('nfce',this)">🧾 Emitir NFC-e</button>
+      <div class="sidebar-label" style="margin-top:12px">Cadastros</div>
+      <button class="tab-btn" onclick="showTab('cad-produtos',this)">📦 Produtos</button>
+      <button class="tab-btn" onclick="showTab('cad-destinatarios',this)">👤 Destinat&aacute;rios</button>
+      <button class="tab-btn" onclick="showTab('cad-fornecedores',this)">🏭 Fornecedores</button>
+      <div class="sidebar-label" style="margin-top:12px">Servi&ccedil;os Fiscais</div>
+      <button class="tab-btn" onclick="showTab('consultar',this)">🔍 Consultar SEFAZ</button>
+      <button class="tab-btn" onclick="showTab('status',this)">📡 Status Servi&ccedil;o</button>
+      <button class="tab-btn" onclick="showTab('inutilizar',this)">🚫 Inutilizar</button>
+      <button class="tab-btn" onclick="showTab('manifestar',this)">💬 Manifesta&ccedil;&atilde;o</button>
+      <button class="tab-btn" onclick="showTab('entrada',this)">📥 Notas Entrada</button>
+      <button class="tab-btn" onclick="showTab('nuvemfiscal',this)">☁️ Nuvem Fiscal</button>
+      <button class="tab-btn" onclick="showTab('cce',this)">📝 CC-e</button>
+      <button class="tab-btn" onclick="showTab('sped',this)">📋 SPED EFD</button>
+      <button class="tab-btn" onclick="showTab('estoque',this)">📊 Estoque</button>
+      <button class="tab-btn" onclick="showTab('nfse',this)">🏛️ NFS-e</button>
+      <button class="tab-btn" onclick="showTab('configuracoes',this)">⚙️ Configurações</button>
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn btn-ghost btn-sm" id="btnAlterarSenha" onclick="abrirModalSenha()" style="width:100%;display:none">Alterar senha</button>
+      <button class="btn btn-ghost btn-sm" id="btnLogout" onclick="fazerLogout()" style="width:100%;margin-top:4px;display:none">Sair &rarr;</button>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <div class="main-area">
+    <header class="app-header">
+      <span style="font-size:1.1rem">🧾</span>
+      <h1>Jubilados NF-e</h1>
+      <span class="env-badge">HOMOLOGACAO</span>
+      <div class="header-right">
+        <div class="theme-customizer" id="themeCustomizer">
+          <button class="theme-paint-btn" id="themePaintBtn" type="button" title="Personalizar cores">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 3.25a8.75 8.75 0 1 0 0 17.5h.95a2.8 2.8 0 0 0 0-5.6h-.74a1.2 1.2 0 0 1 0-2.4h1.54a5.25 5.25 0 0 0 0-10.5H12Z" stroke="currentColor" stroke-width="1.6"/>
+              <circle cx="7.6" cy="10.1" r="1.05" fill="currentColor"/>
+              <circle cx="10.2" cy="7.3" r="1.05" fill="currentColor"/>
+              <circle cx="13.8" cy="7.4" r="1.05" fill="currentColor"/>
+              <circle cx="16.1" cy="10.4" r="1.05" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="theme-popover" id="themePopover" hidden>
+            <div class="theme-header">
+              <h4>Personalize sua experi&ecirc;ncia</h4>
+              <button class="theme-close" id="themeCloseBtn" type="button" aria-label="Fechar">&times;</button>
+            </div>
+
+            <div class="theme-section">
+              <div class="theme-label"><span>Cor predominante</span><span id="themePrimaryHex">#0ED98A</span></div>
+              <div class="theme-color-row">
+                <input id="themePrimaryColor" type="color" value="#0ed98a">
+                <input id="themePrimaryText" type="text" value="#0ED98A" maxlength="7">
+              </div>
+              <div class="theme-swatches" data-target="themePrimaryColor">
+                <button class="theme-swatch" type="button" style="background:#0ED98A" data-color="#0ED98A"></button>
+                <button class="theme-swatch" type="button" style="background:#00B4D8" data-color="#00B4D8"></button>
+                <button class="theme-swatch" type="button" style="background:#8B5CF6" data-color="#8B5CF6"></button>
+                <button class="theme-swatch" type="button" style="background:#FF8A00" data-color="#FF8A00"></button>
+                <button class="theme-swatch" type="button" style="background:#E1FF00" data-color="#E1FF00"></button>
+              </div>
+              <div class="theme-label"><span>Escureza / Clareza</span><span id="themePrimaryLightnessVal">48%</span></div>
+              <input id="themePrimaryLightness" class="theme-slider" type="range" min="18" max="82" step="1" value="48">
+              <div class="theme-label"><span>Opacidade da predominante</span><span id="themePrimaryOpacityVal">100%</span></div>
+              <input id="themePrimaryOpacity" class="theme-slider" type="range" min="10" max="100" step="1" value="100">
+            </div>
+
+            <div class="theme-section">
+              <div class="theme-label"><span>Cor 2 (coadjuvante / sombra)</span><span id="themeAccentHex">#0CE4F5</span></div>
+              <div class="theme-color-row">
+                <input id="themeAccentColor" type="color" value="#0ce4f5">
+                <input id="themeAccentText" type="text" value="#0CE4F5" maxlength="7">
+              </div>
+              <div class="theme-swatches" data-target="themeAccentColor">
+                <button class="theme-swatch" type="button" style="background:#0CE4F5" data-color="#0CE4F5"></button>
+                <button class="theme-swatch" type="button" style="background:#3B82F6" data-color="#3B82F6"></button>
+                <button class="theme-swatch" type="button" style="background:#EC4899" data-color="#EC4899"></button>
+                <button class="theme-swatch" type="button" style="background:#10B981" data-color="#10B981"></button>
+                <button class="theme-swatch" type="button" style="background:#EAB308" data-color="#EAB308"></button>
+              </div>
+              <div class="theme-label"><span>Opacidade da sombra</span><span id="themeAccentOpacityVal">100%</span></div>
+              <input id="themeAccentOpacity" class="theme-slider" type="range" min="10" max="100" step="1" value="100">
+            </div>
+
+            <div class="theme-section">
+              <div class="theme-label"><span>Opacidade total do front</span><span id="themeUiOpacityVal">100%</span></div>
+              <input id="themeUiOpacity" class="theme-slider" type="range" min="55" max="100" step="1" value="100">
+            </div>
+          </div>
+        </div>
+        <div class="sefaz-pill">
+          <strong>SEFAZ</strong>
+          <span class="pulse-dot"><span></span></span>
+          <span style="color:var(--success);font-size:0.75rem;font-weight:600">Operacional</span>
+        </div>
+        <span id="userEmail" style="font-size:0.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace"></span>
+        <div class="header-avatar" id="headerAvatar" onclick="abrirModalSenha()" title="Alterar senha" style="display:none">JN</div>
+      </div>
+    </header>
+
+    <div class="container">
   <div class="estado-bar" id="estadoBar">
     <strong>Estado:</strong>
     <div class="estado-item">Empresa: <span id="stEmpresa" class="badge badge-red">nao selecionada</span></div>
@@ -109,17 +362,21 @@
   </div>
   <div class="tabs">
     <button class="tab-btn active" onclick="showTab('emitir',this)">Emitir NF-e</button>
+    <button class="tab-btn" onclick="showTab('cad-produtos',this)">Cad. Produtos</button>
+    <button class="tab-btn" onclick="showTab('cad-destinatarios',this)">Cad. Destinatarios</button>
+    <button class="tab-btn" onclick="showTab('cad-fornecedores',this)">Cad. Fornecedores</button>
     <button class="tab-btn" onclick="showTab('consultar',this)">Consultar SEFAZ</button>
     <button class="tab-btn" onclick="showTab('status',this)">Status Servico</button>
     <button class="tab-btn" onclick="showTab('inutilizar',this)">Inutilizar</button>
     <button class="tab-btn" onclick="showTab('manifestar',this)">Manifestacao</button>
-    <button class="tab-btn" onclick="showTab('entrada',this)">Notas Entrada</button>
+    <button class="tab-btn" onclick="showTab('entrada',this)">Importar XML Entrada</button>
     <button class="tab-btn" onclick="showTab('nuvemfiscal',this)">☁️ Nuvem Fiscal</button>
     <button class="tab-btn" onclick="showTab('cce',this)">CCe</button>
     <button class="tab-btn" onclick="showTab('sped',this)">SPED EFD</button>
-    <button class="tab-btn" onclick="showTab('efdcontrib',this)">EFD Contribuicoes</button>
+    <button class="tab-btn" onclick="showTab('estoque',this)">Estoque</button>
     <button class="tab-btn" onclick="showTab('nfse',this)">NFS-e</button>
     <button class="tab-btn" onclick="showTab('nfce',this)">Emitir NFC-e</button>
+    <button class="tab-btn" onclick="showTab('configuracoes',this)">Configurações</button>
   </div>
 
   <!-- ABA EMITIR -->
@@ -339,6 +596,8 @@
               <div class="field"><label>CFOP <span class="req">*</span></label><input id="p_cfop" value="5102" maxlength="4"></div>
               <div class="field"><label>CST</label><input id="p_cst" value="00" maxlength="3"></div>
               <div class="field"><label>CSOSN</label><input id="p_csosn" value="102" maxlength="3"></div>
+              <div class="field"><label>cClassTrib IBS/CBS <span class="req">*</span></label><select id="p_cclasstrib" onchange="aplicarClassificacaoPorCodigo('p_cclasstrib','p_cst_ibscbs')"><option value="">Selecione...</option></select></div>
+              <div class="field"><label>CST IBS/CBS</label><input id="p_cst_ibscbs" maxlength="3" readonly></div>
               <div class="field"><label>Unidade</label><select id="p_unidade"><option selected>UN</option><option>PC</option><option>KG</option><option>LT</option><option>MT</option><option>CX</option></select></div>
               <div class="field"><label>Preco Unitario (R$) <span class="req">*</span></label><input id="p_preco" type="number" step="0.01" value="100.00" min="0.01"></div>
             </div>
@@ -368,6 +627,18 @@
         <div class="grid2" style="margin-bottom:12px">
           <div class="field"><label>Natureza da Operacao <span class="req">*</span></label><input id="n_natureza" value="Venda de Mercadoria"></div>
           <div class="field"><label>Serie <span class="req">*</span></label><input id="n_serie" value="1" maxlength="3"></div>
+          <div class="field"><label>Forma de Pagamento</label>
+            <select id="n_pag">
+              <option value="01">01 - Dinheiro</option>
+              <option value="02">02 - Cheque</option>
+              <option value="03">03 - Cartao de Credito</option>
+              <option value="04">04 - Cartao de Debito</option>
+              <option value="05">05 - Credito Loja</option>
+              <option value="10">10 - Vale Alimentacao</option>
+              <option value="17">17 - PIX</option>
+              <option value="99">99 - Outros</option>
+            </select>
+          </div>
           <div class="field"><label>Frete (R$) <span style="color:var(--muted);font-weight:400">(opcional)</span></label><input id="n_frete" type="number" step="0.01" value="0" min="0"></div>
           <div class="field"><label>Desconto Geral (R$) <span style="color:var(--muted);font-weight:400">(opcional)</span></label><input id="n_desconto" type="number" step="0.01" value="0" min="0"></div>
           <div class="field span2"><label>Informacoes Complementares <span style="color:var(--muted);font-weight:400">(opcional)</span></label><input id="n_info" value="NOTA SEM VALOR FISCAL - EMITIDA PARA FINS DE TESTE"></div>
@@ -519,13 +790,24 @@
       <div id="alertaEntrada"></div>
       <div class="actions">
         <button class="btn btn-primary" onclick="consultarEntrada()"><span id="spinEntrada" class="spinner" style="display:none"></span> Buscar Notas de Entrada</button>
-        <button class="btn btn-outline" onclick="importarXmlEntrada()">&#128228; Importar XML Entrada</button>
+        <button class="btn btn-outline" onclick="importarXmlEntrada()"><span id="spinImportXml" class="spinner" style="display:none"></span> &#128228; Importar XML Entrada</button>
       </div>
     </div>
     <div id="resultEntrada" style="display:none" class="card">
       <h2 id="enTitulo">Resultado</h2>
       <div id="enBadge" style="margin-bottom:10px"></div>
       <pre class="result-box" id="enJson"></pre>
+    </div>
+    <!-- Seção de complemento fiscal gerada após importação XML -->
+    <div id="complementoFiscalSection" style="display:none">
+      <div class="card" style="border-left:4px solid var(--primary)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <h2 style="margin:0">&#128203; Complemento Fiscal dos Produtos Importados</h2>
+          <button id="btnEnviarImportacaoXml" class="btn btn-primary" onclick="enviarImportacaoXml()" style="padding:8px 16px">&#128190; Enviar importação</button>
+        </div>
+        <p class="subtitle" style="margin-bottom:16px">Os campos em cinza foram extraídos automaticamente do XML. A nota só será importada após preencher os <strong>dados fiscais obrigatórios de todos os itens</strong> e clicar em Enviar importação.</p>
+        <div id="complementoProdutosContainer"></div>
+      </div>
     </div>
   </div>
 
@@ -623,25 +905,6 @@
     </div>
   </div>
 
-  <!-- ABA EFD CONTRIBUICOES -->
-  <div id="tab-efdcontrib" class="tab-pane">
-    <div class="card">
-      <h2>EFD Contribuicoes (PIS/COFINS)</h2>
-      <p class="subtitle">Gera o arquivo EFD Contribuicoes com apuracao de PIS e COFINS. Prazo mensal: ate o 10 dia util do segundo mes subsequente.</p>
-      <div class="alert alert-info">Inclui Blocos 0, C, M (apuracao) e 9. Compatible com Simples Nacional (cumulativo) e Lucro Presumido/Real (nao-cumulativo).</div>
-      <div class="grid2" style="margin-bottom:12px">
-        <div class="field span2"><label>Empresa <span class="req">*</span></label><select id="efc_empresaId"><option value="">-- Selecione --</option></select></div>
-        <div class="field"><label>Data Inicio <span class="req">*</span></label><input type="date" id="efc_ini"></div>
-        <div class="field"><label>Data Fim <span class="req">*</span></label><input type="date" id="efc_fim"></div>
-      </div>
-      <div id="alertaEfc"></div>
-      <div class="actions">
-        <button class="btn btn-success" style="font-size:.96rem;padding:11px 24px" onclick="downloadEfdContrib()">&#11015; Baixar EFD Contribuicoes</button>
-        <button class="btn btn-outline" onclick="preencherMesAtualEfc()">Preencher mes atual</button>
-      </div>
-    </div>
-  </div>
-
   <!-- ABA NFS-e -->
   <div id="tab-nfse" class="tab-pane">
     <div class="card">
@@ -690,10 +953,12 @@
             <option value="04">04 - Cartao de Debito</option>
             <option value="05">05 - Credito Loja</option>
             <option value="10">10 - Vale Alimentacao</option>
+            <option value="17">17 - PIX</option>
             <option value="99">99 - Outros</option>
           </select>
         </div>
         <div class="field"><label>Frete (R$)</label><input id="nfce_frete" type="number" step="0.01" value="0" min="0"></div>
+        <div class="field"><label>Desconto Geral (R$) <span style="color:var(--muted);font-weight:400">(opcional)</span></label><input id="nfce_desconto" type="number" step="0.01" value="0" min="0"></div>
         <div class="field"><label>Serie</label><input id="nfce_serie" value="1" maxlength="3"></div>
         <div class="field span2"><label>Informacoes Complementares (opcional)</label><input id="nfce_info" placeholder="Opcional"></div>
       </div>
@@ -715,21 +980,208 @@
     </div>
   </div>
 
+  <div id="tab-estoque" class="tab-pane">
+    <div class="card">
+      <h2>Balanço de Estoque</h2>
+      <p class="subtitle">Consulta saldo atual, entradas e saídas por produto com base nas notas autorizadas.</p>
+      <div class="grid3" style="margin-bottom:12px">
+        <div class="field"><label>Empresa <span class="req">*</span></label><select id="est_empresaId"><option value="">-- Selecione --</option></select></div>
+        <div class="field"><label>Data inicial</label><input id="est_dtIni" type="date"></div>
+        <div class="field"><label>Data final</label><input id="est_dtFim" type="date"></div>
+      </div>
+      <div id="alertaEstoque"></div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="carregarEstoque()"><span id="spinEstoque" class="spinner" style="display:none"></span> Atualizar estoque</button>
+        <button class="btn btn-outline" onclick="baixarEstoqueCsv()">Exportar CSV</button>
+      </div>
+    </div>
+    <div id="resultEstoque" class="card" style="display:none">
+      <h2>Resumo do Estoque</h2>
+      <p class="subtitle" id="estResumoSub">Sem dados.</p>
+      <div id="estoqueTabelaWrap" style="overflow:auto"></div>
+    </div>
+  </div>
+
+  <div id="tab-cad-produtos" class="tab-pane">
+    <div class="card">
+      <h2>Cadastro de Produtos</h2>
+      <p class="subtitle">Gerencie produtos com nome, estoque, preco e classificacao fiscal.</p>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="field span2"><label>Empresa <span class="req">*</span></label><select id="cad_prod_empresaId" onchange="selecionarEmpresaCadastro('cad_prod_empresaId', carregarProdutosCadastro)"><option value="">-- Selecione a empresa --</option></select></div>
+        <div class="field span2"><label>Buscar produto</label><input id="busca_produto_cadastro" placeholder="Digite nome, EAN ou NCM" oninput="filtrarProdutosCadastro()"></div>
+      </div>
+      <div id="lista_produtos_cadastro" style="margin-bottom:14px;max-height:220px;overflow-y:auto;display:none"></div>
+      <div class="section-title">Novo produto</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="field"><label>Nome <span class="req">*</span></label><input id="cad_p_nome" placeholder="Ex.: Cimento CP-II"></div>
+        <div class="field"><label>Descricao</label><input id="cad_p_descricao" placeholder="Descricao resumida"></div>
+        <div class="field"><label>EAN</label><input id="cad_p_ean" placeholder="7890000000000" maxlength="14"></div>
+        <div class="field"><label>NCM <span class="req">*</span></label><input id="cad_p_ncm" placeholder="84713012" maxlength="8"></div>
+        <div class="field"><label>CFOP <span class="req">*</span></label><input id="cad_p_cfop" value="5102" maxlength="4"></div>
+        <div class="field"><label>CST</label><input id="cad_p_cst" value="00" maxlength="3"></div>
+        <div class="field"><label>CSOSN</label><input id="cad_p_csosn" value="102" maxlength="3"></div>
+        <div class="field"><label>cClassTrib IBS/CBS <span class="req">*</span></label><select id="cad_p_cclasstrib" onchange="aplicarClassificacaoPorCodigo('cad_p_cclasstrib','cad_p_cst_ibscbs')"><option value="">Selecione...</option></select></div>
+        <div class="field"><label>CST IBS/CBS</label><input id="cad_p_cst_ibscbs" maxlength="3" readonly></div>
+        <div class="field"><label>Unidade</label><select id="cad_p_unidade"><option selected>UN</option><option>PC</option><option>KG</option><option>LT</option><option>MT</option><option>CX</option></select></div>
+        <div class="field"><label>Preco Unitario (R$) <span class="req">*</span></label><input id="cad_p_preco" type="number" step="0.01" min="0.01" placeholder="0.00"></div>
+        <div class="field"><label>Quantidade em Estoque</label><input id="cad_p_estoque" type="number" step="0.001" min="0" value="0"></div>
+      </div>
+      <div id="alertaProdutoCadastro"></div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="cadastrarProdutoCadastro()"><span id="spinProdutoCadastro" class="spinner" style="display:none"></span> Salvar Produto</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-cad-destinatarios" class="tab-pane">
+    <div class="card">
+      <h2>Cadastro de Destinatario</h2>
+      <p class="subtitle">Cadastre clientes PF ou PJ para reutilizar na emissao.</p>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="field span2"><label>Empresa <span class="req">*</span></label><select id="cad_dest_empresaId" onchange="selecionarEmpresaCadastro('cad_dest_empresaId', carregarDestinatariosCadastro)"><option value="">-- Selecione a empresa --</option></select></div>
+        <div class="field"><label>Tipo</label><select id="cad_dest_tipo" onchange="atualizarFormularioDestinatarioCadastro()"><option value="cpf">Pessoa Fisica (CPF)</option><option value="cnpj">Pessoa Juridica (CNPJ)</option></select></div>
+        <div class="field"><label>Buscar destinatario</label><input id="busca_destinatario_cadastro" placeholder="Digite nome ou documento" oninput="filtrarDestinatariosCadastro()"></div>
+      </div>
+      <div id="cadDestHint" class="alert alert-info" style="margin-bottom:12px">Endereco e opcional para CPF em venda presencial.</div>
+      <div id="lista_destinatarios_cadastro" style="margin-bottom:14px;max-height:220px;overflow-y:auto;display:none"></div>
+      <div class="section-title">Novo destinatario</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="field"><label>Nome / Razao Social <span class="req">*</span></label><input id="cad_dest_nome" placeholder="Nome do destinatario"></div>
+        <div class="field"><label>CPF/CNPJ <span class="req">*</span></label><input id="cad_dest_doc" placeholder="12345678901"></div>
+        <div class="field"><label>Inscricao Estadual</label><input id="cad_dest_ie" placeholder="ISENTO"></div>
+        <div class="field"><label>E-mail</label><input id="cad_dest_email" type="email" placeholder="cliente@empresa.com"></div>
+        <div class="field"><label>Telefone</label><input id="cad_dest_fone" placeholder="83999999999"></div>
+        <div class="field"><label>Logradouro</label><input id="cad_dest_logradouro" placeholder="Rua das Flores"></div>
+        <div class="field"><label>Numero</label><input id="cad_dest_numero" placeholder="100"></div>
+        <div class="field"><label>Complemento</label><input id="cad_dest_comp"></div>
+        <div class="field"><label>Bairro</label><input id="cad_dest_bairro" placeholder="Centro"></div>
+        <div class="field"><label>Municipio</label><input id="cad_dest_municipio" placeholder="Joao Pessoa"></div>
+        <div class="field"><label>Cod. IBGE</label><input id="cad_dest_codmun" placeholder="2507507" maxlength="7"></div>
+        <div class="field"><label>UF</label><select id="cad_dest_uf"><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option selected>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></div>
+        <div class="field"><label>CEP</label><input id="cad_dest_cep" placeholder="58000000" maxlength="9"></div>
+      </div>
+      <div id="alertaDestinatarioCadastro"></div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="cadastrarDestinatarioCadastro()"><span id="spinDestinatarioCadastro" class="spinner" style="display:none"></span> Salvar Destinatario</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-cad-fornecedores" class="tab-pane">
+    <div class="card">
+      <h2>Cadastro de Fornecedor</h2>
+      <p class="subtitle">Cadastre fornecedores com documento e endereco para compras e controle interno.</p>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="field span2"><label>Empresa <span class="req">*</span></label><select id="cad_forn_empresaId" onchange="selecionarEmpresaCadastro('cad_forn_empresaId', carregarFornecedoresCadastro)"><option value="">-- Selecione a empresa --</option></select></div>
+        <div class="field span2"><label>Buscar fornecedor</label><input id="busca_fornecedor_cadastro" placeholder="Digite nome ou documento" oninput="filtrarFornecedoresCadastro()"></div>
+      </div>
+      <div id="lista_fornecedores_cadastro" style="margin-bottom:14px;max-height:220px;overflow-y:auto;display:none"></div>
+      <div class="section-title">Novo fornecedor</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="field"><label>Nome / Razao Social <span class="req">*</span></label><input id="cad_forn_nome" placeholder="Fornecedor Ltda"></div>
+        <div class="field"><label>CPF/CNPJ <span class="req">*</span></label><input id="cad_forn_doc" placeholder="00000000000000"></div>
+        <div class="field"><label>Inscricao Estadual</label><input id="cad_forn_ie" placeholder="ISENTO"></div>
+        <div class="field"><label>E-mail</label><input id="cad_forn_email" type="email" placeholder="contato@fornecedor.com"></div>
+        <div class="field"><label>Telefone</label><input id="cad_forn_fone" placeholder="83999999999"></div>
+        <div class="field"><label>Logradouro</label><input id="cad_forn_logradouro" placeholder="Rua das Flores"></div>
+        <div class="field"><label>Numero</label><input id="cad_forn_numero" placeholder="100"></div>
+        <div class="field"><label>Complemento</label><input id="cad_forn_comp"></div>
+        <div class="field"><label>Bairro</label><input id="cad_forn_bairro" placeholder="Centro"></div>
+        <div class="field"><label>Municipio</label><input id="cad_forn_municipio" placeholder="Joao Pessoa"></div>
+        <div class="field"><label>Cod. IBGE</label><input id="cad_forn_codmun" placeholder="2507507" maxlength="7"></div>
+        <div class="field"><label>UF</label><select id="cad_forn_uf"><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option selected>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></div>
+        <div class="field"><label>CEP</label><input id="cad_forn_cep" placeholder="58000000" maxlength="9"></div>
+      </div>
+      <div id="alertaFornecedorCadastro"></div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="cadastrarFornecedorCadastro()"><span id="spinFornecedorCadastro" class="spinner" style="display:none"></span> Salvar Fornecedor</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-configuracoes" class="tab-pane">
+    <div class="card">
+      <h2>Configurações fiscais da empresa</h2>
+      <p class="subtitle">Atualize dados fiscais, contatos e parâmetros usados na emissão.</p>
+
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="field span2">
+          <label>Empresa <span class="req">*</span></label>
+          <select id="cfg_empresaId" onchange="carregarConfiguracoesEmpresa()">
+            <option value="">-- Selecione a empresa --</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-title">Dados cadastrais</div>
+      <div class="grid3" style="margin-bottom:12px">
+        <div class="field"><label>CNPJ</label><input id="cfg_cnpj" placeholder="00000000000000"></div>
+        <div class="field span2"><label>Razão Social</label><input id="cfg_razao" placeholder="Razão social"></div>
+        <div class="field"><label>Nome Fantasia</label><input id="cfg_fantasia" placeholder="Nome fantasia"></div>
+        <div class="field"><label>Inscrição Estadual</label><input id="cfg_ie" placeholder="Inscrição estadual"></div>
+        <div class="field"><label>CNAE principal</label><input id="cfg_cnae" placeholder="6201-5/01"></div>
+        <div class="field"><label>Regime tributário</label>
+          <select id="cfg_regime">
+            <option value="simples_nacional">Simples Nacional</option>
+            <option value="lucro_presumido">Lucro Presumido</option>
+            <option value="lucro_real">Lucro Real</option>
+          </select>
+        </div>
+        <div class="field"><label>Telefone</label><input id="cfg_fone" placeholder="83999999999"></div>
+        <div class="field"><label>E-mail</label><input id="cfg_email" type="email" placeholder="fiscal@empresa.com"></div>
+      </div>
+
+      <div class="section-title">Endereço fiscal</div>
+      <div class="grid3" style="margin-bottom:12px">
+        <div class="field span2"><label>Logradouro</label><input id="cfg_logradouro" placeholder="Rua/Av"></div>
+        <div class="field"><label>Número</label><input id="cfg_numero" placeholder="100"></div>
+        <div class="field"><label>Complemento</label><input id="cfg_complemento" placeholder="Sala"></div>
+        <div class="field"><label>Bairro</label><input id="cfg_bairro" placeholder="Centro"></div>
+        <div class="field"><label>Município</label><input id="cfg_municipio" placeholder="João Pessoa"></div>
+        <div class="field"><label>UF</label><select id="cfg_uf"><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></div>
+        <div class="field"><label>CEP</label><input id="cfg_cep" placeholder="58000000"></div>
+      </div>
+
+      <div class="section-title">Parâmetros tributários padrão</div>
+      <div class="grid3" style="margin-bottom:12px">
+        <div class="field"><label>Alíquota PIS (%)</label><input id="cfg_pis" type="number" step="0.01" min="0" max="10" placeholder="0.65"></div>
+        <div class="field"><label>Alíquota COFINS (%)</label><input id="cfg_cofins" type="number" step="0.01" min="0" max="10" placeholder="3.00"></div>
+        <div class="field"><label>CSOSN padrão</label><input id="cfg_csosn" placeholder="400"></div>
+      </div>
+
+      <div id="alertaConfig"></div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="salvarConfiguracoesEmpresa()">
+          <span id="spinConfig" class="spinner" style="display:none"></span>
+          Salvar configurações
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
+    </div><!-- /main-area -->
+  </div><!-- /app-layout -->
+<datalist id="lista_cclasstrib"></datalist>
 <script>
 const estado = { empresaId:null, cnpj:null, clienteId:null, clienteNome:null, tipoDest:'cpf', produtoId:null, produtoNome:null, certEnviado:false, cscSalvo:false, pfxBase64:null, pfxNome:null, ultimaChave:null, ultimaNotaId:null };
 var clientesCadastrados = [];
 var produtosCadastrados = [];
+var fornecedoresCadastrados = [];
 var empresasCadastradas = [];
 var notasCarregadas = [];
+var importacaoXmlPendente = null;
+var classificacoesTributarias = [];
+var classificacaoPorCodigo = {};
 const API = window.location.origin;
 
 async function carregarEmpresasSelects(){
   try{
-    var res=await fetch(API+'/api/empresa');
+    var res=await fetchAuth(API+'/api/empresa');
+    if(res.status===401){window.location.href='/login.html';return;}
     if(!res.ok)return;
     empresasCadastradas=await res.json();
-    var ids=['cs_empresaId','st_empresaId','in_empresaId','mf_empresaId','en_empresaId','cce_empresaId','sp_empresaId','efc_empresaId','nfse_empresaId'];
+    var ids=['cs_empresaId','st_empresaId','in_empresaId','mf_empresaId','en_empresaId','cce_empresaId','sp_empresaId','est_empresaId','nfse_empresaId','cad_prod_empresaId','cad_dest_empresaId','cad_forn_empresaId','cfg_empresaId'];
     ids.forEach(function(id){
       var sel=document.getElementById(id);if(!sel)return;
       sel.innerHTML='<option value="">-- Selecione a empresa --</option>';
@@ -739,6 +1191,74 @@ async function carregarEmpresasSelects(){
       if(estado.empresaId)sel.value=estado.empresaId;
     });
   }catch(e){}
+}
+
+async function carregarClassificacoesTributarias(){
+  try{
+    var res=await fetchAuth(API+'/api/produto/classificacao-tributaria');
+    if(!res.ok)return;
+    var data=await res.json();
+    classificacoesTributarias=(data&&data.itens)||[];
+    classificacaoPorCodigo={};
+    classificacoesTributarias.forEach(function(item){
+      if(item&&item.codigo)classificacaoPorCodigo[item.codigo]=item;
+    });
+
+    preencherSelectClassTrib('p_cclasstrib');
+    preencherSelectClassTrib('cad_p_cclasstrib');
+
+    document.querySelectorAll('select.comp-cclasstrib').forEach(function(sel){
+      preencherSelectClassTrib(sel.id, sel.dataset.selected||'');
+      aplicarClassificacaoPorCodigo(sel.id, sel.dataset.cstTarget||'');
+    });
+  }catch(e){}
+}
+
+function preencherSelectClassTrib(selectId, selectedCode){
+  var sel=document.getElementById(selectId);
+  if(!sel)return;
+  var opts=['<option value="">Selecione...</option>'];
+  classificacoesTributarias.forEach(function(item){
+    if(!item||!item.codigo)return;
+    opts.push('<option value="'+item.codigo+'">'+item.codigo+' - '+escHtml(item.descricao||'')+'</option>');
+  });
+  sel.innerHTML=opts.join('');
+  if(selectedCode&&classificacaoPorCodigo[selectedCode])sel.value=selectedCode;
+}
+
+function aplicarClassificacaoPorCodigo(inputId,cstId){
+  var cod=(document.getElementById(inputId)?.value||'').trim();
+  var cstEl=document.getElementById(cstId);
+  if(!cstEl)return null;
+  if(!cod||!classificacaoPorCodigo[cod]){cstEl.value='';return null;}
+  var item=classificacaoPorCodigo[cod];
+  cstEl.value=item.cst||'';
+  return item;
+}
+
+function selecionarEmpresaGlobal(empresaId){
+  estado.empresaId=empresaId||null;
+  var empresa=empresasCadastradas.find(function(e){return e.id===empresaId;});
+  if(empresa&&empresa.cnpj)estado.cnpj=empresa.cnpj;
+  ['cs_empresaId','st_empresaId','in_empresaId','mf_empresaId','en_empresaId','cce_empresaId','sp_empresaId','est_empresaId','nfse_empresaId','cad_prod_empresaId','cad_dest_empresaId','cad_forn_empresaId','cfg_empresaId'].forEach(function(id){
+    var sel=document.getElementById(id);
+    if(sel&&empresaId)sel.value=empresaId;
+  });
+  atualizarEstadoBar();
+}
+
+function selecionarEmpresaCadastro(selectId, callback){
+  var empresaId=(document.getElementById(selectId)||{}).value||'';
+  if(!empresaId)return;
+  selecionarEmpresaGlobal(empresaId);
+  if(typeof callback==='function')callback();
+}
+
+function obterEmpresaSelecionada(selectId, alertaId){
+  var empresaId=(document.getElementById(selectId)||{}).value||estado.empresaId||'';
+  if(!empresaId&&alertaId)mostrarAlerta(alertaId,'warn','Selecione a empresa primeiro.');
+  if(empresaId)selecionarEmpresaGlobal(empresaId);
+  return empresaId;
 }
 
 async function carregarNotasParaSelect(selectId){
@@ -777,9 +1297,87 @@ function showTab(name,btn){
   document.getElementById('tab-'+name).classList.add('active');
   btn.classList.add('active');
   if(name==='nfce'){renderItensNfce();}
+  if(name==='cad-produtos'){carregarProdutosCadastro();}
+  if(name==='cad-destinatarios'){atualizarFormularioDestinatarioCadastro();carregarDestinatariosCadastro();}
+  if(name==='cad-fornecedores'){carregarFornecedoresCadastro();}
+  if(name==='estoque'){carregarEstoque();}
   if(name==='consultar'){carregarNotasParaSelect('cs_nota_sel');}
   if(name==='manifestar'){carregarNotasParaSelect('mf_notaId');}
   if(name==='cce'){carregarNotasParaSelect('cce_notaId');}
+  if(name==='configuracoes'){carregarConfiguracoesEmpresa();}
+}
+
+async function carregarConfiguracoesEmpresa(){
+  limparAlerta('alertaConfig');
+  var empresaId=v('cfg_empresaId') || estado.empresaId;
+  if(!empresaId){mostrarAlerta('alertaConfig','warn','Selecione uma empresa.');return;}
+  selecionarEmpresaGlobal(empresaId);
+  document.getElementById('cfg_empresaId').value=empresaId;
+  try{
+    var res=await fetchAuth(API+'/api/empresa/'+empresaId);
+    if(!res.ok){throw new Error('Nao foi possivel carregar as configuracoes.');}
+    var e=await res.json();
+    var set=function(id,val){var el=document.getElementById(id);if(el)el.value=(val??'');};
+    set('cfg_cnpj',e.cnpj||e.CNPJ);
+    set('cfg_razao',e.razaoSocial||e.RazaoSocial);
+    set('cfg_fantasia',e.nomeFantasia||e.NomeFantasia);
+    set('cfg_ie',e.inscricaoEstadual||e.InscricaoEstadual);
+    set('cfg_cnae',e.cnae||e.CNAE);
+    set('cfg_regime',e.regimeTributario||e.RegimeTributario||'simples_nacional');
+    set('cfg_fone',e.telefone||e.Telefone);
+    set('cfg_email',e.email||e.Email);
+    set('cfg_logradouro',e.logradouro||e.Logradouro);
+    set('cfg_numero',e.numero||e.Numero);
+    set('cfg_complemento',e.complemento||e.Complemento);
+    set('cfg_bairro',e.bairro||e.Bairro);
+    set('cfg_municipio',e.municipio||e.Municipio);
+    set('cfg_uf',e.uf||e.UF||'PB');
+    set('cfg_cep',e.cep||e.CEP);
+    set('cfg_pis',e.aliquotaPis||e.AliquotaPis||'0.65');
+    set('cfg_cofins',e.aliquotaCofins||e.AliquotaCofins||'3.00');
+    set('cfg_csosn',e.csosnPadrao||e.CSOSNPadrao||'400');
+  }catch(err){
+    mostrarAlerta('alertaConfig','error',err.message||'Erro ao carregar configuracoes.');
+  }
+}
+
+async function salvarConfiguracoesEmpresa(){
+  limparAlerta('alertaConfig');
+  var empresaId=v('cfg_empresaId') || estado.empresaId;
+  if(!empresaId){mostrarAlerta('alertaConfig','error','Selecione a empresa.');return;}
+  if(!v('cfg_cnpj')||!v('cfg_razao')){mostrarAlerta('alertaConfig','error','CNPJ e Razao Social sao obrigatorios.');return;}
+  spin('spinConfig',true);
+  try{
+    var body={
+      cnpj:v('cfg_cnpj'),
+      razaoSocial:v('cfg_razao'),
+      nomeFantasia:v('cfg_fantasia')||null,
+      inscricaoEstadual:v('cfg_ie')||null,
+      cnae:v('cfg_cnae')||null,
+      regimeTributario:v('cfg_regime')||'simples_nacional',
+      telefone:v('cfg_fone')||null,
+      email:v('cfg_email')||null,
+      logradouro:v('cfg_logradouro')||null,
+      numero:v('cfg_numero')||null,
+      complemento:v('cfg_complemento')||null,
+      bairro:v('cfg_bairro')||null,
+      municipio:v('cfg_municipio')||null,
+      uf:v('cfg_uf')||'PB',
+      cep:v('cfg_cep')||null,
+      aliquotaPis:parseFloat(v('cfg_pis')||'0')||0,
+      aliquotaCofins:parseFloat(v('cfg_cofins')||'0')||0,
+      csosnPadrao:v('cfg_csosn')||null
+    };
+    var res=await fetchAuth(API+'/api/empresa/'+empresaId,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!res.ok){
+      var data=await safeJson(res);
+      throw new Error(data.erro||data.error||('HTTP '+res.status));
+    }
+    mostrarAlerta('alertaConfig','success','Configuracoes fiscais salvas com sucesso.');
+    await carregarEmpresasSelects();
+  }catch(err){
+    mostrarAlerta('alertaConfig','error',err.message||'Erro ao salvar configuracoes.');
+  }finally{spin('spinConfig',false);}
 }
 
 let passoAtual=0;
@@ -862,6 +1460,8 @@ async function cadastrarEmpresa(){
     estado.cnpj=v('e_cnpj');
     document.getElementById('empresaIdLabel').textContent='ID: '+data.id;
     mostrarAlerta('alertaEmpresa','success','Empresa cadastrada! ID: '+data.id);
+    await carregarEmpresasSelects();
+    selecionarEmpresaGlobal(data.id);
     atualizarEstadoBar();
   }catch(e){mostrarAlerta('alertaEmpresa','error',e.message);}
   finally{spin('spinEmpresa',false);}
@@ -1080,21 +1680,290 @@ async function cadastrarProduto(){
   limparAlerta('alertaProduto');
   if(!estado.empresaId){mostrarAlerta('alertaProduto','warn','Cadastre a empresa primeiro.');return;}
   if(!v('p_nome')){mostrarAlerta('alertaProduto','error','Nome do produto e obrigatorio.');return;}
+  if(!v('p_cclasstrib')){mostrarAlerta('alertaProduto','error','cClassTrib (IBS/CBS) e obrigatorio.');return;}
+  var classTrib=aplicarClassificacaoPorCodigo('p_cclasstrib','p_cst_ibscbs');
+  if(!classTrib){mostrarAlerta('alertaProduto','error','cClassTrib invalido. Selecione um codigo da lista oficial.');return;}
   spin('spinProduto',true);
   try{
     var res=await fetch(API+'/api/produto',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({empresaId:estado.empresaId,nome:v('p_nome'),descricao:v('p_descricao'),ncm:v('p_ncm'),cfop:v('p_cfop'),cst:v('p_cst'),csosn:v('p_csosn'),unidade:v('p_unidade'),preco:parseFloat(v('p_preco'))||0,aliquotaICMS:0,aliquotaIPI:0,aliquotaPIS:0.65,aliquotaCOFINS:3})});
+      body:JSON.stringify({empresaId:estado.empresaId,nome:v('p_nome'),descricao:v('p_descricao'),ncm:v('p_ncm'),cfop:v('p_cfop'),cst:v('p_cst'),csosn:v('p_csosn'),cClassTrib:v('p_cclasstrib'),cstIbsCbs:v('p_cst_ibscbs'),unidade:v('p_unidade'),preco:parseFloat(v('p_preco'))||0,aliquotaICMS:0,aliquotaIPI:0,aliquotaPIS:0.65,aliquotaCOFINS:3})});
     var data=await safeJson(res);
     if(!res.ok)throw new Error(data.erro||'HTTP '+res.status);
     estado.produtoId=data.id; estado.produtoNome=data.nome||v('p_nome');
     document.getElementById('produtoIdLabel').textContent='ID: '+data.id;
-    produtosCadastrados.push({id:data.id,nome:estado.produtoNome,preco:parseFloat(v('p_preco'))||0,unidade:v('p_unidade')||'UN'});
+    produtosCadastrados.push({id:data.id,nome:estado.produtoNome,preco:parseFloat(v('p_preco'))||0,unidade:v('p_unidade')||'UN',cClassTrib:v('p_cclasstrib'),cstIbsCbs:v('p_cst_ibscbs')});
     if(itens.length>0){itens[0].produtoId=data.id;itens[0].valor=parseFloat(v('p_preco'))||itens[0].valor;}
     renderItens();
     mostrarAlerta('alertaProduto','success','Produto cadastrado! ID: '+data.id);
     atualizarEstadoBar();
   }catch(e){mostrarAlerta('alertaProduto','error',e.message);}
   finally{spin('spinProduto',false);}
+}
+
+function renderListaCadastro(lista, containerId, htmlFactory, onSelect){
+  var container=document.getElementById(containerId);
+  if(!container)return;
+  if(!lista||!lista.length){container.style.display='none';container.innerHTML='';return;}
+  container.style.display='block';
+  container.innerHTML='';
+  lista.forEach(function(item){
+    var el=document.createElement('div');
+    el.style.cssText='padding:8px 10px;cursor:pointer;border-bottom:1px solid var(--border);border-radius:4px;display:flex;justify-content:space-between;align-items:center;gap:10px';
+    el.innerHTML='<span>'+htmlFactory(item)+'</span><span class="badge badge-blue" style="font-size:.7rem">Selecionar</span>';
+    el.onmouseenter=function(){this.style.background='var(--step-active)';};
+    el.onmouseleave=function(){this.style.background='';};
+    el.onclick=function(){onSelect(item);};
+    container.appendChild(el);
+  });
+}
+
+async function carregarProdutosCadastro(){
+  limparAlerta('alertaProdutoCadastro');
+  var empresaId=obterEmpresaSelecionada('cad_prod_empresaId','alertaProdutoCadastro');
+  if(!empresaId)return;
+  spin('spinBuscaProduto',true);
+  try{
+    var res=await fetch(API+'/api/produto?empresaId='+encodeURIComponent(empresaId));
+    if(res.ok){produtosCadastrados=await res.json();filtrarProdutosCadastro();}
+  }catch(e){mostrarAlerta('alertaProdutoCadastro','error',e.message||'Erro ao carregar produtos.');}
+  finally{spin('spinBuscaProduto',false);}
+}
+
+function filtrarProdutosCadastro(){
+  var q=(document.getElementById('busca_produto_cadastro').value||'').toLowerCase();
+  var lista=produtosCadastrados.filter(function(p){
+    return !q||p.nome.toLowerCase().includes(q)||((p.ean||'').toLowerCase().includes(q))||((p.ncm||'').toLowerCase().includes(q));
+  });
+  renderListaCadastro(lista.slice(0,12),'lista_produtos_cadastro',function(p){
+    var preco='R$ '+(p.preco||0).toFixed(2).replace('.',',');
+    var estoque=(p.quantidadeEstoque||0).toString().replace('.',',');
+    return '<strong>'+p.nome+'</strong> <small style="color:var(--muted)">'+(p.unidade||'UN')+' - '+preco+' - estoque: '+estoque+'</small>';
+  },function(p){
+    document.getElementById('cad_p_nome').value=p.nome||'';
+    document.getElementById('cad_p_descricao').value=p.descricao||'';
+    document.getElementById('cad_p_ean').value=p.ean||'';
+    document.getElementById('cad_p_ncm').value=p.ncm||'';
+    document.getElementById('cad_p_cfop').value=p.cfop||'';
+    document.getElementById('cad_p_cst').value=p.cst||'';
+    document.getElementById('cad_p_csosn').value=p.csosn||'';
+    document.getElementById('cad_p_cclasstrib').value=p.cClassTrib||'';
+    document.getElementById('cad_p_cst_ibscbs').value=p.cstIbsCbs||'';
+    document.getElementById('cad_p_unidade').value=p.unidade||'UN';
+    document.getElementById('cad_p_preco').value=(p.preco||0).toFixed(2);
+    document.getElementById('cad_p_estoque').value=p.quantidadeEstoque||0;
+    estado.produtoId=p.id;estado.produtoNome=p.nome;
+    atualizarEstadoBar();
+    mostrarAlerta('alertaProdutoCadastro','success','Produto carregado para consulta: '+p.nome);
+  });
+}
+
+async function cadastrarProdutoCadastro(){
+  limparAlerta('alertaProdutoCadastro');
+  var empresaId=obterEmpresaSelecionada('cad_prod_empresaId','alertaProdutoCadastro');
+  if(!empresaId)return;
+  if(!v('cad_p_nome')||!v('cad_p_ncm')||!v('cad_p_cfop')){mostrarAlerta('alertaProdutoCadastro','error','Nome, NCM e CFOP sao obrigatorios.');return;}
+  if(!v('cad_p_cclasstrib')){mostrarAlerta('alertaProdutoCadastro','error','cClassTrib (IBS/CBS) e obrigatorio.');return;}
+  var classTrib=aplicarClassificacaoPorCodigo('cad_p_cclasstrib','cad_p_cst_ibscbs');
+  if(!classTrib){mostrarAlerta('alertaProdutoCadastro','error','cClassTrib invalido. Selecione um codigo da lista oficial.');return;}
+  spin('spinProdutoCadastro',true);
+  try{
+    var res=await fetch(API+'/api/produto',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({empresaId:empresaId,nome:v('cad_p_nome'),descricao:v('cad_p_descricao'),ean:v('cad_p_ean')||null,ncm:v('cad_p_ncm'),cfop:v('cad_p_cfop'),cst:v('cad_p_cst')||'00',csosn:v('cad_p_csosn')||'102',cClassTrib:v('cad_p_cclasstrib'),cstIbsCbs:v('cad_p_cst_ibscbs'),unidade:v('cad_p_unidade')||'UN',preco:parseFloat(v('cad_p_preco'))||0,quantidadeEstoque:parseFloat(v('cad_p_estoque'))||0,aliquotaICMS:0,aliquotaIPI:0,aliquotaPIS:0.65,aliquotaCOFINS:3})});
+    var data=await safeJson(res);
+    if(!res.ok)throw new Error(data.erro||'HTTP '+res.status);
+    estado.produtoId=data.id;estado.produtoNome=data.nome||v('cad_p_nome');
+    produtosCadastrados.unshift({id:data.id,nome:estado.produtoNome,descricao:v('cad_p_descricao'),ean:v('cad_p_ean'),ncm:v('cad_p_ncm'),cfop:v('cad_p_cfop'),cst:v('cad_p_cst')||'00',csosn:v('cad_p_csosn')||'102',cClassTrib:v('cad_p_cclasstrib'),cstIbsCbs:v('cad_p_cst_ibscbs'),preco:parseFloat(v('cad_p_preco'))||0,unidade:v('cad_p_unidade')||'UN',quantidadeEstoque:parseFloat(v('cad_p_estoque'))||0});
+    filtrarProdutosCadastro();
+    atualizarEstadoBar();
+    mostrarAlerta('alertaProdutoCadastro','success','Produto cadastrado! ID: '+data.id);
+  }catch(e){mostrarAlerta('alertaProdutoCadastro','error',e.message);}
+  finally{spin('spinProdutoCadastro',false);}
+}
+
+function atualizarFormularioDestinatarioCadastro(){
+  var tipo=(document.getElementById('cad_dest_tipo')||{}).value||'cpf';
+  var hint=document.getElementById('cadDestHint');
+  if(!hint)return;
+  if(tipo==='cnpj'){
+    hint.className='alert alert-warn';
+    hint.innerHTML='Endereco completo e recomendado para destinatario PJ; a emissao B2B depende desses dados.';
+    document.getElementById('cad_dest_doc').placeholder='00000000000000';
+  }else{
+    hint.className='alert alert-info';
+    hint.innerHTML='Endereco e opcional para CPF em venda presencial.';
+    document.getElementById('cad_dest_doc').placeholder='12345678901';
+  }
+}
+
+async function carregarDestinatariosCadastro(){
+  limparAlerta('alertaDestinatarioCadastro');
+  var empresaId=obterEmpresaSelecionada('cad_dest_empresaId','alertaDestinatarioCadastro');
+  if(!empresaId)return;
+  try{
+    var res=await fetch(API+'/api/cliente?empresaId='+encodeURIComponent(empresaId));
+    if(res.ok){clientesCadastrados=await res.json();filtrarDestinatariosCadastro();}
+  }catch(e){mostrarAlerta('alertaDestinatarioCadastro','error',e.message||'Erro ao carregar destinatarios.');}
+}
+
+function filtrarDestinatariosCadastro(){
+  var q=(document.getElementById('busca_destinatario_cadastro').value||'').toLowerCase();
+  var lista=clientesCadastrados.filter(function(c){return !q||c.nome.toLowerCase().includes(q)||((c.cpf_CNPJ||'').toLowerCase().includes(q));});
+  renderListaCadastro(lista.slice(0,12),'lista_destinatarios_cadastro',function(c){
+    return '<strong>'+c.nome+'</strong> <small style="color:var(--muted)">'+(c.cpf_CNPJ||'sem documento')+'</small>';
+  },function(c){
+    document.getElementById('cad_dest_nome').value=c.nome||'';
+    document.getElementById('cad_dest_doc').value=c.cpf_CNPJ||'';
+    document.getElementById('cad_dest_email').value=c.email||'';
+    document.getElementById('cad_dest_ie').value=c.inscricaoEstadual||'';
+    document.getElementById('cad_dest_fone').value=c.telefone||'';
+    document.getElementById('cad_dest_logradouro').value=c.logradouro||'';
+    document.getElementById('cad_dest_numero').value=c.numero||'';
+    document.getElementById('cad_dest_comp').value=c.complemento||'';
+    document.getElementById('cad_dest_bairro').value=c.bairro||'';
+    document.getElementById('cad_dest_municipio').value=c.municipio||'';
+    document.getElementById('cad_dest_codmun').value=c.codigoMunicipio||'';
+    document.getElementById('cad_dest_uf').value=c.uf||'PB';
+    document.getElementById('cad_dest_cep').value=c.cep||'';
+    estado.clienteId=c.id;estado.clienteNome=c.nome;
+    atualizarEstadoBar();
+    mostrarAlerta('alertaDestinatarioCadastro','success','Destinatario carregado: '+c.nome);
+  });
+}
+
+async function cadastrarDestinatarioCadastro(){
+  limparAlerta('alertaDestinatarioCadastro');
+  var empresaId=obterEmpresaSelecionada('cad_dest_empresaId','alertaDestinatarioCadastro');
+  if(!empresaId)return;
+  var tipo=(document.getElementById('cad_dest_tipo')||{}).value||'cpf';
+  if(!v('cad_dest_nome')||!v('cad_dest_doc')){mostrarAlerta('alertaDestinatarioCadastro','error','Nome e CPF/CNPJ sao obrigatorios.');return;}
+  if(tipo==='cnpj'&&(!v('cad_dest_logradouro')||!v('cad_dest_numero')||!v('cad_dest_bairro')||!v('cad_dest_municipio')||!v('cad_dest_cep'))){
+    mostrarAlerta('alertaDestinatarioCadastro','error','Endereco completo e obrigatorio para destinatario PJ.');return;
+  }
+  spin('spinDestinatarioCadastro',true);
+  try{
+    var res=await fetch(API+'/api/cliente',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({empresaId:empresaId,nome:v('cad_dest_nome'),cpf_CNPJ:v('cad_dest_doc'),inscricaoEstadual:v('cad_dest_ie'),email:v('cad_dest_email'),telefone:v('cad_dest_fone'),logradouro:v('cad_dest_logradouro'),numero:v('cad_dest_numero'),complemento:v('cad_dest_comp'),bairro:v('cad_dest_bairro'),municipio:v('cad_dest_municipio'),codigoMunicipio:v('cad_dest_codmun'),uf:v('cad_dest_uf'),cep:v('cad_dest_cep'),pais:'Brasil',codigoPais:'1058'})});
+    var data=await safeJson(res);
+    if(!res.ok)throw new Error(data.erro||'HTTP '+res.status);
+    estado.clienteId=data.id;estado.clienteNome=data.nome||v('cad_dest_nome');
+    clientesCadastrados.unshift({id:data.id,nome:estado.clienteNome,cpf_CNPJ:v('cad_dest_doc'),inscricaoEstadual:v('cad_dest_ie'),email:v('cad_dest_email'),telefone:v('cad_dest_fone'),logradouro:v('cad_dest_logradouro'),numero:v('cad_dest_numero'),complemento:v('cad_dest_comp'),bairro:v('cad_dest_bairro'),municipio:v('cad_dest_municipio'),codigoMunicipio:v('cad_dest_codmun'),uf:v('cad_dest_uf'),cep:v('cad_dest_cep')});
+    filtrarDestinatariosCadastro();
+    atualizarEstadoBar();
+    mostrarAlerta('alertaDestinatarioCadastro','success','Destinatario cadastrado! ID: '+data.id);
+  }catch(e){mostrarAlerta('alertaDestinatarioCadastro','error',e.message);}
+  finally{spin('spinDestinatarioCadastro',false);}
+}
+
+async function carregarFornecedoresCadastro(){
+  limparAlerta('alertaFornecedorCadastro');
+  var empresaId=obterEmpresaSelecionada('cad_forn_empresaId','alertaFornecedorCadastro');
+  if(!empresaId)return;
+  try{
+    var res=await fetch(API+'/api/fornecedor?empresaId='+encodeURIComponent(empresaId));
+    if(res.ok){fornecedoresCadastrados=await res.json();filtrarFornecedoresCadastro();}
+  }catch(e){mostrarAlerta('alertaFornecedorCadastro','error',e.message||'Erro ao carregar fornecedores.');}
+}
+
+function filtrarFornecedoresCadastro(){
+  var q=(document.getElementById('busca_fornecedor_cadastro').value||'').toLowerCase();
+  var lista=fornecedoresCadastrados.filter(function(f){return !q||f.nome.toLowerCase().includes(q)||((f.cpf_CNPJ||'').toLowerCase().includes(q));});
+  renderListaCadastro(lista.slice(0,12),'lista_fornecedores_cadastro',function(f){
+    return '<strong>'+f.nome+'</strong> <small style="color:var(--muted)">'+(f.cpf_CNPJ||'sem documento')+'</small>';
+  },function(f){
+    document.getElementById('cad_forn_nome').value=f.nome||'';
+    document.getElementById('cad_forn_doc').value=f.cpf_CNPJ||'';
+    document.getElementById('cad_forn_ie').value=f.inscricaoEstadual||'';
+    document.getElementById('cad_forn_email').value=f.email||'';
+    document.getElementById('cad_forn_fone').value=f.telefone||'';
+    document.getElementById('cad_forn_logradouro').value=f.logradouro||'';
+    document.getElementById('cad_forn_numero').value=f.numero||'';
+    document.getElementById('cad_forn_comp').value=f.complemento||'';
+    document.getElementById('cad_forn_bairro').value=f.bairro||'';
+    document.getElementById('cad_forn_municipio').value=f.municipio||'';
+    document.getElementById('cad_forn_codmun').value=f.codigoMunicipio||'';
+    document.getElementById('cad_forn_uf').value=f.uf||'PB';
+    document.getElementById('cad_forn_cep').value=f.cep||'';
+    mostrarAlerta('alertaFornecedorCadastro','success','Fornecedor carregado: '+f.nome);
+  });
+}
+
+async function cadastrarFornecedorCadastro(){
+  limparAlerta('alertaFornecedorCadastro');
+  var empresaId=obterEmpresaSelecionada('cad_forn_empresaId','alertaFornecedorCadastro');
+  if(!empresaId)return;
+  if(!v('cad_forn_nome')||!v('cad_forn_doc')){mostrarAlerta('alertaFornecedorCadastro','error','Nome e CPF/CNPJ sao obrigatorios.');return;}
+  spin('spinFornecedorCadastro',true);
+  try{
+    var res=await fetch(API+'/api/fornecedor',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({empresaId:empresaId,nome:v('cad_forn_nome'),cpf_CNPJ:v('cad_forn_doc'),inscricaoEstadual:v('cad_forn_ie'),email:v('cad_forn_email'),telefone:v('cad_forn_fone'),logradouro:v('cad_forn_logradouro'),numero:v('cad_forn_numero'),complemento:v('cad_forn_comp'),bairro:v('cad_forn_bairro'),municipio:v('cad_forn_municipio'),codigoMunicipio:v('cad_forn_codmun'),uf:v('cad_forn_uf'),cep:v('cad_forn_cep'),pais:'Brasil',codigoPais:'1058'})});
+    var data=await safeJson(res);
+    if(!res.ok)throw new Error(data.erro||'HTTP '+res.status);
+    fornecedoresCadastrados.unshift({id:data.id,nome:data.nome||v('cad_forn_nome'),cpf_CNPJ:v('cad_forn_doc'),inscricaoEstadual:v('cad_forn_ie'),email:v('cad_forn_email'),telefone:v('cad_forn_fone'),logradouro:v('cad_forn_logradouro'),numero:v('cad_forn_numero'),complemento:v('cad_forn_comp'),bairro:v('cad_forn_bairro'),municipio:v('cad_forn_municipio'),codigoMunicipio:v('cad_forn_codmun'),uf:v('cad_forn_uf'),cep:v('cad_forn_cep')});
+    filtrarFornecedoresCadastro();
+    mostrarAlerta('alertaFornecedorCadastro','success','Fornecedor cadastrado! ID: '+data.id);
+  }catch(e){mostrarAlerta('alertaFornecedorCadastro','error',e.message);}
+  finally{spin('spinFornecedorCadastro',false);}
+}
+
+async function carregarEstoque(){
+  limparAlerta('alertaEstoque');
+  var empresaId=(document.getElementById('est_empresaId')||{}).value||estado.empresaId||'';
+  if(!empresaId){mostrarAlerta('alertaEstoque','warn','Selecione a empresa para consultar o estoque.');return;}
+  selecionarEmpresaGlobal(empresaId);
+  spin('spinEstoque',true);
+  try{
+    var qs='?empresaId='+encodeURIComponent(empresaId);
+    if(v('est_dtIni'))qs+='&dtIni='+encodeURIComponent(v('est_dtIni'));
+    if(v('est_dtFim'))qs+='&dtFim='+encodeURIComponent(v('est_dtFim'));
+    var res=await fetch(API+'/api/produto/estoque'+qs);
+    var data=await safeJson(res);
+    if(!res.ok||!data.sucesso)throw new Error(data.erro||data.xMotivo||('HTTP '+res.status));
+
+    var wrap=document.getElementById('estoqueTabelaWrap');
+    var itens=data.itens||[];
+    var rows=itens.map(function(i){
+      return '<tr>'
+        +'<td style="padding:8px 10px;border-bottom:1px solid var(--border)">'+(i.nome||'')+'</td>'
+        +'<td style="padding:8px 10px;border-bottom:1px solid var(--border)">'+(i.ncm||'')+'</td>'
+        +'<td style="padding:8px 10px;border-bottom:1px solid var(--border)">'+(i.unidade||'UN')+'</td>'
+        +'<td style="padding:8px 10px;border-bottom:1px solid var(--border);text-align:right">'+Number(i.precoUnitario||0).toFixed(2)+'</td>'
+        +'<td style="padding:8px 10px;border-bottom:1px solid var(--border);text-align:right">'+Number(i.saldoAtual||0).toFixed(3)+'</td>'
+        +'<td style="padding:8px 10px;border-bottom:1px solid var(--border);text-align:right">'+Number(i.totalEntradas||0).toFixed(3)+'</td>'
+        +'<td style="padding:8px 10px;border-bottom:1px solid var(--border);text-align:right">'+Number(i.totalSaidas||0).toFixed(3)+'</td>'
+        +'<td style="padding:8px 10px;border-bottom:1px solid var(--border);text-align:right">'+Number(i.valorEstoque||0).toFixed(2)+'</td>'
+      +'</tr>';
+    }).join('');
+
+    wrap.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.84rem">'
+      +'<thead><tr style="background:var(--step-active)">'
+      +'<th style="padding:8px 10px;text-align:left">Produto</th>'
+      +'<th style="padding:8px 10px;text-align:left">NCM</th>'
+      +'<th style="padding:8px 10px;text-align:left">Un</th>'
+      +'<th style="padding:8px 10px;text-align:right">Preco</th>'
+      +'<th style="padding:8px 10px;text-align:right">Saldo</th>'
+      +'<th style="padding:8px 10px;text-align:right">Entradas</th>'
+      +'<th style="padding:8px 10px;text-align:right">Saidas</th>'
+      +'<th style="padding:8px 10px;text-align:right">Valor Estoque</th>'
+      +'</tr></thead><tbody>'
+      +(rows||'<tr><td colspan="8" style="padding:10px;color:var(--muted)">Nenhum produto encontrado.</td></tr>')
+      +'</tbody></table>';
+
+    document.getElementById('estResumoSub').textContent='Produtos: '+Number(data.totalProdutos||0)+' | Valor total: R$ '+Number(data.valorTotalEstoque||0).toFixed(2);
+    document.getElementById('resultEstoque').style.display='block';
+  }catch(e){
+    mostrarAlerta('alertaEstoque','error','Falha ao consultar estoque: '+e.message);
+    document.getElementById('resultEstoque').style.display='none';
+  }finally{spin('spinEstoque',false);}
+}
+
+function baixarEstoqueCsv(){
+  limparAlerta('alertaEstoque');
+  var empresaId=(document.getElementById('est_empresaId')||{}).value||estado.empresaId||'';
+  if(!empresaId){mostrarAlerta('alertaEstoque','warn','Selecione a empresa para exportar o CSV.');return;}
+  var qs='?empresaId='+encodeURIComponent(empresaId);
+  if(v('est_dtIni'))qs+='&dtIni='+encodeURIComponent(v('est_dtIni'));
+  if(v('est_dtFim'))qs+='&dtFim='+encodeURIComponent(v('est_dtFim'));
+  window.open(API+'/api/produto/estoque/csv'+qs,'_blank');
 }
 
 var itens=[];
@@ -1152,7 +2021,7 @@ async function emitirNFe(){
   if(itensList.some(function(it){return!it.produtoId;})){mostrarAlerta('alertaEmitir','error','Selecione o produto em todos os itens.');return;}
   spin('spinEmitir',true);
   try{
-    var body={empresaId:estado.empresaId,clienteId:td==='anonimo'?null:estado.clienteId,naturezaOperacao:v('n_natureza')||'Venda de Mercadoria',serie:v('n_serie')||'1',itens:itensList,valorFrete:parseFloat(v('n_frete'))||0,valorSeguro:0,valorDesconto:parseFloat(v('n_desconto'))||0,informacaoComplementar:v('n_info')||null};
+    var body={empresaId:estado.empresaId,clienteId:td==='anonimo'?null:estado.clienteId,naturezaOperacao:v('n_natureza')||'Venda de Mercadoria',serie:v('n_serie')||'1',itens:itensList,valorFrete:parseFloat(v('n_frete'))||0,valorSeguro:0,valorDesconto:parseFloat(v('n_desconto'))||0,formaPagamento:v('n_pag')||'01',informacaoComplementar:v('n_info')||null};
     if(td==='anonimo'){body.destinatarioCpfCnpj=null;body.destinatarioNome=null;}
     var res=await fetch(API+'/api/nfe/emitir',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     var data=await safeJson(res);
@@ -1421,7 +2290,7 @@ async function emitirNFCe(){
   spin('spinNfce',true);
   try{
     var cpf=v('nfce_cpf').replace(/\D/g,'');
-    var body={empresaId:estado.empresaId,itens:itensList,serie:v('nfce_serie')||'1',cpfConsumidor:cpf||null,valorFrete:parseFloat(v('nfce_frete'))||0,valorDesconto:0,formaPagamento:v('nfce_pag')||'01',informacaoComplementar:v('nfce_info')||null};
+    var body={empresaId:estado.empresaId,itens:itensList,serie:v('nfce_serie')||'1',cpfConsumidor:cpf||null,valorFrete:parseFloat(v('nfce_frete'))||0,valorDesconto:parseFloat(v('nfce_desconto'))||0,formaPagamento:v('nfce_pag')||'01',informacaoComplementar:v('nfce_info')||null};
     var res=await fetch(API+'/api/nfe/emitir-nfce',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     var data=await safeJson(res);
     var resultEl=document.getElementById('resultNfce');resultEl.style.display='block';
@@ -1454,16 +2323,194 @@ function importarXmlEntrada(){
     var file=e.target.files[0];if(!file)return;
     var reader=new FileReader();
     reader.onload=async function(ev){
+      // FileReader.readAsBinaryString retorna string binária — converter para base64
       var base64=btoa(ev.target.result);
+      document.getElementById('complementoFiscalSection').style.display='none';
+      spin('spinImportXml',true);
       try{
-        var res=await fetchAuth(API+'/api/nfe/importar-xml-entrada',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({empresaId:empId,xmlBase64:base64})});
+        var res=await fetchAuth(API+'/api/nfe/previsualizar-xml-entrada',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({empresaId:empId,xmlBase64:base64})});
         var data=await safeJson(res);
-        mostrarAlerta('alertaEntrada',data.sucesso?'success':'error',data.mensagem||(data.sucesso?'Importado!':'Erro'));
+        if(data.sucesso){
+          importacaoXmlPendente={empresaId:empId,xmlBase64:base64,chaveAcesso:data.chaveAcesso||null};
+          var msg=data.mensagem||'Pré-visualização carregada.';
+          if(data.fornecedor){
+            msg+=' | Fornecedor: '+data.fornecedor.nome+(data.fornecedor.jaExistia?' (já cadastrado)':' (cadastrado agora)');
+          }
+          mostrarAlerta('alertaEntrada','success',msg);
+          if(data.produtosCriados&&data.produtosCriados.length>0){
+            mostrarComplementoFiscal(data.produtosCriados);
+          } else {
+            mostrarAlerta('alertaEntrada','error','XML sem itens de produto para importar.');
+          }
+        } else {
+          mostrarAlerta('alertaEntrada','error',data.mensagem||data.erro||'Erro ao importar XML');
+        }
       }catch(ex){mostrarAlerta('alertaEntrada','error','Erro: '+ex.message);}
+      finally{spin('spinImportXml',false);}
     };
     reader.readAsBinaryString(file);
   };
   input.click();
+}
+
+function mostrarComplementoFiscal(produtos){
+  var container=document.getElementById('complementoProdutosContainer');
+  container.innerHTML='';
+  produtos.forEach(function(p,idx){
+    var id=p.id||('novo_'+idx);
+    var itemNumero=Number(p.itemNumero||idx+1);
+    var jaLabel=p.jaExistia?'<span style="background:#ECC94B;color:#744210;padding:2px 8px;border-radius:10px;font-size:0.75rem">já existia</span>':'<span style="background:#38A169;color:white;padding:2px 8px;border-radius:10px;font-size:0.75rem">novo</span>';
+    var card=document.createElement('div');
+    card.className='complemento-card';
+    card.id='complemento-'+id;
+    card.setAttribute('data-produto-id',id);
+    card.setAttribute('data-item-numero',String(itemNumero));
+    card.style.cssText='border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:16px;background:#fff;transition:opacity .3s';
+    card.innerHTML=
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+        +'<div style="display:flex;align-items:center;gap:8px"><strong style="font-size:1rem">Item '+itemNumero+' · '+escHtml(p.nome)+'</strong>'+jaLabel+'</div>'
+      +'</div>'
+      +'<div style="background:#f7fafc;border:1px solid #e2e8f0;border-radius:6px;padding:12px;margin-bottom:14px">'
+        +'<div style="font-size:0.72rem;font-weight:600;color:#718096;letter-spacing:.05em;margin-bottom:8px">EXTRAÍDO AUTOMATICAMENTE DO XML</div>'
+        +'<div class="grid3">'
+          +'<div class="field"><label>NCM</label><input disabled value="'+escHtml(p.ncm||'')+'"></div>'
+          +'<div class="field"><label>Unidade</label><input disabled value="'+escHtml(p.unidade||'UN')+'"></div>'
+          +'<div class="field"><label>EAN / GTIN</label><input disabled value="'+escHtml(p.ean||'-')+'"></div>'
+        +'</div>'
+        +'<div class="grid3">'
+          +'<div class="field"><label>CEST</label><input disabled value="'+escHtml(p.cest||'-')+'"></div>'
+          +'<div class="field"><label>Custo unitário (R$)</label><input disabled value="'+Number(p.custo||0).toFixed(2)+'"></div>'
+          +'<div class="field"></div>'
+        +'</div>'
+      +'</div>'
+      +'<div>'
+        +'<div style="font-size:0.72rem;font-weight:600;color:#2b6cb0;letter-spacing:.05em;margin-bottom:8px">PREENCHER MANUALMENTE (DADOS DE VENDA)</div>'
+        +'<div class="grid3">'
+          +'<div class="field"><label>Preço de Venda (R$) <span class="req">*</span></label>'
+            +'<input type="number" id="comp_preco_'+id+'" step="0.01" min="0" placeholder="0,00"></div>'
+          +'<div class="field"><label>Código Interno / SKU</label>'
+            +'<input id="comp_codigo_'+id+'" maxlength="50" placeholder="código próprio da loja"></div>'
+          +'<div class="field"><label>CFOP de Venda</label>'
+            +'<input id="comp_cfop_'+id+'" maxlength="4" placeholder="ex: 5102"></div>'
+        +'</div>'
+        +'<div class="grid3">'
+          +'<div class="field"><label>cClassTrib IBS/CBS <span class="req">*</span></label>'
+            +'<select id="comp_cclasstrib_'+id+'" class="comp-cclasstrib" data-selected="'+escHtml(p.cClassTrib||'')+'" data-cst-target="comp_cstibscbs_'+id+'" onchange="aplicarClassificacaoComplemento(\''+id+'\')"><option value="">Selecione...</option></select></div>'
+          +'<div class="field"><label>CST IBS/CBS</label>'
+            +'<input id="comp_cstibscbs_'+id+'" maxlength="3" readonly></div>'
+          +'<div class="field"><label>Tipo Alíquota IBS/CBS</label>'
+            +'<input id="comp_tipoaliq_'+id+'" readonly></div>'
+        +'</div>'
+        +'<div class="grid3">'
+          +'<div class="field"><label>Categoria</label>'
+            +'<input id="comp_categoria_'+id+'" maxlength="80" placeholder="ex: Bebidas, Alimentos..."></div>'
+          +'<div class="field"><label>Organização / Setor</label>'
+            +'<input id="comp_organizacao_'+id+'" maxlength="80" placeholder="ex: Gôndola 3, Setor A"></div>'
+          +'<div class="field"><label>Padronização</label>'
+            +'<input id="comp_padronizacao_'+id+'" maxlength="80" placeholder="ex: Unitário, Caixa com 12"></div>'
+        +'</div>'
+      +'</div>';
+    container.appendChild(card);
+
+    preencherSelectClassTrib('comp_cclasstrib_'+id, p.cClassTrib||'');
+    aplicarClassificacaoComplemento(id);
+  });
+  var sec=document.getElementById('complementoFiscalSection');
+  sec.style.display='block';
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function escHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function aplicarClassificacaoComplemento(produtoId){
+  var item=aplicarClassificacaoPorCodigo('comp_cclasstrib_'+produtoId,'comp_cstibscbs_'+produtoId);
+  var tipoEl=document.getElementById('comp_tipoaliq_'+produtoId);
+  if(tipoEl)tipoEl.value=item&&item.tipoAliquota?item.tipoAliquota:'';
+  return item;
+}
+
+function coletarComplementosImportacao(){
+  var cards=document.querySelectorAll('.complemento-card');
+  var complementos=[];
+  var pendencias=[];
+  for(var c of cards){
+    var id=c.getAttribute('data-produto-id');
+    var itemNumero=parseInt(c.getAttribute('data-item-numero')||'0',10);
+    var preco=parseFloat(document.getElementById('comp_preco_'+id)?.value||'0');
+    var classTrib=aplicarClassificacaoComplemento(id);
+    var cfop=(document.getElementById('comp_cfop_'+id)?.value||'').trim();
+    var cClassTrib=(document.getElementById('comp_cclasstrib_'+id)?.value||'').trim();
+    var cstIbsCbs=(document.getElementById('comp_cstibscbs_'+id)?.value||'').trim();
+
+    var msgs=[];
+    if(!preco||preco<=0)msgs.push('preço de venda');
+    if(!classTrib||!cClassTrib)msgs.push('cClassTrib');
+    if(!cstIbsCbs)msgs.push('CST IBS/CBS');
+    if(!cfop||!/^[0-9]{4}$/.test(cfop))msgs.push('CFOP de venda');
+
+    if(msgs.length){
+      pendencias.push('Item '+itemNumero+': '+msgs.join(', '));
+      c.style.borderColor='#E53E3E';
+      continue;
+    }
+
+    c.style.borderColor='#38A169';
+    complementos.push({
+      itemNumero:itemNumero,
+      precoVenda:preco,
+      cClassTrib:cClassTrib,
+      cstIbsCbs:cstIbsCbs,
+      cfop:cfop,
+      codigoInterno:(document.getElementById('comp_codigo_'+id)?.value||'').trim()||null,
+      categoria:(document.getElementById('comp_categoria_'+id)?.value||'').trim()||null,
+      organizacao:(document.getElementById('comp_organizacao_'+id)?.value||'').trim()||null,
+      padronizacao:(document.getElementById('comp_padronizacao_'+id)?.value||'').trim()||null
+    });
+  }
+  return {ok:pendencias.length===0,pendencias:pendencias,complementos:complementos};
+}
+
+async function enviarImportacaoXml(){
+  if(!importacaoXmlPendente){
+    mostrarAlerta('alertaEntrada','error','Faça o upload de um XML para pré-visualizar antes de enviar.');
+    return;
+  }
+
+  var coleta=coletarComplementosImportacao();
+  if(!coleta.ok){
+    mostrarAlerta('alertaEntrada','error','Preencha todos os complementos obrigatórios antes de enviar: '+coleta.pendencias.join(' | '));
+    return;
+  }
+
+  var btn=document.getElementById('btnEnviarImportacaoXml');
+  if(btn)btn.disabled=true;
+  try{
+    var res=await fetchAuth(API+'/api/nfe/importar-xml-entrada',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        empresaId:importacaoXmlPendente.empresaId,
+        xmlBase64:importacaoXmlPendente.xmlBase64,
+        confirmarImportacao:true,
+        complementos:coleta.complementos
+      })
+    });
+    var data=await safeJson(res);
+    if(res.ok&&data.sucesso){
+      mostrarAlerta('alertaEntrada','success',data.mensagem||'Nota importada com sucesso!');
+      importacaoXmlPendente=null;
+      document.getElementById('complementoFiscalSection').style.display='none';
+      document.getElementById('complementoProdutosContainer').innerHTML='';
+    } else {
+      mostrarAlerta('alertaEntrada','error',data.mensagem||data.erro||'Erro ao enviar importação');
+    }
+  }catch(ex){
+    mostrarAlerta('alertaEntrada','error','Erro: '+ex.message);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
 }
 
 function exportarXmlLote(){
@@ -1502,22 +2549,6 @@ function downloadSpedBlocoH(){
   if(!empId||!ini||!fim){mostrarAlerta('alertaSped','error','Preencha empresa e periodo.');return;}
   window.open(API+'/api/nfe/sped?empresaId='+encodeURIComponent(empId)+'&dataInicio='+ini+'&dataFim='+fim,'_blank');
   mostrarAlerta('alertaSped','info','Bloco H incluido no arquivo SPED EFD (registros H001/H005/H010/H990).');
-}
-
-function downloadEfdContrib(){
-  limparAlerta('alertaEfc');
-  var empId=v('efc_empresaId'),ini=v('efc_ini'),fim=v('efc_fim');
-  if(!empId){mostrarAlerta('alertaEfc','error','EmpresaId e obrigatorio.');return;}
-  if(!ini||!fim){mostrarAlerta('alertaEfc','error','Informe a data de inicio e fim.');return;}
-  window.open(API+'/api/nfe/efd-contribuicoes?empresaId='+encodeURIComponent(empId)+'&dataInicio='+ini+'&dataFim='+fim,'_blank');
-}
-
-function preencherMesAtualEfc(){
-  var now=new Date();
-  var y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0');
-  var ultimo=new Date(y,now.getMonth()+1,0).getDate();
-  document.getElementById('efc_ini').value=y+'-'+m+'-01';
-  document.getElementById('efc_fim').value=y+'-'+m+'-'+String(ultimo).padStart(2,'0');
 }
 
 async function emitirNfse(){
@@ -1601,6 +2632,313 @@ async function fazerLogout() {
   window.location.href = '/login.html';
 }
 
+// ── Modal alterar senha ──────────────────────────────────────────────────────
+function abrirModalSenha() {
+  var modal = document.getElementById('modal-senha');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modal-senha';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999';
+    modal.innerHTML = '<div style="background:#fff;border-radius:12px;padding:32px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,.2)">'
+      + '<h3 style="margin:0 0 20px;font-size:1.1rem;color:#1a202c">Alterar Senha</h3>'
+      + '<label style="font-size:.85rem;color:#4a5568;margin-bottom:4px;display:block">Senha atual</label>'
+      + '<input type="password" id="ms-atual" placeholder="Sua senha atual" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:1rem;margin-bottom:14px;outline:none" />'
+      + '<label style="font-size:.85rem;color:#4a5568;margin-bottom:4px;display:block">Nova senha (min. 6 caracteres)</label>'
+      + '<input type="password" id="ms-nova" placeholder="Nova senha" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:1rem;margin-bottom:14px;outline:none" />'
+      + '<label style="font-size:.85rem;color:#4a5568;margin-bottom:4px;display:block">Confirmar nova senha</label>'
+      + '<input type="password" id="ms-conf" placeholder="Confirmar nova senha" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:1rem;margin-bottom:20px;outline:none" />'
+      + '<div id="ms-msg" style="display:none;margin-bottom:14px;padding:10px 14px;border-radius:8px;font-size:.9rem"></div>'
+      + '<div style="display:flex;gap:10px">'
+      + '<button onclick="fecharModalSenha()" style="flex:1;padding:10px;border-radius:8px;border:2px solid #e2e8f0;background:#fff;cursor:pointer;font-size:.95rem">Cancelar</button>'
+      + '<button id="ms-btn" onclick="salvarSenha()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#3b82f6;color:#fff;font-weight:600;cursor:pointer;font-size:.95rem">Salvar</button>'
+      + '</div></div>';
+    document.body.appendChild(modal);
+    modal.addEventListener('click', function(e) { if (e.target === modal) fecharModalSenha(); });
+  }
+  modal.style.display = 'flex';
+  document.getElementById('ms-atual').value = '';
+  document.getElementById('ms-nova').value  = '';
+  document.getElementById('ms-conf').value  = '';
+  document.getElementById('ms-msg').style.display = 'none';
+  document.getElementById('ms-btn').disabled = false;
+  document.getElementById('ms-btn').textContent = 'Salvar';
+  setTimeout(function() { document.getElementById('ms-atual').focus(); }, 100);
+}
+
+function fecharModalSenha() {
+  var modal = document.getElementById('modal-senha');
+  if (modal) modal.style.display = 'none';
+}
+
+async function salvarSenha() {
+  var atual = document.getElementById('ms-atual').value;
+  var nova  = document.getElementById('ms-nova').value;
+  var conf  = document.getElementById('ms-conf').value;
+  var msgEl = document.getElementById('ms-msg');
+
+  function showMsg(txt, tipo) {
+    msgEl.textContent = txt;
+    msgEl.style.background = tipo === 'error' ? '#fee2e2' : '#d1fae5';
+    msgEl.style.color = tipo === 'error' ? '#991b1b' : '#065f46';
+    msgEl.style.display = '';
+  }
+
+  if (!atual) { showMsg('Digite a senha atual.', 'error'); return; }
+  if (!nova || nova.length < 6) { showMsg('A nova senha deve ter ao menos 6 caracteres.', 'error'); return; }
+  if (nova !== conf) { showMsg('As senhas nao coincidem.', 'error'); return; }
+
+  var btn = document.getElementById('ms-btn');
+  btn.disabled = true; btn.textContent = 'Salvando...';
+
+  try {
+    var res = await fetchAuth('/api/auth/alterar-senha', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ senhaAtual: atual, novaSenha: nova })
+    });
+    var data = await res.json();
+    if (!res.ok) { showMsg(data.error || 'Erro ao alterar senha.', 'error'); btn.disabled = false; btn.textContent = 'Salvar'; return; }
+    showMsg(data.message || 'Senha alterada com sucesso!', 'success');
+    setTimeout(fecharModalSenha, 2000);
+  } catch(e) {
+    showMsg('Falha de rede.', 'error');
+    btn.disabled = false; btn.textContent = 'Salvar';
+  }
+}
+
+// ── Theme customizer (paint icon no header) ─────────────────────────────────
+const THEME_STORAGE_KEY = 'jubilados_theme_custom_v1';
+
+function clamp(val, min, max) {
+  return Math.min(max, Math.max(min, val));
+}
+
+function normalizeHex(hex) {
+  if (!hex) return null;
+  const raw = hex.trim().replace('#', '');
+  if (!/^[0-9a-fA-F]{6}$/.test(raw)) return null;
+  return '#' + raw.toUpperCase();
+}
+
+function hexToHsl(hex) {
+  const safe = normalizeHex(hex);
+  if (!safe) return null;
+  const n = safe.slice(1);
+  const r = parseInt(n.slice(0, 2), 16) / 255;
+  const g = parseInt(n.slice(2, 4), 16) / 255;
+  const b = parseInt(n.slice(4, 6), 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const d = max - min;
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (d !== 0) {
+    s = d / (1 - Math.abs(2 * l - 1));
+    switch (max) {
+      case r: h = 60 * (((g - b) / d) % 6); break;
+      case g: h = 60 * (((b - r) / d) + 2); break;
+      default: h = 60 * (((r - g) / d) + 4); break;
+    }
+  }
+  if (h < 0) h += 360;
+  return {
+    h: Math.round(h),
+    s: Math.round(s * 100),
+    l: Math.round(l * 100)
+  };
+}
+
+function hslCss(h, s, l, a) {
+  if (typeof a === 'number') return 'hsl(' + h + ' ' + s + '% ' + l + '% / ' + a + ')';
+  return 'hsl(' + h + ' ' + s + '% ' + l + '%)';
+}
+
+function getThemeStateFromUI() {
+  return {
+    primaryHex: normalizeHex((document.getElementById('themePrimaryColor') || {}).value) || '#0ED98A',
+    primaryLightness: clamp(parseInt((document.getElementById('themePrimaryLightness') || {}).value || '48', 10), 18, 82),
+    primaryOpacity: clamp(parseInt((document.getElementById('themePrimaryOpacity') || {}).value || '100', 10), 10, 100),
+    accentHex: normalizeHex((document.getElementById('themeAccentColor') || {}).value) || '#0CE4F5',
+    accentOpacity: clamp(parseInt((document.getElementById('themeAccentOpacity') || {}).value || '100', 10), 10, 100),
+    uiOpacity: clamp(parseInt((document.getElementById('themeUiOpacity') || {}).value || '100', 10), 55, 100)
+  };
+}
+
+function syncThemeLabels(state) {
+  const setText = function(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+  setText('themePrimaryHex', state.primaryHex);
+  setText('themeAccentHex', state.accentHex);
+  setText('themePrimaryLightnessVal', state.primaryLightness + '%');
+  setText('themePrimaryOpacityVal', state.primaryOpacity + '%');
+  setText('themeAccentOpacityVal', state.accentOpacity + '%');
+  setText('themeUiOpacityVal', state.uiOpacity + '%');
+}
+
+function applyThemeState(state) {
+  const root = document.documentElement;
+  const p = hexToHsl(state.primaryHex) || { h: 158, s: 84, l: 48 };
+  const a = hexToHsl(state.accentHex) || { h: 190, s: 95, l: 55 };
+
+  const primaryL = clamp(state.primaryLightness, 18, 82);
+  const primaryDarkL = clamp(primaryL - 10, 8, 70);
+  const primaryGlowL = clamp(primaryL + 12, 20, 95);
+
+  const primaryAlpha = state.primaryOpacity / 100;
+  const accentAlpha = state.accentOpacity / 100;
+  const uiAlpha = state.uiOpacity / 100;
+
+  root.style.setProperty('--primary', hslCss(p.h, p.s, primaryL));
+  root.style.setProperty('--primary-dark', hslCss(p.h, p.s, primaryDarkL));
+  root.style.setProperty('--primary-glow', hslCss(p.h, p.s, primaryGlowL));
+  root.style.setProperty('--primary-sub', hslCss(p.h, p.s, primaryL, (0.14 * primaryAlpha).toFixed(3)));
+  root.style.setProperty('--primary-border', hslCss(p.h, p.s, primaryL, (0.34 * primaryAlpha).toFixed(3)));
+
+  root.style.setProperty('--accent', hslCss(a.h, a.s, a.l));
+  root.style.setProperty('--accent-sub', hslCss(a.h, a.s, a.l, (0.12 * accentAlpha).toFixed(3)));
+
+  root.style.setProperty('--shadow-glow', '0 0 40px ' + hslCss(a.h, a.s, a.l, (0.28 * accentAlpha).toFixed(3)));
+  root.style.setProperty('--grad-primary', 'linear-gradient(135deg, ' + hslCss(p.h, p.s, primaryL) + ', ' + hslCss(a.h, a.s, a.l) + ')');
+  root.style.setProperty('--grad-glow', 'radial-gradient(circle at 50% 0%, ' + hslCss(p.h, p.s, primaryL, (0.18 * primaryAlpha).toFixed(3)) + ', ' + hslCss(a.h, a.s, a.l, (0.14 * accentAlpha).toFixed(3)) + ' 35%, transparent 70%)');
+  root.style.setProperty('--ui-opacity', uiAlpha.toFixed(3));
+
+  syncThemeLabels(state);
+}
+
+function saveThemeState(state) {
+  localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadThemeState() {
+  try {
+    const raw = localStorage.getItem(THEME_STORAGE_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    return {
+      primaryHex: normalizeHex(p.primaryHex) || '#0ED98A',
+      primaryLightness: clamp(parseInt(p.primaryLightness, 10) || 48, 18, 82),
+      primaryOpacity: clamp(parseInt(p.primaryOpacity, 10) || 100, 10, 100),
+      accentHex: normalizeHex(p.accentHex) || '#0CE4F5',
+      accentOpacity: clamp(parseInt(p.accentOpacity, 10) || 100, 10, 100),
+      uiOpacity: clamp(parseInt(p.uiOpacity, 10) || 100, 55, 100)
+    };
+  } catch {
+    return null;
+  }
+}
+
+function fillThemeUI(state) {
+  const setValue = function(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.value = value;
+  };
+  setValue('themePrimaryColor', state.primaryHex.toLowerCase());
+  setValue('themePrimaryText', state.primaryHex);
+  setValue('themePrimaryLightness', String(state.primaryLightness));
+  setValue('themePrimaryOpacity', String(state.primaryOpacity));
+
+  setValue('themeAccentColor', state.accentHex.toLowerCase());
+  setValue('themeAccentText', state.accentHex);
+  setValue('themeAccentOpacity', String(state.accentOpacity));
+
+  setValue('themeUiOpacity', String(state.uiOpacity));
+}
+
+function initThemeCustomizer() {
+  const panel = document.getElementById('themePopover');
+  const btn = document.getElementById('themePaintBtn');
+  const closeBtn = document.getElementById('themeCloseBtn');
+  const container = document.getElementById('themeCustomizer');
+  if (!panel || !btn || !closeBtn || !container) return;
+
+  const saved = loadThemeState() || {
+    primaryHex: '#0ED98A',
+    primaryLightness: 48,
+    primaryOpacity: 100,
+    accentHex: '#0CE4F5',
+    accentOpacity: 100,
+    uiOpacity: 100
+  };
+  fillThemeUI(saved);
+  applyThemeState(saved);
+
+  const applyFromUi = function() {
+    const state = getThemeStateFromUI();
+    applyThemeState(state);
+    saveThemeState(state);
+  };
+
+  ['themePrimaryColor','themePrimaryLightness','themePrimaryOpacity','themeAccentColor','themeAccentOpacity','themeUiOpacity'].forEach(function(id){
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', function() {
+      if (id === 'themePrimaryColor') {
+        const txt = document.getElementById('themePrimaryText');
+        if (txt) txt.value = normalizeHex(el.value) || '#0ED98A';
+      }
+      if (id === 'themeAccentColor') {
+        const txt = document.getElementById('themeAccentText');
+        if (txt) txt.value = normalizeHex(el.value) || '#0CE4F5';
+      }
+      applyFromUi();
+    });
+  });
+
+  ['themePrimaryText','themeAccentText'].forEach(function(id){
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('change', function() {
+      const normalized = normalizeHex(el.value);
+      if (!normalized) {
+        el.value = id === 'themePrimaryText' ? '#0ED98A' : '#0CE4F5';
+      } else {
+        el.value = normalized;
+        const colorInput = document.getElementById(id === 'themePrimaryText' ? 'themePrimaryColor' : 'themeAccentColor');
+        if (colorInput) colorInput.value = normalized.toLowerCase();
+      }
+      applyFromUi();
+    });
+  });
+
+  document.querySelectorAll('.theme-swatches .theme-swatch').forEach(function(swatch) {
+    swatch.addEventListener('click', function() {
+      const color = normalizeHex(swatch.getAttribute('data-color') || '');
+      if (!color) return;
+      const swatchRow = swatch.parentElement;
+      const targetId = swatchRow ? swatchRow.getAttribute('data-target') : null;
+      if (!targetId) return;
+      const colorInput = document.getElementById(targetId);
+      if (colorInput) colorInput.value = color.toLowerCase();
+      const textInputId = targetId === 'themePrimaryColor' ? 'themePrimaryText' : 'themeAccentText';
+      const txt = document.getElementById(textInputId);
+      if (txt) txt.value = color;
+      applyFromUi();
+    });
+  });
+
+  btn.addEventListener('click', function() {
+    panel.hidden = !panel.hidden;
+  });
+
+  closeBtn.addEventListener('click', function() {
+    panel.hidden = true;
+  });
+
+  document.addEventListener('click', function(e) {
+    if (panel.hidden) return;
+    if (!container.contains(e.target)) panel.hidden = true;
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') panel.hidden = true;
+  });
+}
+
+initThemeCustomizer();
+
 // ── Auth guard: usa token local armazenado no localStorage ──────────────────
 (function() {
   var token = localStorage.getItem('jubilados_token');
@@ -1617,76 +2955,84 @@ async function fazerLogout() {
   } catch(e) {}
   var logoutBtn = document.getElementById('btnLogout');
   if (logoutBtn) logoutBtn.style.display = '';
+  var senhaBtn = document.getElementById('btnAlterarSenha');
+  if (senhaBtn) senhaBtn.style.display = '';
+  var avatarEl = document.getElementById('headerAvatar');
+  if (avatarEl) { avatarEl.style.display = ''; }
 })();
 
-estado.empresaId='dd104b57-010a-4458-8699-d63807e205d3';
-estado.cnpj='21362844000152';
-estado.clienteId='0865f76e-bff7-48ef-8b02-f24b6a468e3d';
-estado.clienteNome='WURTH DO BRASIL';
-estado.tipoDest='cnpj';
-tipoDest='cnpj';
-estado.produtoId='9ae15d08-81e9-4767-911e-8faf96ad2821';
-estado.produtoNome='Produto Teste Homologacao';
-produtosCadastrados=[{id:estado.produtoId,nome:estado.produtoNome,preco:100,unidade:'UN'}];
-clientesCadastrados=[{id:estado.clienteId,nome:estado.clienteNome,cpf_CNPJ:'43648971003170'}];
-estado.ultimaChave='25260421362844000152550010000000241754171544';
-estado.ultimaNotaId='3e7fc1b1-1306-4793-aba0-b1a76ac58207';
+// Carrega dados da empresa do usuário logado dinamicamente
+async function carregarDadosEmpresa() {
+  try {
+    const res = await fetchAuth('/api/auth/me');
+    if (!res.ok) { window.location.href = '/login.html'; return; }
+    const perfil = await res.json();
+    if (!perfil.onboardingConcluido) { window.location.href = '/onboarding.html'; return; }
 
-document.getElementById('empresaIdLabel').textContent='ID: '+estado.empresaId;
-document.getElementById('clienteIdLabel').textContent='ID: '+estado.clienteId;
-document.getElementById('clienteIdLabelCnpj').textContent='ID: '+estado.clienteId;
-document.getElementById('produtoIdLabel').textContent='ID: '+estado.produtoId;
+    const empresaId = perfil.empresaId || perfil.empresa?.id;
+    if (!empresaId) { window.location.href = '/onboarding.html'; return; }
 
-document.getElementById('e_cnpj').value='21362844000152';
-document.getElementById('e_razao').value='Orlando Lucindo de Pontes Neto Materiais de Construcao';
-document.getElementById('e_fantasia').value='Azulzao da Construcao';
-document.getElementById('e_ie').value='162421303';
-document.getElementById('e_fone').value='83998347220';
-document.getElementById('e_logradouro').value='R OTAVIANO D MONTEIRO P FILHO';
-document.getElementById('e_numero').value='19';
-document.getElementById('e_complemento').value='BOX B';
-document.getElementById('e_bairro').value='FUNCIONARIOS';
-document.getElementById('e_municipio').value='JOAO PESSOA';
-document.getElementById('e_uf').value='PB';
-document.getElementById('e_cep').value='58078340';
+    // Busca dados completos da empresa
+    const resE = await fetchAuth('/api/empresa/' + empresaId);
+    if (!resE.ok) throw new Error('Empresa não encontrada.');
+    const e = await resE.json();
 
-document.getElementById('c_nome').value='';
-document.getElementById('c_cpfcnpj').value='';
+    estado.empresaId = e.id || e.Id;
+    estado.cnpj      = e.cnpj || e.CNPJ || '';
 
-document.getElementById('c_nome_cnpj').value='WURTH DO BRASIL PECAS DE FIXACAO LTDA';
-document.getElementById('c_cpfcnpj_cnpj').value='43648971003170';
-document.getElementById('c_ie_cnpj').value='161585078';
-document.getElementById('c_fone_cnpj').value='1146131900';
-document.getElementById('c_logradouro_cnpj').value='ROD BR-230';
-document.getElementById('c_numero_cnpj').value='SN';
-document.getElementById('c_complemento_cnpj').value='KM28 SALA 00003';
-document.getElementById('c_bairro_cnpj').value='CRISTO REDENTOR';
-document.getElementById('c_municipio_cnpj').value='JOAO PESSOA';
-document.getElementById('c_codmun_cnpj').value='2507507';
-document.getElementById('c_uf_cnpj').value='PB';
-document.getElementById('c_cep_cnpj').value='58071680';
+    // Preenche formulário de emissão
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+    set('e_cnpj',        e.cnpj        || e.CNPJ);
+    set('e_razao',       e.razaoSocial || e.RazaoSocial);
+    set('e_fantasia',    e.nomeFantasia || e.NomeFantasia);
+    set('e_ie',          e.inscricaoEstadual || e.InscricaoEstadual);
+    set('e_fone',        e.telefone    || e.Telefone);
+    set('e_email',       e.email       || e.Email);
+    set('e_logradouro',  e.logradouro  || e.Logradouro);
+    set('e_numero',      e.numero      || e.Numero);
+    set('e_complemento', e.complemento || e.Complemento);
+    set('e_bairro',      e.bairro      || e.Bairro);
+    set('e_municipio',   e.municipio   || e.Municipio);
+    set('e_uf',          e.uf          || e.UF || 'PB');
+    set('e_cep',         e.cep         || e.CEP);
+    set('cfg_empresaId', estado.empresaId);
+    set('cfg_cnpj',      e.cnpj        || e.CNPJ);
+    set('cfg_razao',     e.razaoSocial || e.RazaoSocial);
+    set('cfg_fantasia',  e.nomeFantasia || e.NomeFantasia);
+    set('cfg_ie',        e.inscricaoEstadual || e.InscricaoEstadual);
+    set('cfg_cnae',      e.cnae || e.CNAE);
+    set('cfg_regime',    e.regimeTributario || e.RegimeTributario || 'simples_nacional');
+    set('cfg_fone',      e.telefone || e.Telefone);
+    set('cfg_email',     e.email || e.Email);
+    set('cfg_logradouro',e.logradouro || e.Logradouro);
+    set('cfg_numero',    e.numero || e.Numero);
+    set('cfg_complemento',e.complemento || e.Complemento);
+    set('cfg_bairro',    e.bairro || e.Bairro);
+    set('cfg_municipio', e.municipio || e.Municipio);
+    set('cfg_uf',        e.uf || e.UF || 'PB');
+    set('cfg_cep',       e.cep || e.CEP);
+    set('cfg_pis',       e.aliquotaPis || e.AliquotaPis || '0.65');
+    set('cfg_cofins',    e.aliquotaCofins || e.AliquotaCofins || '3.00');
+    set('cfg_csosn',     e.csosnPadrao || e.CSOSNPadrao || '400');
+    const lbEl = document.getElementById('empresaIdLabel');
+    if (lbEl) lbEl.textContent = 'ID: ' + estado.empresaId;
+    mostrarAlerta('alertaEmpresa', 'success',
+      'Empresa ' + (e.razaoSocial || e.CNPJ || estado.cnpj) + ' carregada.');
+  } catch (err) {
+    console.error('Erro ao carregar empresa:', err);
+    mostrarAlerta('alertaEmpresa', 'error', 'Não foi possível carregar os dados da empresa: ' + err.message);
+  }
 
-// inicializa tipo de destinatario no UI (cnpj por padrao com WURTH pre-preenchida)
-selecionarTipoDest('cnpj');
-// restaura cliente/produto apos selecionarTipoDest (que limpa clienteId/clienteNome)
-estado.clienteId='0865f76e-bff7-48ef-8b02-f24b6a468e3d';
-estado.clienteNome='WURTH DO BRASIL';
-estado.produtoId='9ae15d08-81e9-4767-911e-8faf96ad2821';
-estado.produtoNome='Produto Teste Homologacao';
-atualizarEstadoBar();
+  atualizarEstadoBar();
+  verificarCertificadoSalvo();
+  verificarCscSalvo();
+  renderItensNfce();
+  carregarEmpresasSelects();
+}
 
-document.getElementById('cs_chave').value=estado.ultimaChave;
+carregarDadosEmpresa();
+carregarClassificacoesTributarias();
 preencherMesAtual();
-
-mostrarAlerta('alertaEmpresa','success','Empresa Orlando ja cadastrada no banco.');
-mostrarAlerta('alertaClienteCnpj','success','WURTH do Brasil ja cadastrada como destinataria. Clique em Proximo ou selecione outro tipo de destinatario acima.');
-mostrarAlerta('alertaProduto','success','Produto Teste ja registrado. Selecione-o na parte superior da tela.');
-
-atualizarEstadoBar();
-verificarCertificadoSalvo();
-verificarCscSalvo();
-renderItensNfce();
-carregarEmpresasSelects();
 </script>
 </body>
 </html>

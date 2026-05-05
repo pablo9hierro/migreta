@@ -529,6 +529,34 @@ public class NFeController : ControllerBase
     }
 
     /// <summary>
+    /// POST /api/nfe/previsualizar-xml-entrada — Lê XML de entrada sem gravar no banco.
+    /// </summary>
+    [HttpPost("previsualizar-xml-entrada")]
+    public async Task<IActionResult> PrevisualizarXmlEntrada(
+        [FromBody] ImportarXmlRequest req, CancellationToken cancellationToken)
+    {
+        if (req.EmpresaId == Guid.Empty)
+            return BadRequest(new { erro = "EmpresaId é obrigatório." });
+        if (string.IsNullOrWhiteSpace(req.XmlBase64))
+            return BadRequest(new { erro = "XmlBase64 é obrigatório." });
+        try
+        {
+            var resultado = await _entradaService.PrevisualizarXmlEntradaAsync(
+                req.EmpresaId, req.XmlBase64, cancellationToken);
+            return Ok(resultado);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { erro = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[API] Erro ao pré-visualizar XML entrada.");
+            return StatusCode(500, new { erro = "Erro interno." });
+        }
+    }
+
+    /// <summary>
     /// POST /api/nfe/importar-xml-entrada — Importa XML de NF-e de entrada, criando produtos automaticamente.
     /// </summary>
     [HttpPost("importar-xml-entrada")]
@@ -541,8 +569,18 @@ public class NFeController : ControllerBase
             return BadRequest(new { erro = "XmlBase64 é obrigatório." });
         try
         {
+            if (!req.ConfirmarImportacao)
+            {
+                var preview = await _entradaService.PrevisualizarXmlEntradaAsync(
+                    req.EmpresaId, req.XmlBase64, cancellationToken);
+                return Ok(preview);
+            }
+
+            if (req.Complementos is null || req.Complementos.Count == 0)
+                return BadRequest(new { erro = "Envie todos os complementos fiscais obrigatórios para finalizar a importação." });
+
             var resultado = await _entradaService.ImportarXmlEntradaAsync(
-                req.EmpresaId, req.XmlBase64, cancellationToken);
+                req.EmpresaId, req.XmlBase64, req.Complementos, cancellationToken);
             return Ok(resultado);
         }
         catch (InvalidOperationException ex)
@@ -629,4 +667,8 @@ public class NFeController : ControllerBase
 // ── Request helpers ───────────────────────────────────────────────────────────
 
 public record ConsultarNFeRequest(Guid EmpresaId, Guid NotaId = default, string? ChaveAcesso = null);
-public record ImportarXmlRequest(Guid EmpresaId, string XmlBase64);
+public record ImportarXmlRequest(
+    Guid EmpresaId,
+    string XmlBase64,
+    bool ConfirmarImportacao = false,
+    List<ComplementoImportacaoProdutoDto>? Complementos = null);

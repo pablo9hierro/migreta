@@ -41,8 +41,15 @@ public interface InotaEntradaService
     /// <summary>Consulta NFes de entrada via NFeDistribuicaoDFe.</summary>
     Task<EntradaResultDto> ConsultarNotasEntradaAsync(ConsultarEntradaDto dto, CancellationToken cancellationToken = default);
 
-    /// <summary>Importa um XML de NF-e de entrada (base64), cria produtos automaticamente e registra a nota.</summary>
-    Task<ImportarXmlResultDto> ImportarXmlEntradaAsync(Guid empresaId, string xmlBase64, CancellationToken cancellationToken = default);
+    /// <summary>Lê um XML de entrada e retorna os itens para preenchimento de complemento fiscal, sem gravar no banco.</summary>
+    Task<ImportarXmlResultDto> PrevisualizarXmlEntradaAsync(Guid empresaId, string xmlBase64, CancellationToken cancellationToken = default);
+
+    /// <summary>Importa um XML de NF-e de entrada somente após receber todos os complementos obrigatórios por item.</summary>
+    Task<ImportarXmlResultDto> ImportarXmlEntradaAsync(
+        Guid empresaId,
+        string xmlBase64,
+        IReadOnlyList<ComplementoImportacaoProdutoDto> complementos,
+        CancellationToken cancellationToken = default);
 }
 
 public interface ICancelamentoService

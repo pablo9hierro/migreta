@@ -4,6 +4,7 @@ using Jubilados.Domain.Entities;
 using Jubilados.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Xunit;
 
 namespace Jubilados.UnitTests;
@@ -32,7 +33,8 @@ public class CadastroControllerTests
         });
         await db.SaveChangesAsync();
 
-        var controller = new ProdutoController(db);
+        var cache = new MemoryCache(new MemoryCacheOptions());
+        var controller = new ProdutoController(db, new FakeHttpClientFactory(), cache);
         var result = await controller.ListarAsync(empresaId, CancellationToken.None);
 
         var ok = Assert.IsType<OkObjectResult>(result);
@@ -126,5 +128,13 @@ public class CadastroControllerTests
         db.Empresas.Add(empresa);
         db.SaveChanges();
         return empresa.Id;
+    }
+
+    private sealed class FakeHttpClientFactory : IHttpClientFactory
+    {
+        public HttpClient CreateClient(string name)
+        {
+            return new HttpClient();
+        }
     }
 }
