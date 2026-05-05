@@ -976,7 +976,10 @@ public class NFeService : INFeService
         doc.LoadXml(xmlContent);
 
         var signedXml = new NFeSignedXml(doc) { SigningKey = certificado.GetRSAPrivateKey() };
-        var idAttr = doc.DocumentElement!.SelectSingleNode($"//*[@Id]")!.Attributes!["Id"]!.Value;
+        var idNode = doc.DocumentElement!.SelectSingleNode("//*[@Id]");
+        if (idNode?.Attributes?["Id"] is null)
+            throw new InvalidOperationException($"XML não contém atributo Id para assinar (tag esperada: {signedTag}).");
+        var idAttr = idNode.Attributes["Id"]!.Value;
         var reference = new Reference { Uri = $"#{idAttr}" };
         reference.AddTransform(new XmlDsigEnvelopedSignatureTransform());
         reference.AddTransform(new XmlDsigC14NTransform());
@@ -1168,7 +1171,17 @@ public class NFeService : INFeService
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "[NFe] Erro HTTP SEFAZ.");
-            return ("999", $"Erro de comunicaÃ§Ã£o: {ex.Message}", string.Empty);
+            return ("999", $"Erro de comunicação: {ex.Message}", string.Empty);
+        }
+        catch (TaskCanceledException ex)
+        {
+            _logger.LogError(ex, "[NFe] Timeout na comunicação com SEFAZ.");
+            return ("999", "Timeout na comunicação com SEFAZ.", string.Empty);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[NFe] Erro inesperado ao enviar para SEFAZ.");
+            return ("999", $"Erro inesperado: {ex.Message}", string.Empty);
         }
     }
 

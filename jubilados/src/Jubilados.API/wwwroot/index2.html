@@ -1815,7 +1815,7 @@ function filtrarClientes(){
     estado.clienteId=c.id; estado.clienteNome=c.nome;
     document.getElementById('clienteIdLabel').textContent='ID: '+c.id;
     mostrarAlerta('alertaCliente','success','Cliente selecionado: '+c.nome);
-    atualizarEstadoBar();
+    atualizarEstadoBar(); atualizarResumoDestinatario();
   });
 }
 
@@ -1828,7 +1828,7 @@ function filtrarClientesCnpj(){
     estado.clienteId=c.id; estado.clienteNome=c.nome;
     document.getElementById('clienteIdLabelCnpj').textContent='ID: '+c.id;
     mostrarAlerta('alertaClienteCnpj','success','Empresa selecionada: '+c.nome);
-    atualizarEstadoBar();
+    atualizarEstadoBar(); atualizarResumoDestinatario();
   });
 }
 
@@ -1846,7 +1846,7 @@ async function cadastrarCliente(){
     document.getElementById('clienteIdLabel').textContent='ID: '+data.id;
     mostrarAlerta('alertaCliente','success','Cliente salvo! ID: '+data.id);
     clientesCadastrados.push({id:data.id,nome:estado.clienteNome,cpf_CNPJ:v('c_cpfcnpj')});
-    atualizarEstadoBar();
+    atualizarEstadoBar(); atualizarResumoDestinatario();
   }catch(e){mostrarAlerta('alertaCliente','error',e.message);}
   finally{spin('spinCliente',false);}
 }
@@ -1867,7 +1867,7 @@ async function cadastrarClienteCnpj(){
     document.getElementById('clienteIdLabelCnpj').textContent='ID: '+data.id;
     mostrarAlerta('alertaClienteCnpj','success','Empresa salva! ID: '+data.id);
     clientesCadastrados.push({id:data.id,nome:estado.clienteNome,cpf_CNPJ:v('c_cpfcnpj_cnpj')});
-    atualizarEstadoBar();
+    atualizarEstadoBar(); atualizarResumoDestinatario();
   }catch(e){mostrarAlerta('alertaClienteCnpj','error',e.message);}
   finally{spin('spinClienteCnpj',false);}
 }
