@@ -106,6 +106,10 @@
       --muted: rgba(255, 255, 255, 0.58);
       --step-active: rgba(139, 92, 246, 0.18);
       --step-done: rgba(52, 211, 153, 0.16);
+      /* override design-system light vars */
+      --bg-elevated: #0f1322;
+      --input-bg: rgba(255, 255, 255, 0.06);
+      --input-border: rgba(255, 255, 255, 0.16);
     }
 
     html {
@@ -166,9 +170,20 @@
     input,
     select,
     textarea {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.16);
-      color: var(--text);
+      background: rgba(255, 255, 255, 0.04) !important;
+      border-color: rgba(255, 255, 255, 0.16) !important;
+      color: var(--text) !important;
+    }
+
+    select option {
+      background: #0f1322;
+      color: rgba(255, 255, 255, 0.93);
+    }
+
+    select option:hover,
+    select option:checked {
+      background: rgba(139, 92, 246, 0.35);
+      color: #fff;
     }
 
     input::placeholder,
@@ -218,10 +233,10 @@
     .badge-orange { background: rgba(251, 191, 36, 0.22); color: #fde68a; }
     .badge-gray { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
 
-    .alert-info { background: rgba(56, 189, 248, 0.12); border-color: rgba(56, 189, 248, 0.25); color: #93c5fd; }
-    .alert-success { background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.25); color: #86efac; }
-    .alert-error { background: rgba(248, 113, 113, 0.12); border-color: rgba(248, 113, 113, 0.25); color: #fca5a5; }
-    .alert-warn { background: rgba(245, 158, 11, 0.14); border-color: rgba(245, 158, 11, 0.25); color: #fde68a; }
+    .alert-info { background: rgba(56, 189, 248, 0.12) !important; border-color: rgba(56, 189, 248, 0.25) !important; color: #93c5fd !important; }
+    .alert-success { background: rgba(52, 211, 153, 0.12) !important; border-color: rgba(52, 211, 153, 0.25) !important; color: #86efac !important; }
+    .alert-error { background: rgba(248, 113, 113, 0.12) !important; border-color: rgba(248, 113, 113, 0.25) !important; color: #fca5a5 !important; }
+    .alert-warn { background: rgba(245, 158, 11, 0.14) !important; border-color: rgba(245, 158, 11, 0.25) !important; color: #fde68a !important; }
 
     .result-box {
       background: rgba(2, 6, 23, 0.82);
@@ -2600,13 +2615,13 @@ function mostrarComplementoFiscal(produtos){
     card.id='complemento-'+id;
     card.setAttribute('data-produto-id',id);
     card.setAttribute('data-item-numero',String(itemNumero));
-    card.style.cssText='border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:16px;background:#fff;transition:opacity .3s';
+    card.style.cssText='border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px;background:var(--card);transition:opacity .3s';
     card.innerHTML=
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
         +'<div style="display:flex;align-items:center;gap:8px"><strong style="font-size:1rem">Item '+itemNumero+' · '+escHtml(p.nome)+'</strong>'+jaLabel+'</div>'
       +'</div>'
-      +'<div style="background:#f7fafc;border:1px solid #e2e8f0;border-radius:6px;padding:12px;margin-bottom:14px">'
-        +'<div style="font-size:0.72rem;font-weight:600;color:#718096;letter-spacing:.05em;margin-bottom:8px">EXTRAÍDO AUTOMATICAMENTE DO XML</div>'
+      +'<div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:14px">'
+        +'<div style="font-size:0.72rem;font-weight:600;color:var(--muted);letter-spacing:.05em;margin-bottom:8px">EXTRAÍDO AUTOMATICAMENTE DO XML</div>'
         +'<div class="grid3">'
           +'<div class="field"><label>NCM</label><input disabled value="'+escHtml(p.ncm||'')+'"></div>'
           +'<div class="field"><label>Unidade</label><input disabled value="'+escHtml(p.unidade||'UN')+'"></div>'
@@ -2619,7 +2634,7 @@ function mostrarComplementoFiscal(produtos){
         +'</div>'
       +'</div>'
       +'<div>'
-        +'<div style="font-size:0.72rem;font-weight:600;color:#2b6cb0;letter-spacing:.05em;margin-bottom:8px">PREENCHER MANUALMENTE (DADOS DE VENDA)</div>'
+        +'<div style="font-size:0.72rem;font-weight:600;color:var(--primary);letter-spacing:.05em;margin-bottom:8px">PREENCHER MANUALMENTE (DADOS DE VENDA)</div>'
         +'<div class="grid3">'
           +'<div class="field"><label>Preço de Venda (R$) <span class="req">*</span></label>'
             +'<input type="number" id="comp_preco_'+id+'" step="0.01" min="0" placeholder="0,00"></div>'
@@ -2874,18 +2889,18 @@ function abrirModalSenha() {
     modal = document.createElement('div');
     modal.id = 'modal-senha';
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999';
-    modal.innerHTML = '<div style="background:#fff;border-radius:12px;padding:32px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,.2)">'
-      + '<h3 style="margin:0 0 20px;font-size:1.1rem;color:#1a202c">Alterar Senha</h3>'
-      + '<label style="font-size:.85rem;color:#4a5568;margin-bottom:4px;display:block">Senha atual</label>'
-      + '<input type="password" id="ms-atual" placeholder="Sua senha atual" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:1rem;margin-bottom:14px;outline:none" />'
-      + '<label style="font-size:.85rem;color:#4a5568;margin-bottom:4px;display:block">Nova senha (min. 6 caracteres)</label>'
-      + '<input type="password" id="ms-nova" placeholder="Nova senha" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:1rem;margin-bottom:14px;outline:none" />'
-      + '<label style="font-size:.85rem;color:#4a5568;margin-bottom:4px;display:block">Confirmar nova senha</label>'
-      + '<input type="password" id="ms-conf" placeholder="Confirmar nova senha" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:1rem;margin-bottom:20px;outline:none" />'
+    modal.innerHTML = '<div style="background:#0f1322;border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:32px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,.6)">'
+      + '<h3 style="margin:0 0 20px;font-size:1.1rem;color:rgba(255,255,255,0.93)">Alterar Senha</h3>'
+      + '<label style="font-size:.85rem;color:rgba(255,255,255,0.58);margin-bottom:4px;display:block">Senha atual</label>'
+      + '<input type="password" id="ms-atual" placeholder="Sua senha atual" style="width:100%;padding:10px 12px;border:1.5px solid rgba(255,255,255,0.16);border-radius:8px;font-size:1rem;margin-bottom:14px;outline:none;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.93)" />'
+      + '<label style="font-size:.85rem;color:rgba(255,255,255,0.58);margin-bottom:4px;display:block">Nova senha (min. 6 caracteres)</label>'
+      + '<input type="password" id="ms-nova" placeholder="Nova senha" style="width:100%;padding:10px 12px;border:1.5px solid rgba(255,255,255,0.16);border-radius:8px;font-size:1rem;margin-bottom:14px;outline:none;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.93)" />'
+      + '<label style="font-size:.85rem;color:rgba(255,255,255,0.58);margin-bottom:4px;display:block">Confirmar nova senha</label>'
+      + '<input type="password" id="ms-conf" placeholder="Confirmar nova senha" style="width:100%;padding:10px 12px;border:1.5px solid rgba(255,255,255,0.16);border-radius:8px;font-size:1rem;margin-bottom:20px;outline:none;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.93)" />'
       + '<div id="ms-msg" style="display:none;margin-bottom:14px;padding:10px 14px;border-radius:8px;font-size:.9rem"></div>'
       + '<div style="display:flex;gap:10px">'
-      + '<button onclick="fecharModalSenha()" style="flex:1;padding:10px;border-radius:8px;border:2px solid #e2e8f0;background:#fff;cursor:pointer;font-size:.95rem">Cancelar</button>'
-      + '<button id="ms-btn" onclick="salvarSenha()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#3b82f6;color:#fff;font-weight:600;cursor:pointer;font-size:.95rem">Salvar</button>'
+      + '<button onclick="fecharModalSenha()" style="flex:1;padding:10px;border-radius:8px;border:2px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8);cursor:pointer;font-size:.95rem">Cancelar</button>'
+      + '<button id="ms-btn" onclick="salvarSenha()" style="flex:1;padding:10px;border-radius:8px;border:none;background:linear-gradient(135deg,#8b5cf6,#06b6d4);color:#fff;font-weight:600;cursor:pointer;font-size:.95rem">Salvar</button>'
       + '</div></div>';
     document.body.appendChild(modal);
     modal.addEventListener('click', function(e) { if (e.target === modal) fecharModalSenha(); });

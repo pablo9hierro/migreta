@@ -106,6 +106,14 @@
       --muted: rgba(255, 255, 255, 0.58);
       --step-active: rgba(139, 92, 246, 0.18);
       --step-done: rgba(52, 211, 153, 0.16);
+      /* override design-system light vars */
+      --bg-elevated: #0f1322;
+      --input-bg: rgba(255, 255, 255, 0.06);
+      --input-border: rgba(255, 255, 255, 0.16);
+    }
+
+    html {
+      scrollbar-gutter: stable;
     }
 
     body {
@@ -114,6 +122,7 @@
         radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.22), transparent 44%),
         #060a16;
       color: var(--text);
+      overflow-y: scroll;
     }
 
     .card,
@@ -161,9 +170,20 @@
     input,
     select,
     textarea {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.16);
-      color: var(--text);
+      background: rgba(255, 255, 255, 0.04) !important;
+      border-color: rgba(255, 255, 255, 0.16) !important;
+      color: var(--text) !important;
+    }
+
+    select option {
+      background: #0f1322;
+      color: rgba(255, 255, 255, 0.93);
+    }
+
+    select option:hover,
+    select option:checked {
+      background: rgba(139, 92, 246, 0.35);
+      color: #fff;
     }
 
     input::placeholder,
@@ -213,10 +233,10 @@
     .badge-orange { background: rgba(251, 191, 36, 0.22); color: #fde68a; }
     .badge-gray { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
 
-    .alert-info { background: rgba(56, 189, 248, 0.12); border-color: rgba(56, 189, 248, 0.25); color: #93c5fd; }
-    .alert-success { background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.25); color: #86efac; }
-    .alert-error { background: rgba(248, 113, 113, 0.12); border-color: rgba(248, 113, 113, 0.25); color: #fca5a5; }
-    .alert-warn { background: rgba(245, 158, 11, 0.14); border-color: rgba(245, 158, 11, 0.25); color: #fde68a; }
+    .alert-info { background: rgba(56, 189, 248, 0.12) !important; border-color: rgba(56, 189, 248, 0.25) !important; color: #93c5fd !important; }
+    .alert-success { background: rgba(52, 211, 153, 0.12) !important; border-color: rgba(52, 211, 153, 0.25) !important; color: #86efac !important; }
+    .alert-error { background: rgba(248, 113, 113, 0.12) !important; border-color: rgba(248, 113, 113, 0.25) !important; color: #fca5a5 !important; }
+    .alert-warn { background: rgba(245, 158, 11, 0.14) !important; border-color: rgba(245, 158, 11, 0.25) !important; color: #fde68a !important; }
 
     .result-box {
       background: rgba(2, 6, 23, 0.82);
@@ -226,6 +246,271 @@
     .step-item.active .num,
     .step-item.done .num {
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.28);
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, rgba(29, 20, 72, 0.94), rgba(10, 12, 30, 0.95));
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      height: 100vh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.35);
+      border-radius: 999px;
+    }
+
+    .sidebar-group {
+      margin-bottom: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      overflow: hidden;
+    }
+
+    .sidebar-group-toggle {
+      width: 100%;
+      border: 0;
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(255, 255, 255, 0.84);
+      cursor: pointer;
+      text-align: left;
+      font-size: .74rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sidebar-group-toggle:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .sidebar-group-toggle .arrow {
+      transition: transform .2s ease;
+      display: inline-block;
+      font-size: .8rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .sidebar-group-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .22s ease;
+      padding: 0 6px;
+    }
+
+    .sidebar-group.open .sidebar-group-content {
+      max-height: 380px;
+      padding: 6px;
+    }
+
+    .sidebar-group.open .sidebar-group-toggle .arrow {
+      transform: rotate(90deg);
+    }
+
+    .sidebar-group .tab-btn {
+      font-size: .83rem;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      width: 100%;
+      color: rgba(226, 232, 240, 0.78);
+      border: 1px solid transparent;
+    }
+
+    .sidebar-group .tab-btn:hover {
+      background: rgba(139, 92, 246, 0.22) !important;
+      color: rgba(248, 250, 252, 0.98) !important;
+      border-color: rgba(139, 92, 246, 0.38);
+    }
+
+    .sidebar-group .tab-btn.active {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.28), rgba(6, 182, 212, 0.18)) !important;
+      color: #e2e8f0 !important;
+      border: 1px solid rgba(139, 92, 246, 0.45);
+      box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.22) inset;
+    }
+
+    #tab-manifestar .tipo-btn {
+      color: rgba(226, 232, 240, 0.9);
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+
+    #tab-manifestar .tipo-btn small {
+      color: rgba(203, 213, 225, 0.78) !important;
+    }
+
+    #tab-manifestar .tipo-btn:hover {
+      border-color: rgba(34, 211, 238, 0.6);
+      color: rgba(248, 250, 252, 0.98);
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.26), rgba(56, 189, 248, 0.18));
+    }
+
+    #tab-manifestar .tipo-btn:hover small,
+    #tab-manifestar .tipo-btn.selected small {
+      color: rgba(224, 242, 254, 0.95) !important;
+    }
+
+    #tab-consultar select {
+      background: rgba(15, 23, 42, 0.88);
+      color: #e2e8f0;
+      border-color: rgba(56, 189, 248, 0.36);
+    }
+
+    #tab-consultar select:hover,
+    #tab-consultar select:focus {
+      border-color: rgba(34, 211, 238, 0.72);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.16);
+    }
+
+    #tab-consultar select option {
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+
+    /* Evita "efeito sanfona" ao alternar anonimo/CPF/CNPJ no passo de destinatario */
+    #passo1 .card {
+      width: 100% !important;
+      max-width: 100%;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+    #passo1 > .card > div[style*="display:grid"] {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #passo1 #area_anonimo,
+    #passo1 #area_cpf,
+    #passo1 #area_cnpj {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    #passo1 div[style*="display:flex;gap:8px;align-items:flex-end"] {
+      display: flex !important;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: flex-end;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    #passo1 div[style*="display:flex;gap:8px;align-items:flex-end"] .field {
+      flex: 1 1 280px;
+      min-width: 0;
+      width: auto;
+    }
+
+    #passo1 div[style*="display:flex;gap:8px;align-items:flex-end"] .btn {
+      flex: 0 0 auto;
+      max-width: 100%;
+    }
+
+    #passo1 .alert {
+      max-width: 100%;
+      word-break: break-word;
+    }
+
+    #passo1 .tipo-btn {
+      color: rgba(226, 232, 240, 0.92);
+      border-color: rgba(148, 163, 184, 0.38);
+    }
+
+    #passo1 .tipo-btn small {
+      color: rgba(203, 213, 225, 0.88) !important;
+    }
+
+    #passo1 .tipo-btn:hover {
+      color: rgba(248, 250, 252, 0.98);
+      border-color: rgba(34, 211, 238, 0.55);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.24), rgba(14, 165, 233, 0.16));
+    }
+
+    #passo1 .tipo-btn.selected {
+      color: #ecfeff;
+      border-color: rgba(34, 211, 238, 0.75);
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.92), rgba(34, 197, 94, 0.86));
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.26);
+    }
+
+    #passo1 .tipo-btn.selected small {
+      color: rgba(236, 253, 245, 0.96) !important;
+    }
+
+    @media (max-width: 900px) {
+      #passo1 div[style*="grid-template-columns:1fr 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    @media (max-width: 700px) {
+      #passo1 div[style*="display:flex;gap:8px;align-items:flex-end"] .btn {
+        width: 100%;
+      }
+    }
+
+    .sefaz-pill {
+      background: rgba(15, 23, 42, 0.82);
+      border-color: rgba(52, 211, 153, 0.38);
+      color: rgba(226, 232, 240, 0.9);
+    }
+
+    .sefaz-pill strong {
+      color: rgba(148, 163, 184, 0.92);
+    }
+
+    .sefaz-status-text {
+      color: #6ee7b7;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .emitir-hero {
+      margin-bottom: 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      background: linear-gradient(135deg, rgba(30, 41, 99, 0.38), rgba(6, 182, 212, 0.12));
+      padding: 18px 20px;
+    }
+
+    .emitir-hero h2 {
+      font-size: 2.2rem;
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: #f8fafc;
+    }
+
+    .emitir-hero p {
+      margin: 0;
+      color: rgba(226, 232, 240, 0.78);
+      font-size: .92rem;
+    }
+
+    #tab-emitir .stepper {
+      display: none !important;
+    }
+
+    #tab-emitir > [id^="passo"] {
+      display: block !important;
+      margin-bottom: 16px;
+    }
+
+    #tab-emitir .actions button[onclick^="irParaPasso"] {
+      display: none !important;
     }
   </style>
 </head>
@@ -250,25 +535,53 @@
       </div>
     </div>
     <div class="sidebar-section sidebar-nav">
-      <div class="sidebar-label">Emiss&atilde;o</div>
-      <button class="tab-btn active" onclick="showTab('emitir',this)">📄 Emitir NF-e</button>
-      <button class="tab-btn" onclick="showTab('nfce',this)">🧾 Emitir NFC-e</button>
-      <div class="sidebar-label" style="margin-top:12px">Cadastros</div>
-      <button class="tab-btn" onclick="showTab('cad-produtos',this)">📦 Produtos</button>
-      <button class="tab-btn" onclick="showTab('cad-destinatarios',this)">👤 Destinat&aacute;rios</button>
-      <button class="tab-btn" onclick="showTab('cad-fornecedores',this)">🏭 Fornecedores</button>
-      <div class="sidebar-label" style="margin-top:12px">Servi&ccedil;os Fiscais</div>
-      <button class="tab-btn" onclick="showTab('consultar',this)">🔍 Consultar SEFAZ</button>
-      <button class="tab-btn" onclick="showTab('status',this)">📡 Status Servi&ccedil;o</button>
-      <button class="tab-btn" onclick="showTab('inutilizar',this)">🚫 Inutilizar</button>
-      <button class="tab-btn" onclick="showTab('manifestar',this)">💬 Manifesta&ccedil;&atilde;o</button>
-      <button class="tab-btn" onclick="showTab('entrada',this)">📥 Notas Entrada</button>
-      <button class="tab-btn" onclick="showTab('nuvemfiscal',this)">☁️ Nuvem Fiscal</button>
-      <button class="tab-btn" onclick="showTab('cce',this)">📝 CC-e</button>
-      <button class="tab-btn" onclick="showTab('sped',this)">📋 SPED EFD</button>
-      <button class="tab-btn" onclick="showTab('estoque',this)">📊 Estoque</button>
-      <button class="tab-btn" onclick="showTab('nfse',this)">🏛️ NFS-e</button>
-      <button class="tab-btn" onclick="showTab('configuracoes',this)">⚙️ Configurações</button>
+      <div class="sidebar-group open" id="grupo-operacao">
+        <button class="sidebar-group-toggle" type="button" onclick="toggleSidebarGroup('grupo-operacao')">
+          Opera&ccedil;&atilde;o <span class="arrow">&#9654;</span>
+        </button>
+        <div class="sidebar-group-content">
+          <button class="tab-btn active" data-tab="emitir" onclick="showTab('emitir',this)">📄 Emitir NF-e</button>
+          <button class="tab-btn" data-tab="nfce" onclick="showTab('nfce',this)">🧾 Emitir NFC-e</button>
+          <button class="tab-btn" data-tab="nfse" onclick="showTab('nfse',this)">🏛️ NFS-e</button>
+          <button class="tab-btn" data-tab="cce" onclick="showTab('cce',this)">📝 CC-e</button>
+          <button class="tab-btn" data-tab="consultar" onclick="showTab('consultar',this)">🔍 Consultar SEFAZ</button>
+          <button class="tab-btn" data-tab="status" onclick="showTab('status',this)">📡 Status Servi&ccedil;o</button>
+          <button class="tab-btn" data-tab="inutilizar" onclick="showTab('inutilizar',this)">🚫 Inutilizar</button>
+          <button class="tab-btn" data-tab="manifestar" onclick="showTab('manifestar',this)">💬 Manifesta&ccedil;&atilde;o</button>
+          <button class="tab-btn" data-tab="entrada" onclick="showTab('entrada',this)">📥 Notas Entrada</button>
+        </div>
+      </div>
+
+      <div class="sidebar-group" id="grupo-cadastros">
+        <button class="sidebar-group-toggle" type="button" onclick="toggleSidebarGroup('grupo-cadastros')">
+          Cadastros <span class="arrow">&#9654;</span>
+        </button>
+        <div class="sidebar-group-content">
+          <button class="tab-btn" data-tab="cad-produtos" onclick="showTab('cad-produtos',this)">📦 Produtos</button>
+          <button class="tab-btn" data-tab="cad-destinatarios" onclick="showTab('cad-destinatarios',this)">👤 Destinat&aacute;rios</button>
+          <button class="tab-btn" data-tab="cad-fornecedores" onclick="showTab('cad-fornecedores',this)">🏭 Fornecedores</button>
+          <button class="tab-btn" data-tab="estoque" onclick="showTab('estoque',this)">📊 Estoque</button>
+        </div>
+      </div>
+
+      <div class="sidebar-group" id="grupo-relatorios">
+        <button class="sidebar-group-toggle" type="button" onclick="toggleSidebarGroup('grupo-relatorios')">
+          Relat&oacute;rios <span class="arrow">&#9654;</span>
+        </button>
+        <div class="sidebar-group-content">
+          <button class="tab-btn" data-tab="nuvemfiscal" onclick="showTab('nuvemfiscal',this)">☁️ Nuvem Fiscal</button>
+          <button class="tab-btn" data-tab="sped" onclick="showTab('sped',this)">📋 SPED EFD</button>
+        </div>
+      </div>
+
+      <div class="sidebar-group" id="grupo-sistema">
+        <button class="sidebar-group-toggle" type="button" onclick="toggleSidebarGroup('grupo-sistema')">
+          Sistema <span class="arrow">&#9654;</span>
+        </button>
+        <div class="sidebar-group-content">
+          <button class="tab-btn" data-tab="configuracoes" onclick="showTab('configuracoes',this)">⚙️ Configurações</button>
+        </div>
+      </div>
     </div>
     <div class="sidebar-footer">
       <button class="btn btn-ghost btn-sm" id="btnAlterarSenha" onclick="abrirModalSenha()" style="width:100%;display:none">Alterar senha</button>
@@ -283,68 +596,11 @@
       <h1>Jubilados NF-e</h1>
       <span class="env-badge">HOMOLOGACAO</span>
       <div class="header-right">
-        <div class="theme-customizer" id="themeCustomizer">
-          <button class="theme-paint-btn" id="themePaintBtn" type="button" title="Personalizar cores">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M12 3.25a8.75 8.75 0 1 0 0 17.5h.95a2.8 2.8 0 0 0 0-5.6h-.74a1.2 1.2 0 0 1 0-2.4h1.54a5.25 5.25 0 0 0 0-10.5H12Z" stroke="currentColor" stroke-width="1.6"/>
-              <circle cx="7.6" cy="10.1" r="1.05" fill="currentColor"/>
-              <circle cx="10.2" cy="7.3" r="1.05" fill="currentColor"/>
-              <circle cx="13.8" cy="7.4" r="1.05" fill="currentColor"/>
-              <circle cx="16.1" cy="10.4" r="1.05" fill="currentColor"/>
-            </svg>
-          </button>
-          <div class="theme-popover" id="themePopover" hidden>
-            <div class="theme-header">
-              <h4>Personalize sua experi&ecirc;ncia</h4>
-              <button class="theme-close" id="themeCloseBtn" type="button" aria-label="Fechar">&times;</button>
-            </div>
 
-            <div class="theme-section">
-              <div class="theme-label"><span>Cor predominante</span><span id="themePrimaryHex">#0ED98A</span></div>
-              <div class="theme-color-row">
-                <input id="themePrimaryColor" type="color" value="#0ed98a">
-                <input id="themePrimaryText" type="text" value="#0ED98A" maxlength="7">
-              </div>
-              <div class="theme-swatches" data-target="themePrimaryColor">
-                <button class="theme-swatch" type="button" style="background:#0ED98A" data-color="#0ED98A"></button>
-                <button class="theme-swatch" type="button" style="background:#00B4D8" data-color="#00B4D8"></button>
-                <button class="theme-swatch" type="button" style="background:#8B5CF6" data-color="#8B5CF6"></button>
-                <button class="theme-swatch" type="button" style="background:#FF8A00" data-color="#FF8A00"></button>
-                <button class="theme-swatch" type="button" style="background:#E1FF00" data-color="#E1FF00"></button>
-              </div>
-              <div class="theme-label"><span>Escureza / Clareza</span><span id="themePrimaryLightnessVal">48%</span></div>
-              <input id="themePrimaryLightness" class="theme-slider" type="range" min="18" max="82" step="1" value="48">
-              <div class="theme-label"><span>Opacidade da predominante</span><span id="themePrimaryOpacityVal">100%</span></div>
-              <input id="themePrimaryOpacity" class="theme-slider" type="range" min="10" max="100" step="1" value="100">
-            </div>
-
-            <div class="theme-section">
-              <div class="theme-label"><span>Cor 2 (coadjuvante / sombra)</span><span id="themeAccentHex">#0CE4F5</span></div>
-              <div class="theme-color-row">
-                <input id="themeAccentColor" type="color" value="#0ce4f5">
-                <input id="themeAccentText" type="text" value="#0CE4F5" maxlength="7">
-              </div>
-              <div class="theme-swatches" data-target="themeAccentColor">
-                <button class="theme-swatch" type="button" style="background:#0CE4F5" data-color="#0CE4F5"></button>
-                <button class="theme-swatch" type="button" style="background:#3B82F6" data-color="#3B82F6"></button>
-                <button class="theme-swatch" type="button" style="background:#EC4899" data-color="#EC4899"></button>
-                <button class="theme-swatch" type="button" style="background:#10B981" data-color="#10B981"></button>
-                <button class="theme-swatch" type="button" style="background:#EAB308" data-color="#EAB308"></button>
-              </div>
-              <div class="theme-label"><span>Opacidade da sombra</span><span id="themeAccentOpacityVal">100%</span></div>
-              <input id="themeAccentOpacity" class="theme-slider" type="range" min="10" max="100" step="1" value="100">
-            </div>
-
-            <div class="theme-section">
-              <div class="theme-label"><span>Opacidade total do front</span><span id="themeUiOpacityVal">100%</span></div>
-              <input id="themeUiOpacity" class="theme-slider" type="range" min="55" max="100" step="1" value="100">
-            </div>
-          </div>
-        </div>
         <div class="sefaz-pill">
           <strong>SEFAZ</strong>
           <span class="pulse-dot"><span></span></span>
-          <span style="color:var(--success);font-size:0.75rem;font-weight:600">Operacional</span>
+          <span class="sefaz-status-text">Operacional</span>
         </div>
         <span id="userEmail" style="font-size:0.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace"></span>
         <div class="header-avatar" id="headerAvatar" onclick="abrirModalSenha()" title="Alterar senha" style="display:none">JN</div>
@@ -381,6 +637,10 @@
 
   <!-- ABA EMITIR -->
   <div id="tab-emitir" class="tab-pane active">
+    <div class="emitir-hero">
+      <h2>Emitir nota fiscal</h2>
+      <p>Preencha os dados abaixo em um fluxo &uacute;nico. O sistema valida automaticamente os campos obrigat&oacute;rios da SEFAZ.</p>
+    </div>
     <div class="stepper">
       <div class="step-item active" id="nav0" onclick="irParaPasso(0)"><div class="num" id="num0">1</div><br>Empresa + Cert.</div>
       <div class="step-item" id="nav1" onclick="irParaPasso(1)"><div class="num" id="num1">2</div><br>Destinatario</div>
@@ -415,43 +675,6 @@
         <div class="actions">
           <button class="btn btn-primary" onclick="cadastrarEmpresa()"><span id="spinEmpresa" class="spinner" style="display:none"></span> Cadastrar Empresa</button>
           <small id="empresaIdLabel" style="color:var(--muted)"></small>
-        </div>
-      </div>
-      <div class="card">
-        <h2>Certificado Digital A1</h2>
-        <p class="subtitle">Arquivo .pfx do certificado e-CNPJ. Obrigatorio para assinar e enviar a SEFAZ.</p>
-        <div class="grid2">
-          <div class="field">
-            <label>Arquivo .pfx <span class="req">*</span></label>
-            <div class="file-zone" id="fileZone" onclick="document.getElementById('pfxInput').click()" ondragover="fileDragOver(event)" ondragleave="fileDragLeave()" ondrop="fileDrop(event)">
-              <div class="icon">📁</div>
-              <p id="fileZoneText">Clique ou arraste o arquivo .pfx aqui</p>
-            </div>
-            <input type="file" id="pfxInput" accept=".pfx,.p12" style="display:none" onchange="pfxSelecionado(event)">
-          </div>
-          <div class="field">
-            <label>Senha do Certificado <span class="req">*</span></label>
-            <input type="password" id="certSenha" placeholder="Senha do .pfx">
-            <br>
-            <label>Validade (opcional)</label>
-            <input type="date" id="certValidade">
-          </div>
-        </div>
-        <div id="alertaCert"></div>
-        <div class="actions">
-          <button class="btn btn-primary" onclick="enviarCertificado()"><span id="spinCert" class="spinner" style="display:none"></span> Enviar Certificado</button>
-        </div>
-      </div>
-      <div class="card">
-        <h2>CSC NFC-e (Codigo de Seguranca do Contribuinte)</h2>
-        <p class="subtitle">Necessario para emitir NFC-e (cupom fiscal). O CSC e fornecido pela SEFAZ para cada empresa emitente.</p>
-        <div class="grid2">
-          <div class="field"><label>CSC ID (ex: 000001)</label><input id="csc_id" placeholder="000001" maxlength="8"></div>
-          <div class="field"><label>CSC Token</label><input id="csc_token" placeholder="Token CSC da SEFAZ" maxlength="64"></div>
-        </div>
-        <div id="alertaCsc"></div>
-        <div class="actions">
-          <button class="btn btn-primary" onclick="salvarCsc()"><span id="spinCsc" class="spinner" style="display:none"></span> Salvar CSC</button>
         </div>
       </div>
       <div class="actions" style="justify-content:flex-end">
@@ -586,28 +809,11 @@
           </div>
           <div id="lista_produtos" style="margin-top:8px;max-height:150px;overflow-y:auto;display:none"></div>
         </div>
-        <details id="detalhes_novo_produto">
-          <summary style="cursor:pointer;font-size:.86rem;font-weight:700;color:var(--primary);margin-bottom:10px;user-select:none">&#9654; Cadastrar novo produto</summary>
-          <div style="padding-top:8px">
-            <div class="grid2" style="margin-bottom:12px">
-              <div class="field"><label>Nome do Produto <span class="req">*</span></label><input id="p_nome" value="Produto Teste Homologacao"></div>
-              <div class="field"><label>Descricao <span style="color:var(--muted);font-weight:400">(opcional)</span></label><input id="p_descricao" value="Produto para teste de emissao NF-e em homologacao"></div>
-              <div class="field"><label>NCM <span class="req">*</span></label><input id="p_ncm" value="84713012" maxlength="8"></div>
-              <div class="field"><label>CFOP <span class="req">*</span></label><input id="p_cfop" value="5102" maxlength="4"></div>
-              <div class="field"><label>CST</label><input id="p_cst" value="00" maxlength="3"></div>
-              <div class="field"><label>CSOSN</label><input id="p_csosn" value="102" maxlength="3"></div>
-              <div class="field"><label>cClassTrib IBS/CBS <span class="req">*</span></label><select id="p_cclasstrib" onchange="aplicarClassificacaoPorCodigo('p_cclasstrib','p_cst_ibscbs')"><option value="">Selecione...</option></select></div>
-              <div class="field"><label>CST IBS/CBS</label><input id="p_cst_ibscbs" maxlength="3" readonly></div>
-              <div class="field"><label>Unidade</label><select id="p_unidade"><option selected>UN</option><option>PC</option><option>KG</option><option>LT</option><option>MT</option><option>CX</option></select></div>
-              <div class="field"><label>Preco Unitario (R$) <span class="req">*</span></label><input id="p_preco" type="number" step="0.01" value="100.00" min="0.01"></div>
-            </div>
-            <div id="alertaProduto"></div>
-            <div class="actions">
-              <button class="btn btn-primary" onclick="cadastrarProduto()"><span id="spinProduto" class="spinner" style="display:none"></span> Cadastrar Produto</button>
-              <small id="produtoIdLabel" style="color:var(--muted)"></small>
-            </div>
-          </div>
-        </details>
+        <div class="alert alert-info" style="margin-top:10px">A emiss&atilde;o usa apenas produtos j&aacute; cadastrados. Se precisar criar novo item, use a aba <strong>Cadastro de Produtos</strong>.</div>
+        <div id="alertaProduto"></div>
+        <div class="actions">
+          <small id="produtoIdLabel" style="color:var(--muted)"></small>
+        </div>
       </div>
       <div class="actions" style="justify-content:space-between">
         <button class="btn btn-outline" onclick="irParaPasso(1)">Voltar</button>
@@ -936,7 +1142,7 @@
   <div id="tab-nfce" class="tab-pane">
     <div class="card">
       <h2>Emitir NFC-e (Cupom Fiscal)</h2>
-      <p class="subtitle">Emite cupom fiscal eletronico (modelo 65) para venda ao consumidor. Requer CSC configurado no Passo 1 (Empresa).</p>
+      <p class="subtitle">Emite cupom fiscal eletronico (modelo 65) para venda ao consumidor. Requer CSC configurado na aba Configura&ccedil;&otilde;es.</p>
       <div class="alert alert-warn">Voce esta em AMBIENTE DE HOMOLOGACAO. Os cupons emitidos nao tem validade fiscal.</div>
       <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
         Itens do Cupom <span class="req">*</span>
@@ -1149,6 +1355,39 @@
         <div class="field"><label>CSOSN padrão</label><input id="cfg_csosn" placeholder="400"></div>
       </div>
 
+      <div class="section-title">Certificado digital A1</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="field">
+          <label>Arquivo .pfx <span class="req">*</span></label>
+          <div class="file-zone" id="fileZone" onclick="document.getElementById('pfxInput').click()" ondragover="fileDragOver(event)" ondragleave="fileDragLeave()" ondrop="fileDrop(event)">
+            <div class="icon">📁</div>
+            <p id="fileZoneText">Clique ou arraste o arquivo .pfx aqui</p>
+          </div>
+          <input type="file" id="pfxInput" accept=".pfx,.p12" style="display:none" onchange="pfxSelecionado(event)">
+        </div>
+        <div class="field">
+          <label>Senha do Certificado <span class="req">*</span></label>
+          <input type="password" id="certSenha" placeholder="Senha do .pfx">
+          <br>
+          <label>Validade (opcional)</label>
+          <input type="date" id="certValidade">
+        </div>
+      </div>
+      <div id="alertaCert"></div>
+      <div class="actions" style="margin-bottom:12px">
+        <button class="btn btn-primary" onclick="enviarCertificado()"><span id="spinCert" class="spinner" style="display:none"></span> Enviar Certificado</button>
+      </div>
+
+      <div class="section-title">CSC NFC-e</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="field"><label>CSC ID (ex: 000001)</label><input id="csc_id" placeholder="000001" maxlength="8"></div>
+        <div class="field"><label>CSC Token</label><input id="csc_token" placeholder="Token CSC da SEFAZ" maxlength="64"></div>
+      </div>
+      <div id="alertaCsc"></div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="salvarCsc()"><span id="spinCsc" class="spinner" style="display:none"></span> Salvar CSC</button>
+      </div>
+
       <div id="alertaConfig"></div>
       <div class="actions">
         <button class="btn btn-primary" onclick="salvarConfiguracoesEmpresa()">
@@ -1291,11 +1530,22 @@ function selecionarNotaConsultar(){
   if(opt&&opt.dataset.chave)document.getElementById('cs_chave').value=opt.dataset.chave;
 }
 
+function toggleSidebarGroup(groupId){
+  var group=document.getElementById(groupId);
+  if(!group)return;
+  group.classList.toggle('open');
+}
+
+function marcarTabAtiva(name){
+  document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.classList.toggle('active', btn.dataset.tab===name);
+  });
+}
+
 function showTab(name,btn){
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  btn.classList.add('active');
+  if(btn&&btn.dataset&&btn.dataset.tab){marcarTabAtiva(name);}else{marcarTabAtiva(name);}
   if(name==='nfce'){renderItensNfce();}
   if(name==='cad-produtos'){carregarProdutosCadastro();}
   if(name==='cad-destinatarios'){atualizarFormularioDestinatarioCadastro();carregarDestinatariosCadastro();}
@@ -1580,7 +1830,7 @@ function filtrarClientes(){
     estado.clienteId=c.id; estado.clienteNome=c.nome;
     document.getElementById('clienteIdLabel').textContent='ID: '+c.id;
     mostrarAlerta('alertaCliente','success','Cliente selecionado: '+c.nome);
-    atualizarEstadoBar();
+    atualizarEstadoBar(); atualizarResumoDestinatario();
   });
 }
 
@@ -1593,7 +1843,7 @@ function filtrarClientesCnpj(){
     estado.clienteId=c.id; estado.clienteNome=c.nome;
     document.getElementById('clienteIdLabelCnpj').textContent='ID: '+c.id;
     mostrarAlerta('alertaClienteCnpj','success','Empresa selecionada: '+c.nome);
-    atualizarEstadoBar();
+    atualizarEstadoBar(); atualizarResumoDestinatario();
   });
 }
 
@@ -1611,7 +1861,7 @@ async function cadastrarCliente(){
     document.getElementById('clienteIdLabel').textContent='ID: '+data.id;
     mostrarAlerta('alertaCliente','success','Cliente salvo! ID: '+data.id);
     clientesCadastrados.push({id:data.id,nome:estado.clienteNome,cpf_CNPJ:v('c_cpfcnpj')});
-    atualizarEstadoBar();
+    atualizarEstadoBar(); atualizarResumoDestinatario();
   }catch(e){mostrarAlerta('alertaCliente','error',e.message);}
   finally{spin('spinCliente',false);}
 }
@@ -1632,7 +1882,7 @@ async function cadastrarClienteCnpj(){
     document.getElementById('clienteIdLabelCnpj').textContent='ID: '+data.id;
     mostrarAlerta('alertaClienteCnpj','success','Empresa salva! ID: '+data.id);
     clientesCadastrados.push({id:data.id,nome:estado.clienteNome,cpf_CNPJ:v('c_cpfcnpj_cnpj')});
-    atualizarEstadoBar();
+    atualizarEstadoBar(); atualizarResumoDestinatario();
   }catch(e){mostrarAlerta('alertaClienteCnpj','error',e.message);}
   finally{spin('spinClienteCnpj',false);}
 }
@@ -2048,9 +2298,9 @@ async function consultarUltimaNfeSefaz(){
   if(!estado.ultimaChave){alert('Emita uma NF-e primeiro.');return;}
   document.getElementById('cs_empresaId').value=estado.empresaId||'';
   document.getElementById('cs_chave').value=estado.ultimaChave;
-  document.querySelectorAll('.tab-btn').forEach(function(b,i){b.classList.remove('active');if(i===1)b.classList.add('active');});
   document.querySelectorAll('.tab-pane').forEach(function(p){p.classList.remove('active');});
   document.getElementById('tab-consultar').classList.add('active');
+  marcarTabAtiva('consultar');
   await consultarSefaz();
 }
 
@@ -2365,13 +2615,13 @@ function mostrarComplementoFiscal(produtos){
     card.id='complemento-'+id;
     card.setAttribute('data-produto-id',id);
     card.setAttribute('data-item-numero',String(itemNumero));
-    card.style.cssText='border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:16px;background:#fff;transition:opacity .3s';
+    card.style.cssText='border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px;background:var(--card);transition:opacity .3s';
     card.innerHTML=
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
         +'<div style="display:flex;align-items:center;gap:8px"><strong style="font-size:1rem">Item '+itemNumero+' · '+escHtml(p.nome)+'</strong>'+jaLabel+'</div>'
       +'</div>'
-      +'<div style="background:#f7fafc;border:1px solid #e2e8f0;border-radius:6px;padding:12px;margin-bottom:14px">'
-        +'<div style="font-size:0.72rem;font-weight:600;color:#718096;letter-spacing:.05em;margin-bottom:8px">EXTRAÍDO AUTOMATICAMENTE DO XML</div>'
+      +'<div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:14px">'
+        +'<div style="font-size:0.72rem;font-weight:600;color:var(--muted);letter-spacing:.05em;margin-bottom:8px">EXTRAÍDO AUTOMATICAMENTE DO XML</div>'
         +'<div class="grid3">'
           +'<div class="field"><label>NCM</label><input disabled value="'+escHtml(p.ncm||'')+'"></div>'
           +'<div class="field"><label>Unidade</label><input disabled value="'+escHtml(p.unidade||'UN')+'"></div>'
@@ -2384,7 +2634,7 @@ function mostrarComplementoFiscal(produtos){
         +'</div>'
       +'</div>'
       +'<div>'
-        +'<div style="font-size:0.72rem;font-weight:600;color:#2b6cb0;letter-spacing:.05em;margin-bottom:8px">PREENCHER MANUALMENTE (DADOS DE VENDA)</div>'
+        +'<div style="font-size:0.72rem;font-weight:600;color:var(--primary);letter-spacing:.05em;margin-bottom:8px">PREENCHER MANUALMENTE (DADOS DE VENDA)</div>'
         +'<div class="grid3">'
           +'<div class="field"><label>Preço de Venda (R$) <span class="req">*</span></label>'
             +'<input type="number" id="comp_preco_'+id+'" step="0.01" min="0" placeholder="0,00"></div>'
@@ -2639,18 +2889,18 @@ function abrirModalSenha() {
     modal = document.createElement('div');
     modal.id = 'modal-senha';
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999';
-    modal.innerHTML = '<div style="background:#fff;border-radius:12px;padding:32px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,.2)">'
-      + '<h3 style="margin:0 0 20px;font-size:1.1rem;color:#1a202c">Alterar Senha</h3>'
-      + '<label style="font-size:.85rem;color:#4a5568;margin-bottom:4px;display:block">Senha atual</label>'
-      + '<input type="password" id="ms-atual" placeholder="Sua senha atual" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:1rem;margin-bottom:14px;outline:none" />'
-      + '<label style="font-size:.85rem;color:#4a5568;margin-bottom:4px;display:block">Nova senha (min. 6 caracteres)</label>'
-      + '<input type="password" id="ms-nova" placeholder="Nova senha" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:1rem;margin-bottom:14px;outline:none" />'
-      + '<label style="font-size:.85rem;color:#4a5568;margin-bottom:4px;display:block">Confirmar nova senha</label>'
-      + '<input type="password" id="ms-conf" placeholder="Confirmar nova senha" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:1rem;margin-bottom:20px;outline:none" />'
+    modal.innerHTML = '<div style="background:#0f1322;border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:32px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,.6)">'
+      + '<h3 style="margin:0 0 20px;font-size:1.1rem;color:rgba(255,255,255,0.93)">Alterar Senha</h3>'
+      + '<label style="font-size:.85rem;color:rgba(255,255,255,0.58);margin-bottom:4px;display:block">Senha atual</label>'
+      + '<input type="password" id="ms-atual" placeholder="Sua senha atual" style="width:100%;padding:10px 12px;border:1.5px solid rgba(255,255,255,0.16);border-radius:8px;font-size:1rem;margin-bottom:14px;outline:none;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.93)" />'
+      + '<label style="font-size:.85rem;color:rgba(255,255,255,0.58);margin-bottom:4px;display:block">Nova senha (min. 6 caracteres)</label>'
+      + '<input type="password" id="ms-nova" placeholder="Nova senha" style="width:100%;padding:10px 12px;border:1.5px solid rgba(255,255,255,0.16);border-radius:8px;font-size:1rem;margin-bottom:14px;outline:none;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.93)" />'
+      + '<label style="font-size:.85rem;color:rgba(255,255,255,0.58);margin-bottom:4px;display:block">Confirmar nova senha</label>'
+      + '<input type="password" id="ms-conf" placeholder="Confirmar nova senha" style="width:100%;padding:10px 12px;border:1.5px solid rgba(255,255,255,0.16);border-radius:8px;font-size:1rem;margin-bottom:20px;outline:none;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.93)" />'
       + '<div id="ms-msg" style="display:none;margin-bottom:14px;padding:10px 14px;border-radius:8px;font-size:.9rem"></div>'
       + '<div style="display:flex;gap:10px">'
-      + '<button onclick="fecharModalSenha()" style="flex:1;padding:10px;border-radius:8px;border:2px solid #e2e8f0;background:#fff;cursor:pointer;font-size:.95rem">Cancelar</button>'
-      + '<button id="ms-btn" onclick="salvarSenha()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#3b82f6;color:#fff;font-weight:600;cursor:pointer;font-size:.95rem">Salvar</button>'
+      + '<button onclick="fecharModalSenha()" style="flex:1;padding:10px;border-radius:8px;border:2px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8);cursor:pointer;font-size:.95rem">Cancelar</button>'
+      + '<button id="ms-btn" onclick="salvarSenha()" style="flex:1;padding:10px;border-radius:8px;border:none;background:linear-gradient(135deg,#8b5cf6,#06b6d4);color:#fff;font-weight:600;cursor:pointer;font-size:.95rem">Salvar</button>'
       + '</div></div>';
     document.body.appendChild(modal);
     modal.addEventListener('click', function(e) { if (e.target === modal) fecharModalSenha(); });
