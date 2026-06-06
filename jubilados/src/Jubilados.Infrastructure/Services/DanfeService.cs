@@ -47,14 +47,20 @@ public class DanfeService : IDanfeService
             .Where(p => produtoIds.Contains(p.Id))
             .ToDictionaryAsync(p => p.Id, cancellationToken);
 
-        _logger.LogInformation("[DANFE] Gerando PDF para nota #{Numero}", nota.Numero);
+        _logger.LogInformation("[DANFE] Gerando PDF (modelo {Modelo}) para nota #{Numero}", nota.Modelo, nota.Numero);
+
+        QuestPDF.Settings.License = LicenseType.Community;
+
+        // Modelo 65 = NFC-e (Cupom Fiscal Eletrônico): layout simplificado e compacto,
+        // com QR Code, conforme MOC – Anexo III (Especificações do DANFE NFC-e e Código QR).
+        // Modelo 55 = NF-e: DANFE tradicional em folha A4 (layout abaixo).
+        if (string.Equals(nota.Modelo, "65", StringComparison.Ordinal))
+            return GerarDanfeNfce(nota, empresa, cliente, produtos);
 
         var tributosExtras = ExtrairTributosExtrasDaNFe(nota.XmlEnvio, nota.XmlRetorno);
         var valorTotalTributosPago = tributosExtras.ValorTotalTributos > 0
             ? tributosExtras.ValorTotalTributos
             : nota.ValorICMS + nota.ValorIPI + nota.ValorPIS + nota.ValorCOFINS + tributosExtras.ValorIbs + tributosExtras.ValorCbs;
-
-        QuestPDF.Settings.License = LicenseType.Community;
 
         var doc = Document.Create(container =>
         {
@@ -310,6 +316,216 @@ public class DanfeService : IDanfeService
         });
 
         return doc.GeneratePdf();
+    }
+
+    // ── DANFE NFC-e (modelo 65) — layout simplificado/compacto com QR Code ───
+    // Referência: MOC – Anexo III (Especificações Técnicas do DANFE NFC-e e do
+    // Código QR), publicado pela SEFAZ. Diferente do DANFE modelo 55 (folha A4,
+    // detalhado), o DANFE NFC-e é impresso pelo próprio contribuinte em impressora
+    // comum/térmica (largura usual de 80mm), trazendo: identificação resumida do
+    // emitente, "Não permite aproveitamento de crédito de ICMS", lista simplificada
+    // de itens, totais, forma de pagamento, identificação do consumidor (se houver),
+    // chave de acesso, dados da autorização e o QR Code para consulta do documento.
+    private byte[] GerarDanfeNfce(NotaFiscal nota, Empresa? empresa, Entidades.ClienteNome? cliente,
+        Dictionary<Guid, Produto> produtos)
+    {
+        var qrCodeUrl = ExtrairTextoDaNFe(nota.XmlEnvio, nota.XmlRetorno, "qrCode");
+        var urlConsulta = ExtrairTextoDaNFe(nota.XmlEnvio, nota.XmlRetorno, "urlChave");
+        var qrImagem = GerarImagemQrCode(qrCodeUrl);
+        var homologacao = (nota.XMotivo ?? string.Empty).Contains("HOMOLOG", StringComparison.OrdinalIgnoreCase);
+
+        var doc = Document.Create(container =>
+        {
+            container.Page(page =>
+            {
+                // Largura de bobina térmica de 80mm (padrão de impressão do DANFE
+                // NFC-e em impressora não fiscal), altura contínua/automática.
+                page.ContinuousSize(80, Unit.Millimetre);
+                page.MarginVertical(12);
+                page.MarginHorizontal(10);
+                page.DefaultTextStyle(x => x.FontSize(7).FontFamily("Arial"));
+
+                page.Content().Column(col =>
+                {
+                    col.Spacing(2);
+
+                    col.Item().AlignCenter().Text(empresa?.RazaoSocial ?? "").Bold().FontSize(8);
+                    if (!string.IsNullOrWhiteSpace(empresa?.NomeFantasia))
+                        col.Item().AlignCenter().Text(empresa!.NomeFantasia).FontSize(6);
+                    col.Item().AlignCenter().Text($"{empresa?.Logradouro}, {empresa?.Numero} - {empresa?.Bairro}").FontSize(6);
+                    col.Item().AlignCenter().Text($"{empresa?.Municipio}/{empresa?.UF} - CEP {empresa?.CEP}").FontSize(6);
+                    col.Item().AlignCenter().Text($"CNPJ: {FormatCnpj(empresa?.CNPJ ?? "")}   IE: {empresa?.InscricaoEstadual}").FontSize(6);
+
+                    col.Item().PaddingVertical(2).LineHorizontal(0.75f).LineColor(Colors.Grey.Darken1);
+
+                    col.Item().AlignCenter().Text("DANFE NFC-e").Bold().FontSize(8);
+                    col.Item().AlignCenter().Text("Documento Auxiliar da Nota Fiscal de Consumidor Eletrônica").FontSize(5);
+                    col.Item().AlignCenter().Text("Não permite aproveitamento de crédito de ICMS").FontSize(5).Italic();
+
+                    col.Item().PaddingVertical(2).LineHorizontal(0.75f).LineColor(Colors.Grey.Darken1);
+
+                    // ── Itens ─────────────────────────────────────────────
+                    col.Item().Table(t =>
+                    {
+                        t.ColumnsDefinition(c =>
+                        {
+                            c.RelativeColumn(5);  // descrição
+                            c.ConstantColumn(28); // qtd un
+                            c.ConstantColumn(35); // vl unit
+                            c.ConstantColumn(35); // vl total
+                        });
+
+                        t.Header(h =>
+                        {
+                            h.Cell().Text("DESCRIÇÃO").FontSize(5).Bold();
+                            h.Cell().AlignRight().Text("QTD UN").FontSize(5).Bold();
+                            h.Cell().AlignRight().Text("VL UNIT").FontSize(5).Bold();
+                            h.Cell().AlignRight().Text("VL TOTAL").FontSize(5).Bold();
+                        });
+
+                        foreach (var item in nota.Itens.OrderBy(i => i.NumeroItem))
+                        {
+                            var prod = produtos.TryGetValue(item.ProdutoId, out var p) ? p : null;
+                            t.Cell().Text($"{item.NumeroItem:00} {prod?.Nome ?? "—"}").FontSize(6);
+                            t.Cell().AlignRight().Text($"{item.Quantidade:N2} {item.Unidade}").FontSize(6);
+                            t.Cell().AlignRight().Text(item.ValorUnitario.ToString("N2")).FontSize(6);
+                            t.Cell().AlignRight().Text(item.ValorTotal.ToString("N2")).FontSize(6);
+                        }
+                    });
+
+                    col.Item().PaddingVertical(2).LineHorizontal(0.75f).LineColor(Colors.Grey.Darken1);
+
+                    // ── Totais ────────────────────────────────────────────
+                    col.Item().Row(r =>
+                    {
+                        r.RelativeItem().Text("QTD. TOTAL DE ITENS").FontSize(6);
+                        r.ConstantItem(50).AlignRight().Text(nota.Itens.Sum(i => i.Quantidade).ToString("N2")).FontSize(6);
+                    });
+                    if (nota.ValorDesconto > 0)
+                        col.Item().Row(r =>
+                        {
+                            r.RelativeItem().Text("DESCONTOS").FontSize(6);
+                            r.ConstantItem(50).AlignRight().Text($"R$ {nota.ValorDesconto:N2}").FontSize(6);
+                        });
+                    col.Item().Row(r =>
+                    {
+                        r.RelativeItem().Text("VALOR TOTAL R$").Bold().FontSize(8);
+                        r.ConstantItem(60).AlignRight().Text(nota.ValorTotal.ToString("N2")).Bold().FontSize(10).FontColor(Colors.Green.Darken2);
+                    });
+                    col.Item().Text($"FORMA DE PAGAMENTO: {DescreverFormaPagamento(nota.XmlEnvio, nota.XmlRetorno)}").FontSize(6);
+
+                    col.Item().PaddingVertical(2).LineHorizontal(0.75f).LineColor(Colors.Grey.Darken1);
+
+                    // ── Consumidor ────────────────────────────────────────
+                    col.Item().Text("CONSUMIDOR").FontSize(5).FontColor(Colors.Grey.Darken2).Bold();
+                    col.Item().Text(cliente is not null
+                        ? $"{cliente.Nome} — {FormatDoc(cliente.CpfCnpj)}"
+                        : "CPF/CNPJ não informado").FontSize(6);
+
+                    col.Item().PaddingVertical(2).LineHorizontal(0.75f).LineColor(Colors.Grey.Darken1);
+
+                    // ── Chave de acesso e protocolo ───────────────────────
+                    col.Item().AlignCenter().Text("CHAVE DE ACESSO").FontSize(5).FontColor(Colors.Grey.Darken2);
+                    col.Item().AlignCenter().Text(FormatChave(nota.ChaveAcesso)).FontFamily("Courier New").FontSize(6).Bold();
+                    col.Item().AlignCenter().Text($"N° {nota.Numero:D9}  Série {nota.Serie}  —  {nota.EmitidaEm.ToLocalTime():dd/MM/yyyy HH:mm:ss}").FontSize(5);
+                    if (!string.IsNullOrWhiteSpace(nota.Protocolo))
+                        col.Item().AlignCenter().Text($"Protocolo de autorização: {nota.Protocolo}").FontSize(5);
+                    if (nota.Status != StatusNota.Autorizada)
+                        col.Item().AlignCenter().Text($"⚠ {nota.XMotivo}").FontColor(Colors.Red.Medium).Bold().FontSize(6);
+
+                    // ── QR Code ───────────────────────────────────────────
+                    if (qrImagem is not null)
+                    {
+                        col.Item().PaddingTop(4).AlignCenter().Width(120).Image(qrImagem);
+                        col.Item().AlignCenter().Text("Consulte pela Chave de Acesso em:").FontSize(5);
+                        if (!string.IsNullOrWhiteSpace(urlConsulta))
+                            col.Item().AlignCenter().Text(urlConsulta!).FontSize(5);
+                    }
+
+                    if (homologacao)
+                        col.Item().PaddingTop(4).Background(Colors.Yellow.Lighten3).Padding(3)
+                            .Text("*** EMITIDA EM AMBIENTE DE HOMOLOGAÇÃO — SEM VALOR FISCAL ***")
+                            .Bold().FontSize(6).FontColor(Colors.Red.Medium).AlignCenter();
+
+                    col.Item().PaddingTop(4).AlignCenter()
+                        .Text("Tributos Totais Incidentes (Lei Federal 12.741/2012): consulte o cupom completo / portal do contribuinte.")
+                        .FontSize(4.5f).FontColor(Colors.Grey.Darken1);
+                });
+            });
+        });
+
+        return doc.GeneratePdf();
+    }
+
+    private static string DescreverFormaPagamento(string? xmlEnvio, string? xmlRetorno)
+    {
+        var xml = string.IsNullOrWhiteSpace(xmlRetorno) ? xmlEnvio : xmlRetorno;
+        if (string.IsNullOrWhiteSpace(xml)) return "Não informada";
+
+        try
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml(xml);
+            var tPag = doc.SelectSingleNode("//*[local-name()='detPag']/*[local-name()='tPag']")?.InnerText;
+            return tPag switch
+            {
+                "01" => "Dinheiro",
+                "02" => "Cheque",
+                "03" => "Cartão de Crédito",
+                "04" => "Cartão de Débito",
+                "05" => "Crédito Loja",
+                "10" => "Vale Alimentação",
+                "11" => "Vale Refeição",
+                "12" => "Vale Presente",
+                "13" => "Vale Combustível",
+                "15" => "Boleto Bancário",
+                "17" => "PIX",
+                "99" => "Outros",
+                null or "" => "Não informada",
+                _ => $"Código {tPag}"
+            };
+        }
+        catch
+        {
+            return "Não informada";
+        }
+    }
+
+    private byte[]? GerarImagemQrCode(string? conteudo)
+    {
+        if (string.IsNullOrWhiteSpace(conteudo))
+            return null;
+
+        try
+        {
+            using var geradorQr = new QRCoder.QRCodeGenerator();
+            using var dadosQr = geradorQr.CreateQrCode(conteudo, QRCoder.QRCodeGenerator.ECCLevel.M);
+            var pngQr = new QRCoder.PngByteQRCode(dadosQr);
+            return pngQr.GetGraphic(8);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "[DANFE] Falha ao gerar QR Code da NFC-e.");
+            return null;
+        }
+    }
+
+    private static string? ExtrairTextoDaNFe(string? xmlEnvio, string? xmlRetorno, string localName)
+    {
+        var xml = string.IsNullOrWhiteSpace(xmlRetorno) ? xmlEnvio : xmlRetorno;
+        if (string.IsNullOrWhiteSpace(xml))
+            return null;
+
+        try
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml(xml);
+            return LerPrimeiroTexto(doc, localName);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

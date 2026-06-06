@@ -116,6 +116,14 @@
       scrollbar-gutter: stable;
     }
 
+    /* Seleção de texto com contraste adequado sobre o tema escuro */
+    ::selection { background: var(--primary); color: #ffffff; }
+    ::-moz-selection { background: var(--primary); color: #ffffff; }
+
+    /* Linhas de tabela: realce de hover/seleção com contraste garantido */
+    table tbody tr:hover { background: rgba(139, 92, 246, 0.16); }
+    table tbody tr:hover td { color: var(--text); }
+
     body {
       background:
         radial-gradient(circle at 12% 0%, rgba(139, 92, 246, 0.24), transparent 42%),
