@@ -390,6 +390,10 @@ app.MapGet("/diag", () => {
     };
 });
 
+// SPA fallback: serve index2.html para rotas client-side (/operacoes/*, /cadastros/*, etc.)
+// Arquivos estáticos (login.html, css/, etc.) já são servidos pelo UseStaticFiles acima.
+app.MapFallbackToFile("index2.html");
+
 app.Run();
 
 public partial class Program;
