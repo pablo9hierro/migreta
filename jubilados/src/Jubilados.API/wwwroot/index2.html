@@ -572,6 +572,7 @@
           <button class="tab-btn" data-tab="cad-produtos" onclick="navigateTo('cad-produtos')">📦 Produtos</button>
           <button class="tab-btn" data-tab="cad-destinatarios" onclick="navigateTo('cad-destinatarios')">👤 Destinat&aacute;rios</button>
           <button class="tab-btn" data-tab="cad-fornecedores" onclick="navigateTo('cad-fornecedores')">🏭 Fornecedores</button>
+          <button class="tab-btn" data-tab="entrada" onclick="navigateTo('entrada')">📤 Upload XML do Fornecedor</button>
           <button class="tab-btn" data-tab="estoque" onclick="navigateTo('estoque')">📊 Estoque</button>
         </div>
       </div>
@@ -1523,12 +1524,11 @@ function navigateTo(tabName) {
   const route = TAB_TO_ROUTE[tabName] || '/operacoes/emitir-nfe';
   if (window.location.pathname !== route)
     history.pushState({ tab: tabName }, '', route);
-  // Abre o grupo do sidebar que contém este tab
-  const btn = document.querySelector('.tab-btn[data-tab="' + tabName + '"]');
-  if (btn) {
+  // Abre o(s) grupo(s) do sidebar que contém(êm) este tab
+  document.querySelectorAll('.tab-btn[data-tab="' + tabName + '"]').forEach(function(btn) {
     const grp = btn.closest('.sidebar-group');
     if (grp && !grp.classList.contains('open')) grp.classList.add('open');
-  }
+  });
 }
 
 window.addEventListener('popstate', function(e) {
