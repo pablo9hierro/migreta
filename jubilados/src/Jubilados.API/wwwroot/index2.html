@@ -688,7 +688,7 @@
     <!-- Passo 1 -->
     <div id="passo1" style="display:none">
       <div class="card">
-        <h2>2. Destinatario da Nota Fiscal</h2>
+        <h2>Destinatário da Nota Fiscal</h2>
         <p class="subtitle">Selecione o tipo de destinatario para a nota.</p>
 
         <!-- Tipo selector -->
@@ -722,8 +722,7 @@
           <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid var(--border)">
             <div class="section-title" style="margin-bottom:8px">Buscar cliente ja cadastrado</div>
             <div style="display:flex;gap:8px;align-items:flex-end">
-              <div class="field" style="flex:1"><label>Pesquisar por nome ou CPF</label><input id="busca_cliente" placeholder="Digite nome ou CPF..." oninput="filtrarClientes()"></div>
-              <button class="btn btn-outline" onclick="carregarClientes()" style="white-space:nowrap"><span id="spinBuscaCliente" class="spinner" style="display:none"></span> Atualizar lista</button>
+              <div class="field" style="flex:1"><label>Pesquisar por nome ou CPF</label><input id="busca_cliente" placeholder="Digite nome ou CPF..." oninput="filtrarClientes()" onfocus="if(!clientesCadastrados.length)carregarClientes()"></div>
             </div>
             <div id="lista_clientes" style="margin-top:8px;max-height:150px;overflow-y:auto;display:none"></div>
           </div>
@@ -751,7 +750,6 @@
           <div id="alertaCliente"></div>
           <div class="actions">
             <button class="btn btn-primary" onclick="cadastrarCliente()"><span id="spinCliente" class="spinner" style="display:none"></span> Salvar Cliente</button>
-            <small id="clienteIdLabel" style="color:var(--muted)"></small>
           </div>
         </div>
 
@@ -762,8 +760,7 @@
           <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid var(--border)">
             <div class="section-title" style="margin-bottom:8px">Buscar empresa ja cadastrada</div>
             <div style="display:flex;gap:8px;align-items:flex-end">
-              <div class="field" style="flex:1"><label>Pesquisar por nome ou CNPJ</label><input id="busca_cliente_cnpj" placeholder="Digite nome ou CNPJ..." oninput="filtrarClientesCnpj()"></div>
-              <button class="btn btn-outline" onclick="carregarClientes()" style="white-space:nowrap"><span id="spinBuscaClienteCnpj" class="spinner" style="display:none"></span> Atualizar lista</button>
+              <div class="field" style="flex:1"><label>Pesquisar por nome ou CNPJ</label><input id="busca_cliente_cnpj" placeholder="Digite nome ou CNPJ..." oninput="filtrarClientesCnpj()" onfocus="if(!clientesCadastrados.length)carregarClientes()"></div>
             </div>
             <div id="lista_clientes_cnpj" style="margin-top:8px;max-height:150px;overflow-y:auto;display:none"></div>
           </div>
@@ -789,7 +786,6 @@
           <div id="alertaClienteCnpj"></div>
           <div class="actions">
             <button class="btn btn-primary" onclick="cadastrarClienteCnpj()"><span id="spinClienteCnpj" class="spinner" style="display:none"></span> Salvar Empresa</button>
-            <small id="clienteIdLabelCnpj" style="color:var(--muted)"></small>
           </div>
         </div>
 
@@ -802,32 +798,30 @@
     <!-- Passo 2 -->
     <div id="passo2" style="display:none">
       <div class="card">
-        <h2>3. Produto / Servico</h2>
-        <p class="subtitle">Selecione um produto existente ou cadastre um novo.</p>
+        <h2>Produto / Serviço</h2>
+        <p class="subtitle">Pesquise e adicione produtos ao pedido. Você pode adicionar vários itens antes de emitir.</p>
         <!-- Busca produto existente -->
         <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:14px;border:1px solid var(--border)">
-          <div class="section-title" style="margin-bottom:8px">Buscar produto ja cadastrado</div>
+          <div class="section-title" style="margin-bottom:8px">Buscar produto já cadastrado</div>
           <div style="display:flex;gap:8px;align-items:flex-end">
-            <div class="field" style="flex:1"><label>Pesquisar por nome</label><input id="busca_produto" placeholder="Digite o nome do produto..." oninput="filtrarProdutos()"></div>
-            <button class="btn btn-outline" onclick="carregarProdutos()" style="white-space:nowrap"><span id="spinBuscaProduto" class="spinner" style="display:none"></span> Atualizar lista</button>
+            <div class="field" style="flex:1"><label>Pesquisar por nome</label><input id="busca_produto" placeholder="Digite o nome do produto..." oninput="filtrarProdutos()" onfocus="if(!produtosCadastrados.length)carregarProdutos()"></div>
           </div>
           <div id="lista_produtos" style="margin-top:8px;max-height:150px;overflow-y:auto;display:none"></div>
         </div>
-        <div class="alert alert-info" style="margin-top:10px">A emiss&atilde;o usa apenas produtos j&aacute; cadastrados. Se precisar criar novo item, use a aba <strong>Cadastro de Produtos</strong>.</div>
+        <!-- Carrinho de produtos -->
+        <div id="carrinhoPasso2" style="margin-bottom:12px"></div>
+        <div class="alert alert-info" style="margin-top:10px">A emissão usa apenas produtos já cadastrados. Se precisar criar novo item, use a aba <strong>Cadastro de Produtos</strong>.</div>
         <div id="alertaProduto"></div>
-        <div class="actions">
-          <small id="produtoIdLabel" style="color:var(--muted)"></small>
-        </div>
       </div>
       <div class="actions" style="justify-content:space-between">
         <button class="btn btn-outline" onclick="irParaPasso(1)">Voltar</button>
-        <button class="btn btn-success" onclick="irParaPasso(3)">Proximo: Emitir NF-e</button>
+        <button class="btn btn-success" onclick="irParaPasso(3)">Próximo: Informações de Pagamento</button>
       </div>
     </div>
     <!-- Passo 3 -->
     <div id="passo3" style="display:none">
       <div class="card">
-        <h2>4. Emitir Nota Fiscal Eletronica</h2>
+        <h2>Informações de Pagamento</h2>
         <p class="subtitle">Confirme os dados e clique em Emitir NF-e.</p>
         <div class="alert alert-warn">Voce esta em AMBIENTE DE HOMOLOGACAO. As notas emitidas nao tem validade fiscal.</div>
 
@@ -1874,7 +1868,6 @@ function filtrarClientes(){
     document.getElementById('c_nome').value=c.nome;
     document.getElementById('c_cpfcnpj').value=c.cpf_CNPJ||'';
     estado.clienteId=c.id; estado.clienteNome=c.nome;
-    document.getElementById('clienteIdLabel').textContent='ID: '+c.id;
     mostrarAlerta('alertaCliente','success','Cliente selecionado: '+c.nome);
     atualizarEstadoBar(); atualizarResumoDestinatario();
   });
@@ -1887,7 +1880,6 @@ function filtrarClientesCnpj(){
     document.getElementById('c_nome_cnpj').value=c.nome;
     document.getElementById('c_cpfcnpj_cnpj').value=c.cpf_CNPJ||'';
     estado.clienteId=c.id; estado.clienteNome=c.nome;
-    document.getElementById('clienteIdLabelCnpj').textContent='ID: '+c.id;
     mostrarAlerta('alertaClienteCnpj','success','Empresa selecionada: '+c.nome);
     atualizarEstadoBar(); atualizarResumoDestinatario();
   });
@@ -1904,8 +1896,7 @@ async function cadastrarCliente(){
     var data=await safeJson(res);
     if(!res.ok)throw new Error(data.erro||'HTTP '+res.status);
     estado.clienteId=data.id; estado.clienteNome=data.nome||v('c_nome');
-    document.getElementById('clienteIdLabel').textContent='ID: '+data.id;
-    mostrarAlerta('alertaCliente','success','Cliente salvo! ID: '+data.id);
+    mostrarAlerta('alertaCliente','success','Cliente salvo!');
     clientesCadastrados.push({id:data.id,nome:estado.clienteNome,cpf_CNPJ:v('c_cpfcnpj')});
     atualizarEstadoBar(); atualizarResumoDestinatario();
   }catch(e){mostrarAlerta('alertaCliente','error',e.message);}
@@ -1925,8 +1916,7 @@ async function cadastrarClienteCnpj(){
     var data=await safeJson(res);
     if(!res.ok)throw new Error(data.erro||'HTTP '+res.status);
     estado.clienteId=data.id; estado.clienteNome=data.nome||v('c_nome_cnpj');
-    document.getElementById('clienteIdLabelCnpj').textContent='ID: '+data.id;
-    mostrarAlerta('alertaClienteCnpj','success','Empresa salva! ID: '+data.id);
+    mostrarAlerta('alertaClienteCnpj','success','Empresa salva!');
     clientesCadastrados.push({id:data.id,nome:estado.clienteNome,cpf_CNPJ:v('c_cpfcnpj_cnpj')});
     atualizarEstadoBar(); atualizarResumoDestinatario();
   }catch(e){mostrarAlerta('alertaClienteCnpj','error',e.message);}
@@ -1956,20 +1946,55 @@ function filtrarProdutos(){
     var el=document.createElement('div');
     el.style.cssText='padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--border);border-radius:4px;display:flex;justify-content:space-between;align-items:center';
     var preco='R$ '+(p.preco||0).toFixed(2).replace('.',',');
-    el.innerHTML='<span><strong>'+p.nome+'</strong> <small style="color:var(--muted)">'+p.unidade+' — '+preco+'</small></span><span class="badge badge-blue" style="font-size:.7rem">Selecionar</span>';
+    el.innerHTML='<span><strong>'+p.nome+'</strong> <small style="color:var(--muted)">'+p.unidade+' — '+preco+'</small></span><span class="badge badge-green" style="font-size:.7rem">+ Adicionar</span>';
     el.onmouseenter=function(){this.style.background='var(--step-active)';};
     el.onmouseleave=function(){this.style.background='';};
     el.onclick=function(){
+      // ADD product to cart (don't replace)
+      itens.push({produtoId:p.id,qtd:1,valor:p.preco||0,desc:0});
       estado.produtoId=p.id; estado.produtoNome=p.nome;
-      document.getElementById('produtoIdLabel').textContent='ID: '+p.id;
-      // atualiza item[0] com este produto
-      if(itens.length>0){itens[0].produtoId=p.id;itens[0].valor=p.preco||itens[0].valor;}
+      var busca=document.getElementById('busca_produto');
+      if(busca){busca.value='';busca.focus();}
+      containerEl.style.display='none';
       renderItens();
-      mostrarAlerta('alertaProduto','success','Produto selecionado: '+p.nome+' — '+preco);
+      renderCarrinho();
+      mostrarAlerta('alertaProduto','success','Produto adicionado: '+p.nome+' — '+preco);
       atualizarEstadoBar();
     };
     containerEl.appendChild(el);
   });
+}
+
+function renderCarrinho(){
+  var container=document.getElementById('carrinhoPasso2');
+  if(!container)return;
+  if(!itens.length||!itens.some(function(it){return it.produtoId;})){
+    container.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:8px 0">Nenhum produto adicionado ainda.</p>';
+    return;
+  }
+  var html='<div class="section-title" style="margin-bottom:8px">Produtos no pedido</div>';
+  itens.forEach(function(item,i){
+    var prod=produtosCadastrados.find(function(p){return p.id===item.produtoId;});
+    var nome=prod?prod.nome:'Produto';
+    var unidade=prod?prod.unidade:'UN';
+    html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;margin-bottom:6px">'
+      +'<div style="flex:1"><strong>'+nome+'</strong> <small style="color:var(--muted)">'+unidade+'</small></div>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<label style="font-size:.78rem;color:var(--muted)">Qtd</label>'
+      +'<input type="number" min="0.001" step="0.001" value="'+item.qtd+'" style="width:70px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:.85rem" onchange="itens['+i+'].qtd=parseFloat(this.value)||1;renderItens();renderCarrinho()">'
+      +'<label style="font-size:.78rem;color:var(--muted)">R$</label>'
+      +'<input type="number" min="0.01" step="0.01" value="'+item.valor.toFixed(2)+'" style="width:90px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:.85rem" onchange="itens['+i+'].valor=parseFloat(this.value)||0;renderItens();renderCarrinho()">'
+      +'<button onclick="removerItemCarrinho('+i+')" style="background:none;border:1px solid var(--danger,#ef4444);color:var(--danger,#ef4444);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:.85rem" title="Remover">✕</button>'
+      +'</div>'
+      +'</div>';
+  });
+  container.innerHTML=html;
+}
+
+function removerItemCarrinho(i){
+  itens.splice(i,1);
+  renderItens();
+  renderCarrinho();
 }
 
 async function cadastrarProduto(){
@@ -1986,11 +2011,11 @@ async function cadastrarProduto(){
     var data=await safeJson(res);
     if(!res.ok)throw new Error(data.erro||'HTTP '+res.status);
     estado.produtoId=data.id; estado.produtoNome=data.nome||v('p_nome');
-    document.getElementById('produtoIdLabel').textContent='ID: '+data.id;
     produtosCadastrados.push({id:data.id,nome:estado.produtoNome,preco:parseFloat(v('p_preco'))||0,unidade:v('p_unidade')||'UN',cClassTrib:v('p_cclasstrib'),cstIbsCbs:v('p_cst_ibscbs')});
-    if(itens.length>0){itens[0].produtoId=data.id;itens[0].valor=parseFloat(v('p_preco'))||itens[0].valor;}
+    itens.push({produtoId:data.id,qtd:1,valor:parseFloat(v('p_preco'))||0,desc:0});
     renderItens();
-    mostrarAlerta('alertaProduto','success','Produto cadastrado! ID: '+data.id);
+    renderCarrinho();
+    mostrarAlerta('alertaProduto','success','Produto cadastrado!');
     atualizarEstadoBar();
   }catch(e){mostrarAlerta('alertaProduto','error',e.message);}
   finally{spin('spinProduto',false);}
@@ -2264,9 +2289,9 @@ function baixarEstoqueCsv(){
 
 var itens=[];
 function renderItens(){
-  if(!itens.length)itens=[{produtoId:estado.produtoId||'',qtd:1,valor:100,desc:0}];
-  if(estado.produtoId&&!itens[0].produtoId)itens[0].produtoId=estado.produtoId;
-  var container=document.getElementById('itensContainer');container.innerHTML='';
+  var container=document.getElementById('itensContainer');if(!container)return;
+  if(!itens.length){container.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:8px 0">Nenhum produto adicionado. Pesquise e adicione produtos na seção acima.</p>';return;}
+  container.innerHTML='';
   itens.forEach(function(item,i){
     var div=document.createElement('div');div.className='item-linha';
     var opts='<option value="">-- Selecione --</option>';
@@ -2296,8 +2321,8 @@ function selecionarProdutoItem(i){
   var prod=produtosCadastrados.find(function(p){return p.id===sel.value;});
   if(prod){var valEl=document.getElementById('item_val_'+i);if(valEl)valEl.value=prod.preco.toFixed(2);}
 }
-function adicionarItem(){itens.push({produtoId:estado.produtoId||'',qtd:1,valor:100,desc:0});renderItens();}
-function removerItem(i){if(itens.length>1){itens.splice(i,1);renderItens();}}
+function adicionarItem(){itens.push({produtoId:'',qtd:1,valor:0,desc:0});renderItens();renderCarrinho();}
+function removerItem(i){itens.splice(i,1);renderItens();renderCarrinho();}
 function coletarItens(){
   return itens.map(function(_,i){return{
     produtoId:(document.getElementById('item_pid_'+i)||{}).value||'',
@@ -2307,7 +2332,7 @@ function coletarItens(){
   };});
 }
 
-async function emitirNFe(){
+async function emitirNFe(isRetry){
   limparAlerta('alertaEmitir');
   document.getElementById('resultadoCard').style.display='none';
   if(!estado.empresaId){mostrarAlerta('alertaEmitir','error','Cadastre a empresa primeiro.');return;}
@@ -2321,6 +2346,8 @@ async function emitirNFe(){
     if(td==='anonimo'){body.destinatarioCpfCnpj=null;body.destinatarioNome=null;}
     var res=await fetch(API+'/api/nfe/emitir',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     var data=await safeJson(res);
+    // Auto-retry once on SEFAZ contingency parse error
+    if(!data.sucesso&&data.contingencia&&!isRetry){spin('spinEmitir',false);return emitirNFe(true);}
     var card=document.getElementById('resultadoCard');card.style.display='block';
     if(res.ok&&data.sucesso){
       estado.ultimaChave=data.chaveAcesso;estado.ultimaNotaId=data.notaFiscalId;
@@ -3324,6 +3351,8 @@ async function carregarDadosEmpresa() {
   verificarCscSalvo();
   renderItensNfce();
   carregarEmpresasSelects();
+  carregarClientes();
+  carregarProdutos();
 }
 
 carregarDadosEmpresa();
