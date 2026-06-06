@@ -76,6 +76,7 @@ public class ProdutoController : ControllerBase
                 p.CFOP,
                 p.CST,
                 p.CSOSN,
+                p.CEST,
                 p.CstIbsCbs,
                 p.CClassTrib,
                 p.ReducaoIbs,

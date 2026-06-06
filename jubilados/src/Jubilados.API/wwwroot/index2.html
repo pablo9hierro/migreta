@@ -1232,9 +1232,18 @@
         <div class="field"><label>CSOSN</label><input id="cad_p_csosn" value="102" maxlength="3"></div>
         <div class="field"><label>cClassTrib IBS/CBS <span class="req">*</span></label><select id="cad_p_cclasstrib" onchange="aplicarClassificacaoPorCodigo('cad_p_cclasstrib','cad_p_cst_ibscbs')"><option value="">Selecione...</option></select></div>
         <div class="field"><label>CST IBS/CBS</label><input id="cad_p_cst_ibscbs" maxlength="3" readonly></div>
+        <div class="field"><label>Segmento CEST (Anexo I — referência)</label><select id="cad_p_cest_segmento" onchange="aplicarSegmentoCest()"><option value="">-- Produto não sujeito à ST --</option></select></div>
+        <div class="field"><label>CEST (Substituição Tributária)</label><input id="cad_p_cest" placeholder="00.000.00" maxlength="9" inputmode="numeric" oninput="formatarCest(this)"></div>
         <div class="field"><label>Unidade</label><select id="cad_p_unidade"><option selected>UN</option><option>PC</option><option>KG</option><option>LT</option><option>MT</option><option>CX</option></select></div>
         <div class="field"><label>Preco Unitario (R$) <span class="req">*</span></label><input id="cad_p_preco" type="number" step="0.01" min="0.01" placeholder="0.00"></div>
         <div class="field"><label>Quantidade em Estoque</label><input id="cad_p_estoque" type="number" step="0.001" min="0" value="0"></div>
+      </div>
+      <div id="cestInfoBox" class="alert alert-info" style="margin-bottom:12px">
+        <strong>CEST — Código Especificador da Substituição Tributária:</strong> obrigatório apenas para produtos sujeitos ao regime de Substituição Tributária (ICMS-ST), conforme o
+        <a href="https://www.confaz.fazenda.gov.br/legislacao/convenios/2018/CV142_18" target="_blank" rel="noopener noreferrer">Convênio ICMS 142/2018 (CONFAZ)</a>.
+        Selecione o segmento (Anexo I) apenas como referência e informe o código de 7 dígitos indicado na nota fiscal do fornecedor ou na tabela oficial.
+        Para a classificação tributária do IBS/CBS, consulte também o
+        <a href="https://dfe-portal.svrs.rs.gov.br/DFE/ClassificacaoTributaria" target="_blank" rel="noopener noreferrer">Portal de Conformidade Fiscal (SVRS) — Classificação Tributária</a>.
       </div>
       <div id="alertaProdutoCadastro"></div>
       <div class="actions">
@@ -1417,6 +1426,66 @@ var importacaoXmlPendente = null;
 var classificacoesTributarias = [];
 var classificacaoPorCodigo = {};
 const API = window.location.origin;
+
+// ── CEST — Código Especificador da Substituição Tributária ───────────────────
+// Segmentos de referência do Anexo I do Convênio ICMS 142/2018 (CONFAZ).
+// Apenas auxiliam a localizar o segmento do produto — o código CEST de 7 dígitos
+// deve ser obtido na nota fiscal do fornecedor ou na tabela oficial (link abaixo).
+const SEGMENTOS_CEST = [
+  'Autopeças',
+  'Bebidas alcoólicas, exceto cerveja e chope',
+  'Cervejas, chopes, refrigerantes, águas e outras bebidas',
+  'Cigarros e outros produtos derivados do fumo',
+  'Cimentos',
+  'Cosméticos, perfumaria, artigos de higiene pessoal e de toucador',
+  'Combustíveis e lubrificantes',
+  'Energia elétrica',
+  'Ferramentas',
+  'Lâmpadas, reatores e "starter"',
+  'Materiais de construção e congêneres',
+  'Materiais de limpeza',
+  'Materiais elétricos',
+  'Medicamentos de uso humano e produtos farmacêuticos',
+  'Papéis, plásticos, produtos cerâmicos e vidros',
+  'Pneumáticos, câmaras de ar e protetores de borracha',
+  'Produtos alimentícios',
+  'Produtos de papelaria',
+  'Produtos eletrônicos, eletroeletrônicos e eletrodomésticos',
+  'Rações para animais domésticos ("pet food")',
+  'Sorvetes e preparados para fabricação de sorvetes em máquina',
+  'Tintas e vernizes',
+  'Veículos automotores',
+  'Veículos de duas e três rodas motorizados',
+  'Venda de mercadorias pelo sistema porta a porta',
+  'Instrumentos musicais'
+];
+
+function preencherSegmentosCest(selectId){
+  var sel=document.getElementById(selectId);
+  if(!sel)return;
+  var opts=['<option value="">-- Produto não sujeito à ST --</option>'];
+  SEGMENTOS_CEST.forEach(function(nome){
+    opts.push('<option value="'+escHtml(nome)+'">'+escHtml(nome)+'</option>');
+  });
+  sel.innerHTML=opts.join('');
+}
+
+function aplicarSegmentoCest(){
+  var sel=document.getElementById('cad_p_cest_segmento');
+  var info=document.getElementById('cestInfoBox');
+  if(!sel||!info)return;
+  if(sel.value){
+    mostrarAlerta('alertaProdutoCadastro','info','Segmento "'+sel.value+'" selecionado. Informe o código CEST de 7 dígitos correspondente ao produto (consulte a nota fiscal do fornecedor ou a tabela oficial do Anexo I).');
+  }
+}
+
+function formatarCest(input){
+  var digitos=(input.value||'').replace(/\D/g,'').slice(0,7);
+  var formatado=digitos;
+  if(digitos.length>5)formatado=digitos.slice(0,2)+'.'+digitos.slice(2,5)+'.'+digitos.slice(5);
+  else if(digitos.length>2)formatado=digitos.slice(0,2)+'.'+digitos.slice(2);
+  input.value=formatado;
+}
 
 // ── Client-side routing ────────────────────────────────────────────────────────
 const ROUTE_MAP = {
@@ -2073,6 +2142,9 @@ function filtrarProdutosCadastro(){
     document.getElementById('cad_p_csosn').value=p.csosn||'';
     document.getElementById('cad_p_cclasstrib').value=p.cClassTrib||'';
     document.getElementById('cad_p_cst_ibscbs').value=p.cstIbsCbs||'';
+    var cestEl=document.getElementById('cad_p_cest');
+    if(cestEl){cestEl.value=p.cest||'';formatarCest(cestEl);}
+    document.getElementById('cad_p_cest_segmento').value='';
     document.getElementById('cad_p_unidade').value=p.unidade||'UN';
     document.getElementById('cad_p_preco').value=(p.preco||0).toFixed(2);
     document.getElementById('cad_p_estoque').value=p.quantidadeEstoque||0;
@@ -2090,14 +2162,16 @@ async function cadastrarProdutoCadastro(){
   if(!v('cad_p_cclasstrib')){mostrarAlerta('alertaProdutoCadastro','error','cClassTrib (IBS/CBS) e obrigatorio.');return;}
   var classTrib=aplicarClassificacaoPorCodigo('cad_p_cclasstrib','cad_p_cst_ibscbs');
   if(!classTrib){mostrarAlerta('alertaProdutoCadastro','error','cClassTrib invalido. Selecione um codigo da lista oficial.');return;}
+  var cestDigitos=(v('cad_p_cest')||'').replace(/\D/g,'');
+  if(cestDigitos&&cestDigitos.length!==7){mostrarAlerta('alertaProdutoCadastro','error','CEST deve ter 7 dígitos (formato 00.000.00). Deixe em branco se o produto não for sujeito à Substituição Tributária.');return;}
   spin('spinProdutoCadastro',true);
   try{
     var res=await fetch(API+'/api/produto',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({empresaId:empresaId,nome:v('cad_p_nome'),descricao:v('cad_p_descricao'),ean:v('cad_p_ean')||null,ncm:v('cad_p_ncm'),cfop:v('cad_p_cfop'),cst:v('cad_p_cst')||'00',csosn:v('cad_p_csosn')||'102',cClassTrib:v('cad_p_cclasstrib'),cstIbsCbs:v('cad_p_cst_ibscbs'),unidade:v('cad_p_unidade')||'UN',preco:parseFloat(v('cad_p_preco'))||0,quantidadeEstoque:parseFloat(v('cad_p_estoque'))||0,aliquotaICMS:0,aliquotaIPI:0,aliquotaPIS:0.65,aliquotaCOFINS:3})});
+      body:JSON.stringify({empresaId:empresaId,nome:v('cad_p_nome'),descricao:v('cad_p_descricao'),ean:v('cad_p_ean')||null,ncm:v('cad_p_ncm'),cfop:v('cad_p_cfop'),cst:v('cad_p_cst')||'00',csosn:v('cad_p_csosn')||'102',cClassTrib:v('cad_p_cclasstrib'),cstIbsCbs:v('cad_p_cst_ibscbs'),cest:cestDigitos,unidade:v('cad_p_unidade')||'UN',preco:parseFloat(v('cad_p_preco'))||0,quantidadeEstoque:parseFloat(v('cad_p_estoque'))||0,aliquotaICMS:0,aliquotaIPI:0,aliquotaPIS:0.65,aliquotaCOFINS:3})});
     var data=await safeJson(res);
     if(!res.ok)throw new Error(data.erro||'HTTP '+res.status);
     estado.produtoId=data.id;estado.produtoNome=data.nome||v('cad_p_nome');
-    produtosCadastrados.unshift({id:data.id,nome:estado.produtoNome,descricao:v('cad_p_descricao'),ean:v('cad_p_ean'),ncm:v('cad_p_ncm'),cfop:v('cad_p_cfop'),cst:v('cad_p_cst')||'00',csosn:v('cad_p_csosn')||'102',cClassTrib:v('cad_p_cclasstrib'),cstIbsCbs:v('cad_p_cst_ibscbs'),preco:parseFloat(v('cad_p_preco'))||0,unidade:v('cad_p_unidade')||'UN',quantidadeEstoque:parseFloat(v('cad_p_estoque'))||0});
+    produtosCadastrados.unshift({id:data.id,nome:estado.produtoNome,descricao:v('cad_p_descricao'),ean:v('cad_p_ean'),ncm:v('cad_p_ncm'),cfop:v('cad_p_cfop'),cst:v('cad_p_cst')||'00',csosn:v('cad_p_csosn')||'102',cClassTrib:v('cad_p_cclasstrib'),cstIbsCbs:v('cad_p_cst_ibscbs'),cest:cestDigitos,preco:parseFloat(v('cad_p_preco'))||0,unidade:v('cad_p_unidade')||'UN',quantidadeEstoque:parseFloat(v('cad_p_estoque'))||0});
     filtrarProdutosCadastro();
     atualizarEstadoBar();
     mostrarAlerta('alertaProdutoCadastro','success','Produto cadastrado! ID: '+data.id);
@@ -3396,6 +3470,7 @@ async function carregarDadosEmpresa() {
 
 carregarDadosEmpresa();
 carregarClassificacoesTributarias();
+preencherSegmentosCest('cad_p_cest_segmento');
 preencherMesAtual();
 
 // Inicializa a aba correta a partir da URL (suporte a deep links e F5)
