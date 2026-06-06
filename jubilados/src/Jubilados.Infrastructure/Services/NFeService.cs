@@ -219,25 +219,37 @@ public class NFeService : INFeService
         var xml = soapDoc.OuterXml;
         _logger.LogInformation("[NFe] ConsultarSefaz SOAP: {Xml}", xml.Length > 2000 ? xml[..2000] : xml);
 
-        try
+        ConsultarSefazResultDto? lastResult = null;
+        for (int attempt = 0; attempt <= 1; attempt++)
         {
-            var handler = new HttpClientHandler();
-            handler.ClientCertificates.Add(certificado);
-            handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-            using var http = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(30) };
-            var content = new StringContent(xml, Encoding.UTF8);
-            content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(
-                $"application/soap+xml; charset=utf-8; action=\"{soapAction}\"");
-            var response = await http.PostAsync(_options.UrlConsulta, content, cancellationToken);
-            var retorno = await response.Content.ReadAsStringAsync(cancellationToken);
-            _logger.LogInformation("[NFe] ConsultarSefaz resposta: {Body}", retorno.Length > 2000 ? retorno[..2000] : retorno);
-            return InterpretarConsultaProtocolo(retorno, _logger);
+            try
+            {
+                var handler = new HttpClientHandler();
+                handler.ClientCertificates.Add(certificado);
+                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                using var http = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(30) };
+                var content = new StringContent(xml, Encoding.UTF8);
+                content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(
+                    $"application/soap+xml; charset=utf-8; action=\"{soapAction}\"");
+                var response = await http.PostAsync(_options.UrlConsulta, content, cancellationToken);
+                var retorno = await response.Content.ReadAsStringAsync(cancellationToken);
+                _logger.LogInformation("[NFe] ConsultarSefaz resposta (attempt {A}): {Body}", attempt + 1, retorno.Length > 2000 ? retorno[..2000] : retorno);
+                lastResult = InterpretarConsultaProtocolo(retorno, _logger);
+                if (lastResult.CStat != "999" || attempt == 1) return lastResult;
+                await Task.Delay(600, cancellationToken);
+            }
+            catch (HttpRequestException ex) when (attempt == 0)
+            {
+                _logger.LogWarning(ex, "[NFe] ConsultarSefaz erro HTTP na tentativa 1, retentando.");
+                await Task.Delay(600, cancellationToken);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "[NFe] ConsultarSefaz erro HTTP.");
+                return new ConsultarSefazResultDto(false, "999", $"Erro de comunicação: {ex.Message}");
+            }
         }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "[NFe] ConsultarSefaz erro HTTP.");
-            return new ConsultarSefazResultDto(false, "999", $"Erro de comunicaÃ§Ã£o: {ex.Message}");
-        }
+        return lastResult ?? new ConsultarSefazResultDto(false, "999", "Sem resposta da SEFAZ.");
     }
 
     public async Task<StatusServicoResultDto> ConsultarStatusAsync(

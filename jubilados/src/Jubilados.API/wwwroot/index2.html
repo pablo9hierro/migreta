@@ -798,7 +798,7 @@
     <!-- Passo 2 -->
     <div id="passo2" style="display:none">
       <div class="card">
-        <h2>Produto / Serviço</h2>
+        <h2>Produto</h2>
         <p class="subtitle">Pesquise e adicione produtos ao pedido. Você pode adicionar vários itens antes de emitir.</p>
         <!-- Busca produto existente -->
         <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:14px;border:1px solid var(--border)">
@@ -1142,11 +1142,17 @@
       <h2>Emitir NFC-e (Cupom Fiscal)</h2>
       <p class="subtitle">Emite cupom fiscal eletronico (modelo 65) para venda ao consumidor. Requer CSC configurado na aba Configura&ccedil;&otilde;es.</p>
       <div class="alert alert-warn">Voce esta em AMBIENTE DE HOMOLOGACAO. Os cupons emitidos nao tem validade fiscal.</div>
-      <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
-        Itens do Cupom <span class="req">*</span>
-        <button class="btn btn-outline" style="font-size:.78rem;padding:5px 12px" onclick="adicionarItemNfce()">+ Item</button>
+      <!-- Busca produto NFC-e -->
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-top:14px;margin-bottom:14px;border:1px solid var(--border)">
+        <div class="section-title" style="margin-bottom:8px">Buscar produto já cadastrado</div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <div class="field" style="flex:1"><label>Pesquisar por nome</label><input id="busca_produto_nfce" placeholder="Digite o nome do produto..." oninput="filtrarProdutosNfce()" onfocus="if(!produtosCadastrados.length)carregarProdutos()"></div>
+        </div>
+        <div id="lista_produtos_nfce" style="margin-top:8px;max-height:150px;overflow-y:auto;display:none"></div>
       </div>
-      <div id="itensContainerNfce" style="margin-bottom:12px"></div>
+      <!-- Carrinho NFC-e -->
+      <div id="carrinhoNfce" style="margin-bottom:12px"></div>
+      <div id="itensContainerNfce" style="display:none"></div>
       <div class="grid2" style="margin-bottom:12px">
         <div class="field"><label>CPF do Consumidor (opcional)</label><input id="nfce_cpf" placeholder="Deixe vazio para consumidor anonimo" maxlength="11"></div>
         <div class="field"><label>Forma de Pagamento</label>
@@ -1981,9 +1987,7 @@ function renderCarrinho(){
       +'<div style="flex:1"><strong>'+nome+'</strong> <small style="color:var(--muted)">'+unidade+'</small></div>'
       +'<div style="display:flex;align-items:center;gap:6px">'
       +'<label style="font-size:.78rem;color:var(--muted)">Qtd</label>'
-      +'<input type="number" min="0.001" step="0.001" value="'+item.qtd+'" style="width:70px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:.85rem" onchange="itens['+i+'].qtd=parseFloat(this.value)||1;renderItens();renderCarrinho()">'
-      +'<label style="font-size:.78rem;color:var(--muted)">R$</label>'
-      +'<input type="number" min="0.01" step="0.01" value="'+item.valor.toFixed(2)+'" style="width:90px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:.85rem" onchange="itens['+i+'].valor=parseFloat(this.value)||0;renderItens();renderCarrinho()">'
+      +'<input type="number" min="0.001" step="0.001" value="'+item.qtd+'" style="width:70px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:.85rem" onchange="itens['+i+'].qtd=parseFloat(this.value)||1;renderItens()">'
       +'<button onclick="removerItemCarrinho('+i+')" style="background:none;border:1px solid var(--danger,#ef4444);color:var(--danger,#ef4444);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:.85rem" title="Remover">✕</button>'
       +'</div>'
       +'</div>';
@@ -2303,14 +2307,12 @@ function renderItens(){
         +'<div class="grid3"><div class="field span3"><label>Produto <span class="req">*</span></label>'
         +'<select id="item_pid_'+i+'" onchange="selecionarProdutoItem('+i+')">'+opts+'</select></div>'
         +'<div class="field"><label>Quantidade</label><input id="item_qtd_'+i+'" type="number" step="0.001" min="0.001" value="'+item.qtd+'"></div>'
-        +'<div class="field"><label>Valor Unitario (R$)</label><input id="item_val_'+i+'" type="number" step="0.01" min="0.01" value="'+item.valor+'"></div>'
         +'<div class="field"><label>Desconto (R$)</label><input id="item_desc_'+i+'" type="number" step="0.01" value="'+item.desc+'"></div></div>';
     } else {
       div.innerHTML='<button class="remover" onclick="removerItem('+i+')" title="Remover">x</button>'
-        +'<div class="grid3"><div class="field span3"><label>Produto ID <span class="req">*</span></label>'
-        +'<input id="item_pid_'+i+'" value="'+(item.produtoId||'')+'" placeholder="UUID do produto (va ao Passo 3 para selecionar)"></div>'
+        +'<div class="grid3"><div class="field span3"><label>Produto <span class="req">*</span></label>'
+        +'<input id="item_pid_'+i+'" value="'+(item.produtoId||'')+'" placeholder="Adicione produtos na seção acima"></div>'
         +'<div class="field"><label>Quantidade</label><input id="item_qtd_'+i+'" type="number" step="0.001" min="0.001" value="'+item.qtd+'"></div>'
-        +'<div class="field"><label>Valor Unitario (R$)</label><input id="item_val_'+i+'" type="number" step="0.01" min="0.01" value="'+item.valor+'"></div>'
         +'<div class="field"><label>Desconto (R$)</label><input id="item_desc_'+i+'" type="number" step="0.01" value="'+item.desc+'"></div></div>';
     }
     container.appendChild(div);
@@ -2319,16 +2321,16 @@ function renderItens(){
 function selecionarProdutoItem(i){
   var sel=document.getElementById('item_pid_'+i);
   var prod=produtosCadastrados.find(function(p){return p.id===sel.value;});
-  if(prod){var valEl=document.getElementById('item_val_'+i);if(valEl)valEl.value=prod.preco.toFixed(2);}
+  if(prod&&itens[i]){itens[i].produtoId=prod.id;itens[i].valor=prod.preco||0;}
 }
 function adicionarItem(){itens.push({produtoId:'',qtd:1,valor:0,desc:0});renderItens();renderCarrinho();}
 function removerItem(i){itens.splice(i,1);renderItens();renderCarrinho();}
 function coletarItens(){
-  return itens.map(function(_,i){return{
-    produtoId:(document.getElementById('item_pid_'+i)||{}).value||'',
-    quantidade:parseFloat((document.getElementById('item_qtd_'+i)||{}).value)||1,
-    valorUnitario:parseFloat((document.getElementById('item_val_'+i)||{}).value)||0,
-    valorDesconto:parseFloat((document.getElementById('item_desc_'+i)||{}).value)||0
+  return itens.map(function(item,i){return{
+    produtoId:(document.getElementById('item_pid_'+i)||{}).value||item.produtoId||'',
+    quantidade:parseFloat((document.getElementById('item_qtd_'+i)||{}).value)||item.qtd||1,
+    valorUnitario:item.valor||0,
+    valorDesconto:parseFloat((document.getElementById('item_desc_'+i)||{}).value)||item.desc||0
   };});
 }
 
@@ -2548,36 +2550,72 @@ async function consultarNuvemFiscal(){
 
 // -------- NFC-e --------
 var itensNfce=[];
-function renderItensNfce(){
-  if(!itensNfce.length)itensNfce=[{produtoId:estado.produtoId||'',qtd:1,valor:100,desc:0}];
-  if(estado.produtoId&&itensNfce.length===1&&!itensNfce[0].produtoId)itensNfce[0].produtoId=estado.produtoId;
-  var container=document.getElementById('itensContainerNfce');if(!container)return;container.innerHTML='';
-  itensNfce.forEach(function(item,i){
-    var div=document.createElement('div');div.className='item-linha';
-    var opts='<option value="">-- Selecione --</option>';
-    produtosCadastrados.forEach(function(p){opts+='<option value="'+p.id+'"'+(item.produtoId===p.id?' selected':'')+'>'+p.nome+' (R$ '+p.preco.toFixed(2)+')</option>';});
-    if(produtosCadastrados.length){
-      div.innerHTML='<button class="remover" onclick="removerItemNfce('+i+')" title="Remover">x</button>'
-        +'<div class="grid3"><div class="field span3"><label>Produto <span class="req">*</span></label>'
-        +'<select id="nfce_pid_'+i+'" onchange="selecionarProdutoItemNfce('+i+')">'+opts+'</select></div>'
-        +'<div class="field"><label>Quantidade</label><input id="nfce_qtd_'+i+'" type="number" step="0.001" min="0.001" value="'+item.qtd+'"></div>'
-        +'<div class="field"><label>Valor Unitario (R$)</label><input id="nfce_val_'+i+'" type="number" step="0.01" min="0.01" value="'+item.valor+'"></div>'
-        +'<div class="field"><label>Desconto (R$)</label><input id="nfce_desc_'+i+'" type="number" step="0.01" value="'+item.desc+'"></div></div>';
-    } else {
-      div.innerHTML='<button class="remover" onclick="removerItemNfce('+i+')" title="Remover">x</button>'
-        +'<div class="grid3"><div class="field span3"><label>Produto ID <span class="req">*</span></label>'
-        +'<input id="nfce_pid_'+i+'" value="'+(item.produtoId||'')+'" placeholder="UUID do produto"></div>'
-        +'<div class="field"><label>Quantidade</label><input id="nfce_qtd_'+i+'" type="number" step="0.001" min="0.001" value="'+item.qtd+'"></div>'
-        +'<div class="field"><label>Valor Unitario (R$)</label><input id="nfce_val_'+i+'" type="number" step="0.01" min="0.01" value="'+item.valor+'"></div>'
-        +'<div class="field"><label>Desconto (R$)</label><input id="nfce_desc_'+i+'" type="number" step="0.01" value="'+item.desc+'"></div></div>';
-    }
-    container.appendChild(div);
+
+function filtrarProdutosNfce(){
+  var q=(document.getElementById('busca_produto_nfce').value||'').toLowerCase();
+  var lista=produtosCadastrados.filter(function(p){return!q||p.nome.toLowerCase().includes(q);});
+  var containerEl=document.getElementById('lista_produtos_nfce');
+  if(!containerEl)return;
+  if(!lista||!lista.length){containerEl.style.display='none';return;}
+  containerEl.style.display='block';
+  containerEl.innerHTML='';
+  lista.slice(0,8).forEach(function(p){
+    var el=document.createElement('div');
+    el.style.cssText='padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--border);border-radius:4px;display:flex;justify-content:space-between;align-items:center';
+    var preco='R$ '+(p.preco||0).toFixed(2).replace('.',',');
+    el.innerHTML='<span><strong>'+p.nome+'</strong> <small style="color:var(--muted)">'+p.unidade+' — '+preco+'</small></span><span class="badge badge-green" style="font-size:.7rem">+ Adicionar</span>';
+    el.onmouseenter=function(){this.style.background='var(--step-active)';};
+    el.onmouseleave=function(){this.style.background='';};
+    el.onclick=function(){
+      itensNfce.push({produtoId:p.id,qtd:1,valor:p.preco||0,desc:0});
+      var busca=document.getElementById('busca_produto_nfce');
+      if(busca){busca.value='';busca.focus();}
+      containerEl.style.display='none';
+      renderCarrinhoNfce();
+      mostrarAlerta('alertaNfce','success','Produto adicionado: '+p.nome+' — '+preco);
+    };
+    containerEl.appendChild(el);
   });
 }
-function selecionarProdutoItemNfce(i){var sel=document.getElementById('nfce_pid_'+i);var prod=produtosCadastrados.find(function(p){return p.id===sel.value;});if(prod){var valEl=document.getElementById('nfce_val_'+i);if(valEl)valEl.value=prod.preco.toFixed(2);}}
-function adicionarItemNfce(){itensNfce.push({produtoId:estado.produtoId||'',qtd:1,valor:100,desc:0});renderItensNfce();}
-function removerItemNfce(i){if(itensNfce.length>1){itensNfce.splice(i,1);renderItensNfce();}}
-function coletarItensNfce(){return itensNfce.map(function(_,i){return{produtoId:(document.getElementById('nfce_pid_'+i)||{}).value||'',quantidade:parseFloat((document.getElementById('nfce_qtd_'+i)||{}).value)||1,valorUnitario:parseFloat((document.getElementById('nfce_val_'+i)||{}).value)||0,valorDesconto:parseFloat((document.getElementById('nfce_desc_'+i)||{}).value)||0};});}
+
+function renderCarrinhoNfce(){
+  var container=document.getElementById('carrinhoNfce');
+  if(!container)return;
+  if(!itensNfce.length){
+    container.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:8px 0">Nenhum produto adicionado ainda.</p>';
+    return;
+  }
+  var html='<div class="section-title" style="margin-bottom:8px">Produtos no cupom</div>';
+  itensNfce.forEach(function(item,i){
+    var prod=produtosCadastrados.find(function(p){return p.id===item.produtoId;});
+    var nome=prod?prod.nome:'Produto';
+    var unidade=prod?prod.unidade:'UN';
+    html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;margin-bottom:6px">'
+      +'<div style="flex:1"><strong>'+nome+'</strong> <small style="color:var(--muted)">'+unidade+'</small></div>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<label style="font-size:.78rem;color:var(--muted)">Qtd</label>'
+      +'<input type="number" min="0.001" step="0.001" value="'+item.qtd+'" style="width:70px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:.85rem" onchange="itensNfce['+i+'].qtd=parseFloat(this.value)||1">'
+      +'<button onclick="removerItemNfce('+i+')" style="background:none;border:1px solid var(--danger,#ef4444);color:var(--danger,#ef4444);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:.85rem" title="Remover">✕</button>'
+      +'</div>'
+      +'</div>';
+  });
+  container.innerHTML=html;
+}
+
+function renderItensNfce(){
+  var container=document.getElementById('itensContainerNfce');if(!container)return;
+  container.innerHTML='';
+}
+function removerItemNfce(i){itensNfce.splice(i,1);renderCarrinhoNfce();}
+function adicionarItemNfce(){itensNfce.push({produtoId:'',qtd:1,valor:0,desc:0});renderCarrinhoNfce();}
+function coletarItensNfce(){
+  return itensNfce.map(function(item,i){return{
+    produtoId:item.produtoId||'',
+    quantidade:parseFloat((document.getElementById('nfce_qtd_'+i)||{}).value)||item.qtd||1,
+    valorUnitario:item.valor||0,
+    valorDesconto:item.desc||0
+  };});
+}
 
 async function salvarCsc(){
   limparAlerta('alertaCsc');
@@ -2608,8 +2646,9 @@ async function emitirNFCe(){
   limparAlerta('alertaNfce');
   document.getElementById('resultNfce').style.display='none';
   if(!estado.empresaId){mostrarAlerta('alertaNfce','error','Empresa nao configurada.');return;}
+  if(!itensNfce.length){mostrarAlerta('alertaNfce','error','Adicione ao menos um produto ao cupom.');return;}
   var itensList=coletarItensNfce();
-  if(itensList.some(function(it){return!it.produtoId;})){mostrarAlerta('alertaNfce','error','Selecione o produto em todos os itens.');return;}
+  if(itensList.some(function(it){return!it.produtoId;})){mostrarAlerta('alertaNfce','error','Todos os itens precisam ter produto selecionado.');return;}
   spin('spinNfce',true);
   try{
     var cpf=v('nfce_cpf').replace(/\D/g,'');
