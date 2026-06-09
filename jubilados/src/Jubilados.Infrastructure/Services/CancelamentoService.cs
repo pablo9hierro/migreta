@@ -1,4 +1,3 @@
-using System.Text;
 using System.Xml;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
@@ -90,18 +89,14 @@ public class CancelamentoService : ICancelamentoService
         string cStat, xMotivo, protocolo;
         try
         {
-            using var http = SefazHttpClientFactory.Criar(certificado, TimeSpan.FromSeconds(30));
-            var content = new StringContent(soap, Encoding.UTF8);
-            content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(
-                $"application/soap+xml; charset=utf-8; action=\"{soapAction}\"");
-            var response = await http.PostAsync(urlEvento, content, cancellationToken);
-            var retorno = await response.Content.ReadAsStringAsync(cancellationToken);
+            var retorno = await SefazSoapClient.PostAsync(
+                urlEvento, soapAction, soap, certificado, TimeSpan.FromSeconds(30), _logger, cancellationToken);
             _logger.LogInformation("[Cancelamento] Resposta: {R}", retorno.Length > 2000 ? retorno[..2000] : retorno);
             (cStat, xMotivo, protocolo) = InterpretarRetorno(retorno);
         }
-        catch (HttpRequestException ex)
+        catch (Exception ex)
         {
-            _logger.LogError(ex, "[Cancelamento] Erro HTTP.");
+            _logger.LogError(ex, "[Cancelamento] Erro de comunicação.");
             var detalhe = ex.InnerException?.Message ?? ex.Message;
             return new CancelamentoResultDto(false, "999", $"Erro de comunicação: {detalhe}");
         }

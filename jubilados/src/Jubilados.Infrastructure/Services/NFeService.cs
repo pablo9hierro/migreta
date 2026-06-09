@@ -545,18 +545,14 @@ public class NFeService : INFeService
 
         try
         {
-            using var http = SefazHttpClientFactory.Criar(certificado, TimeSpan.FromSeconds(30));
-            var content = new StringContent(soap, Encoding.UTF8);
-            content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(
-                $"application/soap+xml; charset=utf-8; action=\"{soapAction}\"");
-            var response = await http.PostAsync(_options.UrlEvento, content, cancellationToken);
-            var retorno = await response.Content.ReadAsStringAsync(cancellationToken);
+            var retorno = await SefazSoapClient.PostAsync(
+                _options.UrlEvento, soapAction, soap, certificado, TimeSpan.FromSeconds(30), _logger, cancellationToken);
             _logger.LogInformation("[CCe] Resposta: {Body}", retorno.Length > 2000 ? retorno[..2000] : retorno);
             return InterpretarCce(retorno, _logger);
         }
-        catch (HttpRequestException ex)
+        catch (Exception ex)
         {
-            _logger.LogError(ex, "[CCe] Erro HTTP.");
+            _logger.LogError(ex, "[CCe] Erro de comunicação.");
             var detalhe = ex.InnerException?.Message ?? ex.Message;
             return new CceResultDto(false, "999", $"Erro de comunicação: {detalhe}");
         }

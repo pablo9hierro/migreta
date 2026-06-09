@@ -21,6 +21,13 @@ RUN dotnet publish "Jubilados.API.csproj" -c Release -o /app/publish \
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
+# curl é usado para chamadas SOAP aos webservices de eventos da SVRS (recepcaoevento4),
+# pois o SslStream do .NET no Linux não suporta a renegociação TLS pós-handshake
+# exigida por esse endpoint para solicitar o certificado do cliente.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /app/publish .
 
 # Expor porta da API
