@@ -1,3 +1,4 @@
+using System.Security.Authentication;
 using System.Text;
 using System.Xml;
 using System.Security.Cryptography.X509Certificates;
@@ -94,6 +95,10 @@ public class CancelamentoService : ICancelamentoService
             handler.ClientCertificates.Add(certificado);
             handler.ServerCertificateCustomValidationCallback =
                 HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            // SVRS exige TLS 1.2 explicitamente; em Linux/.NET 8 a negociação
+            // automática pode tentar TLS 1.3 e falhar o handshake com o
+            // endpoint de recepção de eventos.
+            handler.SslProtocols = SslProtocols.Tls12;
             using var http = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(30) };
             var content = new StringContent(soap, Encoding.UTF8);
             content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(
@@ -106,7 +111,8 @@ public class CancelamentoService : ICancelamentoService
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "[Cancelamento] Erro HTTP.");
-            return new CancelamentoResultDto(false, "999", $"Erro de comunicação: {ex.Message}");
+            var detalhe = ex.InnerException?.Message ?? ex.Message;
+            return new CancelamentoResultDto(false, "999", $"Erro de comunicação: {detalhe}");
         }
 
         // cStat 135 = Evento registrado e vinculado à NF-e

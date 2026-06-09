@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Text;
@@ -318,7 +319,7 @@ public class NFeService : INFeService
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "[NFe] ConsultarStatus erro HTTP.");
-            return new StatusServicoResultDto(false, "999", $"Erro de comunicaÃ§Ã£o: {ex.Message}");
+            return new StatusServicoResultDto(false, "999", $"Erro de comunicação: {ex.Message}");
         }
     }
 
@@ -412,7 +413,7 @@ public class NFeService : INFeService
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "[NFe] Inutilizar erro HTTP.");
-            return new InutilizarResultDto(false, "999", $"Erro de comunicaÃ§Ã£o: {ex.Message}");
+            return new InutilizarResultDto(false, "999", $"Erro de comunicação: {ex.Message}");
         }
     }
 
@@ -548,6 +549,10 @@ public class NFeService : INFeService
             var handler = new HttpClientHandler();
             handler.ClientCertificates.Add(certificado);
             handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            // SVRS exige TLS 1.2 explicitamente; em Linux/.NET 8 a negociação
+            // automática pode tentar TLS 1.3 e falhar o handshake com o
+            // endpoint de recepção de eventos.
+            handler.SslProtocols = SslProtocols.Tls12;
             using var http = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(30) };
             var content = new StringContent(soap, Encoding.UTF8);
             content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(
@@ -560,7 +565,8 @@ public class NFeService : INFeService
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "[CCe] Erro HTTP.");
-            return new CceResultDto(false, "999", $"Erro de comunicaÃ§Ã£o: {ex.Message}");
+            var detalhe = ex.InnerException?.Message ?? ex.Message;
+            return new CceResultDto(false, "999", $"Erro de comunicação: {detalhe}");
         }
     }
 
