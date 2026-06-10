@@ -42,8 +42,8 @@ internal static class SefazSoapClient
                 RedirectStandardError = true,
                 UseShellExecute = false,
             };
-            psi.ArgumentList.Add("-s");
-            psi.ArgumentList.Add("-S");
+            psi.ArgumentList.Add("-sS");
+            psi.ArgumentList.Add("-v");
             psi.ArgumentList.Add("--tlsv1.2");
             psi.ArgumentList.Add("-k");
             psi.ArgumentList.Add("--cert"); psi.ArgumentList.Add(certPath + ":");
@@ -62,10 +62,13 @@ internal static class SefazSoapClient
             var stdout = await stdoutTask;
             var stderr = await stderrTask;
 
+            // -v escreve o trace do handshake em stderr mesmo em caso de sucesso.
+            logger.LogInformation("[SefazSoapClient] curl trace:\n{Trace}", stderr);
+
             if (proc.ExitCode != 0)
             {
-                logger.LogError("[SefazSoapClient] curl saiu com código {Code}: {Err}", proc.ExitCode, stderr);
-                throw new HttpRequestException($"curl falhou (código {proc.ExitCode}): {stderr.Trim()}");
+                var resumo = ResumirTrace(stderr);
+                throw new HttpRequestException($"curl falhou (código {proc.ExitCode}): {resumo}");
             }
 
             return stdout;
@@ -74,5 +77,25 @@ internal static class SefazSoapClient
         {
             try { Directory.Delete(tempDir, recursive: true); } catch { /* best-effort */ }
         }
+    }
+
+    /// <summary>
+    /// Extrai do trace verboso do curl (-v) as linhas relevantes sobre o handshake
+    /// TLS/SSL e o erro final, para exibir um resumo útil ao usuário.
+    /// </summary>
+    private static string ResumirTrace(string stderr)
+    {
+        var linhas = stderr
+            .Split('\n')
+            .Select(l => l.TrimEnd('\r').Trim())
+            .Where(l => l.Length > 0 &&
+                (l.Contains("SSL", StringComparison.OrdinalIgnoreCase) ||
+                 l.Contains("TLS", StringComparison.OrdinalIgnoreCase) ||
+                 l.Contains("curl:", StringComparison.OrdinalIgnoreCase) ||
+                 l.StartsWith("* Connected", StringComparison.Ordinal) ||
+                 l.StartsWith("* connect", StringComparison.Ordinal)))
+            .ToList();
+
+        return linhas.Count > 0 ? string.Join(" | ", linhas.TakeLast(8)) : stderr.Trim();
     }
 }
