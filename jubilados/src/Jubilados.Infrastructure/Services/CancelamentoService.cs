@@ -89,8 +89,9 @@ public class CancelamentoService : ICancelamentoService
         string cStat, xMotivo, protocolo;
         try
         {
+            var pkcs12 = _certificadoService.CarregarCadeiaPkcs12(empresa.CertificadoBase64!, empresa.CertificadoSenha!);
             var retorno = await SefazSoapClient.PostAsync(
-                urlEvento, soapAction, soap, certificado, TimeSpan.FromSeconds(30), _logger, cancellationToken);
+                urlEvento, soapAction, soap, pkcs12, TimeSpan.FromSeconds(30), _logger, cancellationToken);
             _logger.LogInformation("[Cancelamento] Resposta: {R}", retorno.Length > 2000 ? retorno[..2000] : retorno);
             (cStat, xMotivo, protocolo) = InterpretarRetorno(retorno);
         }

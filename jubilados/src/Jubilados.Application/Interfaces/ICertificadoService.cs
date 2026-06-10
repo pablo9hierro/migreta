@@ -18,4 +18,12 @@ public interface ICertificadoService
     /// Retorna a data de expiração do certificado.
     /// </summary>
     DateTime ObterValidade(string base64, string senha);
+
+    /// <summary>
+    /// Reexporta o .pfx como PKCS#12 sem senha, preservando toda a cadeia
+    /// (certificado + intermediárias) presente no arquivo original. Usado para
+    /// autenticação mTLS via curl, que (diferente de X509Certificate2) envia
+    /// a cadeia completa no handshake TLS.
+    /// </summary>
+    byte[] CarregarCadeiaPkcs12(string base64, string senha);
 }

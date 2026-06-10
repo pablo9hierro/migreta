@@ -76,4 +76,22 @@ public class CertificadoService : ICertificadoService
         var cert = CarregarCertificado(base64, senha);
         return cert.NotAfter;
     }
+
+    /// <inheritdoc />
+    public byte[] CarregarCadeiaPkcs12(string base64, string senha)
+    {
+        var bytes = Convert.FromBase64String(base64);
+
+        var flags = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? X509KeyStorageFlags.Exportable | X509KeyStorageFlags.UserKeySet
+            : X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet;
+
+        // X509Certificate2(bytes, senha) retorna apenas o certificado com a chave
+        // privada, descartando intermediárias do .pfx. A collection preserva todos
+        // os certificados do arquivo original.
+        var collection = new X509Certificate2Collection();
+        collection.Import(bytes, senha, flags);
+
+        return collection.Export(X509ContentType.Pkcs12, string.Empty)!;
+    }
 }

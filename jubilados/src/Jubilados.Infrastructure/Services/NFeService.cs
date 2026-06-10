@@ -545,8 +545,9 @@ public class NFeService : INFeService
 
         try
         {
+            var pkcs12 = _certificadoService.CarregarCadeiaPkcs12(empresa.CertificadoBase64!, empresa.CertificadoSenha!);
             var retorno = await SefazSoapClient.PostAsync(
-                _options.UrlEvento, soapAction, soap, certificado, TimeSpan.FromSeconds(30), _logger, cancellationToken);
+                _options.UrlEvento, soapAction, soap, pkcs12, TimeSpan.FromSeconds(30), _logger, cancellationToken);
             _logger.LogInformation("[CCe] Resposta: {Body}", retorno.Length > 2000 ? retorno[..2000] : retorno);
             return InterpretarCce(retorno, _logger);
         }
