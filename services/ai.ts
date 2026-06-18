@@ -1,9 +1,15 @@
 import { MigrationResponse } from '../types';
+import { FREE_MODELS } from '../constants/models';
 
-// Set EXPO_PUBLIC_AI_URL in .env when your local DeepSeek API is running
-// e.g. EXPO_PUBLIC_AI_URL=http://192.168.1.100:11434/v1
-const AI_BASE = process.env.EXPO_PUBLIC_AI_URL;
-const AI_MODEL = process.env.EXPO_PUBLIC_AI_MODEL ?? 'deepseek-r1:latest';
+const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const API_KEY = process.env.EXPO_PUBLIC_OPENROUTER_KEY;
+
+export class RateLimitError extends Error {
+  constructor() {
+    super('RATE_LIMIT_EXHAUSTED');
+    this.name = 'RateLimitError';
+  }
+}
 
 function buildPrompt(sourceLang: string, targetLang: string, text: string): string {
   return `You are a language migration assistant. The user speaks ${sourceLang} and is learning ${targetLang}.
@@ -22,13 +28,65 @@ Return ONLY valid JSON — no markdown fences, no explanation outside the JSON:
     }
   ],
   "explanation": "grammatical explanation in ${sourceLang} but following ${targetLang} sentence logic — explain WHY the structure is the way it is",
-  "literalExtreme": "word-for-word translation preserving ${targetLang} word order — sounds wrong in ${sourceLang} but exposes the grammar structure"
+  "literalExtreme": "word-for-word translation preserving ${targetLang} word order — sounds wrong in ${sourceLang} but reveals the grammar structure"
 }
 
 Rules:
 - wordMap must cover every content word/phrase in the user's text
-- wasNative=true if the user wrote it in ${sourceLang} (their fallback), false if already in ${targetLang}
-- literalExtreme must NOT reorder words — keep exact ${targetLang} word order but use ${sourceLang} words`;
+- wasNative=true if the user wrote it in ${sourceLang}, false if already in ${targetLang}
+- literalExtreme must keep exact ${targetLang} word order but use ${sourceLang} words`;
+}
+
+async function callModel(model: string, prompt: string): Promise<MigrationResponse> {
+  const res = await fetch(OPENROUTER_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${API_KEY}`,
+      'HTTP-Referer': 'https://migreta.app',
+      'X-Title': 'migreta',
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.3,
+      max_tokens: 2048,
+    }),
+  });
+
+  if (res.status === 429) {
+    throw new Error('RATE_LIMITED');
+  }
+
+  if (!res.ok) {
+    const body = await res.text();
+    // Also catch quota/credit errors that come as 402 or error messages
+    if (res.status === 402 || body.toLowerCase().includes('credit') || body.toLowerCase().includes('quota')) {
+      throw new Error('RATE_LIMITED');
+    }
+    throw new Error(`API ${res.status}: ${body}`);
+  }
+
+  const data = await res.json();
+
+  // OpenRouter wraps errors in a 200 response sometimes
+  if (data.error) {
+    const msg = data.error.message?.toLowerCase() ?? '';
+    if (msg.includes('rate') || msg.includes('limit') || msg.includes('credit') || msg.includes('quota')) {
+      throw new Error('RATE_LIMITED');
+    }
+    throw new Error(data.error.message ?? 'Unknown error');
+  }
+
+  const content: string = data.choices?.[0]?.message?.content ?? '';
+  if (!content) throw new Error('Empty response from model');
+
+  // Strip markdown fences if model wraps response in ```json
+  const clean = content.replace(/^```(?:json)?\s*/m, '').replace(/\s*```$/m, '').trim();
+  const match = clean.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('No JSON in response');
+
+  return JSON.parse(match[0]) as MigrationResponse;
 }
 
 export async function migrateText(
@@ -36,36 +94,30 @@ export async function migrateText(
   targetLang: string,
   text: string,
 ): Promise<MigrationResponse> {
-  if (!AI_BASE) {
-    return getMockResponse(sourceLang, targetLang, text);
+  if (!API_KEY) {
+    return getMockResponse();
   }
 
-  const res = await fetch(`${AI_BASE}/chat/completions`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: AI_MODEL,
-      messages: [{ role: 'user', content: buildPrompt(sourceLang, targetLang, text) }],
-      temperature: 0.3,
-      max_tokens: 2048,
-    }),
-  });
+  const prompt = buildPrompt(sourceLang, targetLang, text);
 
-  if (!res.ok) throw new Error(`AI API ${res.status}: ${await res.text()}`);
+  for (const model of FREE_MODELS) {
+    try {
+      return await callModel(model.id, prompt);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'RATE_LIMITED') {
+        // This model hit rate limit — try the next one
+        continue;
+      }
+      // Any other error (network, malformed JSON) — bubble up
+      throw err;
+    }
+  }
 
-  const data = await res.json();
-  const content: string = data.choices?.[0]?.message?.content ?? '';
-
-  // Strip markdown fences if model wraps in ```json
-  const jsonStr = content.replace(/^```(?:json)?\n?/m, '').replace(/```$/m, '').trim();
-  const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error('No JSON in AI response');
-
-  return JSON.parse(jsonMatch[0]) as MigrationResponse;
+  // All models exhausted
+  throw new RateLimitError();
 }
 
-function getMockResponse(sourceLang: string, targetLang: string, text: string): MigrationResponse {
-  // Realistic demo showing pt→es migration
+function getMockResponse(): MigrationResponse {
   return {
     corrected: 'No puedo entender esto todavía, pero quiero aprender español.',
     wordMap: [
@@ -79,9 +131,8 @@ function getMockResponse(sourceLang: string, targetLang: string, text: string): 
     ],
     explanation:
       'No español, "conseguir" não existe com esse sentido — usamos "poder" para capacidade. ' +
-      'A negação "no" vai imediatamente antes do verbo. ' +
-      '"Todavía" (ainda) segue o verbo que modifica. ' +
-      'A estrutura da frase é quase idêntica ao português neste caso.',
+      'A negação "no" vai antes do verbo. ' +
+      '"Todavía" (ainda) vem depois do verbo que modifica.',
     literalExtreme: 'Não posso entender isto todavia, mas quero aprender espanhol.',
   };
 }

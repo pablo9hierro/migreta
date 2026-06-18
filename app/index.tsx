@@ -7,7 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import LanguageSelector from '../components/LanguageSelector';
 import MigrationResult from '../components/MigrationResult';
-import { migrateText } from '../services/ai';
+import RateLimitModal from '../components/RateLimitModal';
+import { migrateText, RateLimitError } from '../services/ai';
 import { upsertSession, newSession, newMessage } from '../services/storage';
 import { Session, Message } from '../types';
 import { getLang } from '../constants/languages';
@@ -19,6 +20,7 @@ export default function HomeScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [rateLimitVisible, setRateLimitVisible] = useState(false);
   const [session, setSession] = useState<Session>(() => newSession('pt', 'es'));
   const scrollRef = useRef<ScrollView>(null);
 
@@ -50,7 +52,11 @@ export default function HomeScreen() {
 
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 120);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Erro ao conectar com a IA');
+      if (e instanceof RateLimitError) {
+        setRateLimitVisible(true);
+      } else {
+        setError(e instanceof Error ? e.message : 'Erro ao conectar com a IA');
+      }
     } finally {
       setLoading(false);
     }
@@ -74,6 +80,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
+      <RateLimitModal visible={rateLimitVisible} onClose={() => setRateLimitVisible(false)} />
       {/* Header */}
       <View style={styles.header}>
         <View>
