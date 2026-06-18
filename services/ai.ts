@@ -1,5 +1,6 @@
 import { MigrationResponse } from '../types';
 import { FREE_MODELS } from '../constants/models';
+import { SYSTEM_PROMPT } from './systemPrompt';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const API_KEY = process.env.EXPO_PUBLIC_OPENROUTER_KEY;
@@ -11,33 +12,29 @@ export class RateLimitError extends Error {
   }
 }
 
-function buildPrompt(sourceLang: string, targetLang: string, text: string): string {
-  return `You are a language migration assistant. The user speaks ${sourceLang} and is learning ${targetLang}.
+function buildUserMessage(sourceLang: string, targetLang: string, text: string): string {
+  return `Idioma base do usuário: ${sourceLang}
+Idioma alvo (que está aprendendo): ${targetLang}
 
-The user wrote this text (possibly mixing both languages when they didn't know a word):
+Texto que o usuário escreveu (possivelmente misturando os dois idiomas):
 "${text}"
 
-Return ONLY valid JSON — no markdown fences, no explanation outside the JSON:
+Retorne APENAS JSON válido, sem markdown, sem texto fora do JSON:
 {
-  "corrected": "full corrected text in ${targetLang}",
+  "corrected": "frase correta no idioma alvo",
   "wordMap": [
     {
-      "original": "word/phrase as the user wrote it",
-      "target": "correct ${targetLang} equivalent",
+      "original": "palavra/expressão exatamente como o usuário escreveu",
+      "target": "equivalente correto em ${targetLang}",
       "wasNative": true
     }
   ],
-  "explanation": "grammatical explanation in ${sourceLang} but following ${targetLang} sentence logic — explain WHY the structure is the way it is",
-  "literalExtreme": "word-for-word translation preserving ${targetLang} word order — sounds wrong in ${sourceLang} but reveals the grammar structure"
+  "explanation": "explicação no estilo definido — analogia + 4 exemplos em moods diferentes",
+  "literalExtreme": "ordem exata de palavras de ${targetLang} mas com palavras de ${sourceLang}"
+}`;
 }
 
-Rules:
-- wordMap must cover every content word/phrase in the user's text
-- wasNative=true if the user wrote it in ${sourceLang}, false if already in ${targetLang}
-- literalExtreme must keep exact ${targetLang} word order but use ${sourceLang} words`;
-}
-
-async function callModel(model: string, prompt: string): Promise<MigrationResponse> {
+async function callModel(model: string, messages: object[]): Promise<MigrationResponse> {
   const res = await fetch(OPENROUTER_URL, {
     method: 'POST',
     headers: {
@@ -48,8 +45,8 @@ async function callModel(model: string, prompt: string): Promise<MigrationRespon
     },
     body: JSON.stringify({
       model,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.3,
+      messages,
+      temperature: 0.4,
       max_tokens: 2048,
     }),
   });
@@ -61,10 +58,9 @@ async function callModel(model: string, prompt: string): Promise<MigrationRespon
   if (!res.ok) {
     const body = await res.text();
     const bodyLower = body.toLowerCase();
-    // Skip to next model on rate limit, credit exhaustion, or invalid model ID
     if (
       res.status === 402 ||
-      res.status === 400 && (bodyLower.includes('not a valid model') || bodyLower.includes('invalid model')) ||
+      (res.status === 400 && (bodyLower.includes('not a valid model') || bodyLower.includes('invalid model'))) ||
       bodyLower.includes('credit') ||
       bodyLower.includes('quota')
     ) {
@@ -75,7 +71,6 @@ async function callModel(model: string, prompt: string): Promise<MigrationRespon
 
   const data = await res.json();
 
-  // OpenRouter wraps errors in a 200 response sometimes
   if (data.error) {
     const msg = data.error.message?.toLowerCase() ?? '';
     if (msg.includes('rate') || msg.includes('limit') || msg.includes('credit') || msg.includes('quota')) {
@@ -87,7 +82,6 @@ async function callModel(model: string, prompt: string): Promise<MigrationRespon
   const content: string = data.choices?.[0]?.message?.content ?? '';
   if (!content) throw new Error('Empty response from model');
 
-  // Strip markdown fences if model wraps response in ```json
   const clean = content.replace(/^```(?:json)?\s*/m, '').replace(/\s*```$/m, '').trim();
   const match = clean.match(/\{[\s\S]*\}/);
   if (!match) throw new Error('No JSON in response');
@@ -104,22 +98,22 @@ export async function migrateText(
     return getMockResponse();
   }
 
-  const prompt = buildPrompt(sourceLang, targetLang, text);
+  const messages = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'user', content: buildUserMessage(sourceLang, targetLang, text) },
+  ];
 
   for (const model of FREE_MODELS) {
     try {
-      return await callModel(model.id, prompt);
+      return await callModel(model.id, messages);
     } catch (err) {
       if (err instanceof Error && err.message === 'RATE_LIMITED') {
-        // This model hit rate limit — try the next one
         continue;
       }
-      // Any other error (network, malformed JSON) — bubble up
       throw err;
     }
   }
 
-  // All models exhausted
   throw new RateLimitError();
 }
 
@@ -136,9 +130,11 @@ function getMockResponse(): MigrationResponse {
       { original: 'espanhol', target: 'español', wasNative: true },
     ],
     explanation:
-      'No español, "conseguir" não existe com esse sentido — usamos "poder" para capacidade. ' +
-      'A negação "no" vai antes do verbo. ' +
-      '"Todavía" (ainda) vem depois do verbo que modifica.',
+      'Em espanhol "poder" é a chave que abre possibilidade — diferente de "conseguir".\n\n' +
+      '→ [afirmativa] Yo puedo correr rápido. (Eu posso correr rápido.)\n' +
+      '→ [negativa] No puedo dormir. (Não consigo dormir.)\n' +
+      '→ [exclamativa] ¡Puedo hacerlo! (Eu consigo fazer isso!)\n' +
+      '→ [condicional] Si pudiera, iría. (Se eu pudesse, iria.)',
     literalExtreme: 'Não posso entender isto todavia, mas quero aprender espanhol.',
   };
 }
