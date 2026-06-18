@@ -3,54 +3,66 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { LiteralWord } from '../types';
 
 const ROWS = [
-  { key: 'nl' as const, flag: '🇳🇱', color: '#E6EDF3' },
   { key: 'pt' as const, flag: '🇧🇷', color: '#93C5FD' },
+  { key: 'nl' as const, flag: '🇳🇱', color: '#E6EDF3' },
   { key: 'de' as const, flag: '🇩🇪', color: '#FCD34D' },
 ];
 
-export default function LiteralTable({ words }: { words: LiteralWord[] }) {
+interface Props {
+  words: LiteralWord[];
+  examples: string[];
+}
+
+export default function LiteralTable({ words, examples }: Props) {
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View style={styles.table}>
-        {ROWS.map(row => (
-          <View key={row.key} style={styles.row}>
-            <Text style={styles.flag}>{row.flag}</Text>
-            {words.map((w, i) => (
-              <View key={i} style={styles.cell}>
-                <Text style={[styles.word, { color: row.color }]}>{w[row.key]}</Text>
-              </View>
-            ))}
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+    <View>
+      {/* Word-by-word rows — no boxes, plain aligned text */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View>
+          {ROWS.map(row => (
+            <View key={row.key} style={styles.row}>
+              <Text style={styles.flag}>{row.flag}</Text>
+              {words.map((w, i) => (
+                <Text key={i} style={[styles.word, { color: row.color }]}>
+                  {w[row.key]}{i < words.length - 1 ? '  ' : ''}
+                </Text>
+              ))}
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      {/* 6 example sentences */}
+      {examples.length > 0 && (
+        <>
+          <View style={styles.separator} />
+          {examples.map((ex, i) => (
+            <Text key={i} style={styles.example}>{ex}</Text>
+          ))}
+        </>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  table: { paddingBottom: 4 },
   row: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+    alignItems: 'baseline',
+    marginBottom: 8,
   },
-  flag: {
-    fontSize: 16,
-    width: 28,
-    marginRight: 4,
+  flag: { fontSize: 15, marginRight: 8, width: 24 },
+  word: { fontSize: 14, fontWeight: '500' },
+  separator: {
+    height: 1,
+    backgroundColor: '#30363D',
+    marginTop: 12,
+    marginBottom: 14,
   },
-  cell: {
-    minWidth: 52,
-    paddingHorizontal: 6,
-    paddingVertical: 5,
-    marginRight: 4,
-    backgroundColor: '#21262D',
-    borderRadius: 6,
-    alignItems: 'center',
-  },
-  word: {
-    fontSize: 13,
-    fontWeight: '600',
-    textAlign: 'center',
+  example: {
+    color: '#E6EDF3',
+    fontSize: 14,
+    lineHeight: 26,
+    paddingVertical: 2,
   },
 });

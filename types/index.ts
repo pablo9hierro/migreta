@@ -1,20 +1,29 @@
 export interface WordMapping {
   original: string;
-  target: string;
+  target: string;    // Dutch
+  de: string;        // German
   wasNative: boolean;
 }
 
 export interface LiteralWord {
+  pt: string;
+  nl: string;
+  de: string;
+}
+
+export interface GrammarExample {
   nl: string;
   pt: string;
   de: string;
+  note: string;
 }
 
 export interface MigrationResponse {
   corrected: string;
   wordMap: WordMapping[];
-  explanation: string;
-  literalExtreme: LiteralWord[] | string; // string = legacy sessions
+  explanation: GrammarExample[] | string;  // string = legacy sessions
+  literalExtreme: LiteralWord[] | string;  // string = legacy sessions
+  literalExamples: string[];
 }
 
 export interface Message {
