@@ -3,7 +3,7 @@ import {
   View, Text, FlatList, TouchableOpacity, StyleSheet, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, router } from 'expo-router';
 import { getSessions, deleteSession } from '../services/storage';
 import { Session } from '../types';
 import { getLang } from '../constants/languages';
@@ -58,7 +58,11 @@ function SessionCard({ session, onDelete }: { session: Session; onDelete: () => 
   const preview = session.messages[0]?.userText ?? 'Sem mensagens';
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.75}
+      onPress={() => router.push(`/session/${session.id}`)}
+    >
       <View style={styles.cardTop}>
         <Text style={styles.pair}>
           {src.flag} {src.name} → {tgt.flag} {tgt.name}
@@ -68,11 +72,11 @@ function SessionCard({ session, onDelete }: { session: Session; onDelete: () => 
       <Text style={styles.preview} numberOfLines={2}>{preview}</Text>
       <View style={styles.cardBottom}>
         <Text style={styles.count}>{session.messages.length} migração(ões)</Text>
-        <TouchableOpacity onPress={onDelete} activeOpacity={0.7}>
+        <TouchableOpacity onPress={onDelete} activeOpacity={0.7} hitSlop={12}>
           <Text style={styles.deleteBtn}>Apagar</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

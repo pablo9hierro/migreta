@@ -16,6 +16,7 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="history" options={{ title: 'Histórico' }} />
+        <Stack.Screen name="session/[id]" options={{ title: 'Sessão' }} />
       </Stack>
     </>
   );
