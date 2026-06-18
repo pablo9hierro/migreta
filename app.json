@@ -21,10 +21,17 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.migreta.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "62d3c171-69b8-4bce-aa21-d2a35fc3cdfc"
+      }
+    },
+    "owner": "micherlom"
   }
 }
