@@ -60,8 +60,14 @@ async function callModel(model: string, prompt: string): Promise<MigrationRespon
 
   if (!res.ok) {
     const body = await res.text();
-    // Also catch quota/credit errors that come as 402 or error messages
-    if (res.status === 402 || body.toLowerCase().includes('credit') || body.toLowerCase().includes('quota')) {
+    const bodyLower = body.toLowerCase();
+    // Skip to next model on rate limit, credit exhaustion, or invalid model ID
+    if (
+      res.status === 402 ||
+      res.status === 400 && (bodyLower.includes('not a valid model') || bodyLower.includes('invalid model')) ||
+      bodyLower.includes('credit') ||
+      bodyLower.includes('quota')
+    ) {
       throw new Error('RATE_LIMITED');
     }
     throw new Error(`API ${res.status}: ${body}`);
