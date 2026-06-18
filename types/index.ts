@@ -4,11 +4,17 @@ export interface WordMapping {
   wasNative: boolean;
 }
 
+export interface LiteralWord {
+  nl: string;
+  pt: string;
+  de: string;
+}
+
 export interface MigrationResponse {
   corrected: string;
   wordMap: WordMapping[];
   explanation: string;
-  literalExtreme: string;
+  literalExtreme: LiteralWord[] | string; // string = legacy sessions
 }
 
 export interface Message {

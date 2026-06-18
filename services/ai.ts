@@ -21,17 +21,25 @@ Texto que o usuário escreveu (possivelmente misturando os dois idiomas):
 
 Retorne APENAS JSON válido, sem markdown, sem texto fora do JSON:
 {
-  "corrected": "frase correta no idioma alvo",
+  "corrected": "frase correta em holandês",
   "wordMap": [
     {
       "original": "palavra/expressão exatamente como o usuário escreveu",
-      "target": "equivalente correto em ${targetLang}",
+      "target": "equivalente correto em holandês",
       "wasNative": true
     }
   ],
-  "explanation": "explicação no estilo definido — analogia + 4 exemplos em moods diferentes",
-  "literalExtreme": "ordem exata de palavras de ${targetLang} mas com palavras de ${sourceLang}"
-}`;
+  "explanation": "5 a 6 frases de exemplo + explicações como definido no system prompt",
+  "literalExtreme": [
+    { "nl": "palavra holandesa", "pt": "equivalente literal em português", "de": "equivalente em alemão" }
+  ]
+}
+
+IMPORTANTE para literalExtreme:
+- Uma entrada por palavra/token da frase corrigida em holandês, na ordem exata
+- "nl": a palavra holandesa da frase corrigida
+- "pt": o que essa palavra significa literalmente em português (pode soar estranho — é intencional)
+- "de": como seria essa mesma palavra/posição em alemão (mantendo a estrutura/ordem do holandês)`;
 }
 
 async function callModel(model: string, messages: object[]): Promise<MigrationResponse> {
@@ -130,11 +138,16 @@ function getMockResponse(): MigrationResponse {
       { original: 'espanhol', target: 'español', wasNative: true },
     ],
     explanation:
-      'Em espanhol "poder" é a chave que abre possibilidade — diferente de "conseguir".\n\n' +
-      '→ [afirmativa] Yo puedo correr rápido. (Eu posso correr rápido.)\n' +
-      '→ [negativa] No puedo dormir. (Não consigo dormir.)\n' +
-      '→ [exclamativa] ¡Puedo hacerlo! (Eu consigo fazer isso!)\n' +
-      '→ [condicional] Si pudiera, iría. (Se eu pudesse, iria.)',
-    literalExtreme: 'Não posso entender isto todavia, mas quero aprender espanhol.',
+      'Ik kan het niet begrijpen.\n↳ "kan" = posso/consigo. Em holandês não existe "conseguir" separado de "poder" — "kunnen" cobre os dois. Em alemão é igual: "können".\n\n' +
+      'Ik begrijp het nog steeds niet.\n↳ "nog steeds" = ainda/mesmo assim. Em português precisaria de "ainda" ou "mesmo assim". Em espanhol "todavía".\n\n' +
+      'Maar ik wil het leren.\n↳ "wil" = quero. "Willen" em holandês é direto como "querer" em português — sem rodeio.\n\n' +
+      'Kan jij het mij uitleggen?\n↳ "uitleggen" é verbo separável: "uit" vai pro fim. Como "aufklären" em alemão. Em português seria como se "explicar" virasse "ex...ar" com "plic" indo pro final.',
+    literalExtreme: [
+      { nl: 'Ik', pt: 'Eu', de: 'Ich' },
+      { nl: 'kan', pt: 'posso', de: 'kann' },
+      { nl: 'het', pt: 'isso', de: 'es' },
+      { nl: 'niet', pt: 'não', de: 'nicht' },
+      { nl: 'begrijpen', pt: 'entender', de: 'verstehen' },
+    ],
   };
 }

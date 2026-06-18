@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { MigrationResponse } from '../types';
+import { MigrationResponse, LiteralWord } from '../types';
 import WordMapTable from './WordMapTable';
+import LiteralTable from './LiteralTable';
 
 const TABS = [
   { key: 'corrected', label: '✓ Correção', color: '#22C55E' },
@@ -49,12 +50,9 @@ export default function MigrationResult({ response }: { response: MigrationRespo
         )}
 
         {active === 'literal' && (
-          <>
-            <Text style={styles.literalText}>{response.literalExtreme}</Text>
-            <Text style={styles.literalHint}>
-              ↑ Ordem de palavras da língua alvo. O estranhamento é o aprendizado.
-            </Text>
-          </>
+          Array.isArray(response.literalExtreme)
+            ? <LiteralTable words={response.literalExtreme as LiteralWord[]} />
+            : <Text style={styles.literalText}>{response.literalExtreme as string}</Text>
         )}
       </View>
     </View>
